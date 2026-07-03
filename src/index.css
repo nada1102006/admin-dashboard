@@ -1,27 +1,234 @@
-*{
+/**
+ * ========================================
+ * GLOBAL STYLES
+ * ========================================
+ * 
+ * Base styles for the entire application
+ * Tailwind CSS configuration is in tailwind.config.js
+ */
+
+@config "../tailwind.config.js";
+@import "tailwindcss";
+
+/* ========================================
+   CSS VARIABLES FOR THEMING
+   ======================================== */
+
+:root {
+    /* Light Mode Colors */
+    --color-bg-primary: #ffffff;
+    --color-bg-secondary: #f9fafb;
+    --color-bg-tertiary: #f3f4f6;
+    --color-text-primary: #171717;
+    --color-text-secondary: #525252;
+    --color-text-tertiary: #a3a3a3;
+    --color-border: #e5e5e5;
+    --color-border-light: #d4d4d4;
+}
+
+html.dark {
+    /* Dark Mode Colors */
+    --color-bg-primary: #0f1117;
+    --color-bg-secondary: #1c2128;
+    --color-bg-tertiary: #262c36;
+    --color-text-primary: #e8e8e8;
+    --color-text-secondary: #a8aab5;
+    --color-text-tertiary: #6b7278;
+    --color-border: #30363d;
+    --color-border-light: #21262d;
+}
+
+/* ========================================
+   GLOBAL RESETS
+   ======================================== */
+
+* {
     margin: 0;
     padding: 0;
     box-sizing: border-box;
 }
 
-body{
-    font-family: Arial, Helvetica, sans-serif;
+/* ========================================
+   BODY STYLES
+   ======================================== */
+
+body {
+    /* Font from design system */
+    font-family: "Inter", "ui-sans-serif", "system-ui", "-apple-system", "BlinkMacSystemFont", "Segoe UI", "Roboto", "Helvetica Neue", "Arial", "sans-serif";
+
+    /* Colors from design system */
+    @apply bg-white dark:bg-dark-background text-neutral-900 dark:text-text-dark-primary text-body-base leading-relaxed;
+
+    /* Smooth color transitions */
+    transition: background-color 0.2s ease, color 0.2s ease;
 }
 
-a{
+/* ========================================
+   HTML DARK MODE
+   ======================================== */
+
+html.dark {
+    color-scheme: dark;
+}
+
+html.light {
+    color-scheme: light;
+}
+
+/* ========================================
+   LINK STYLES
+   ======================================== */
+
+a {
     text-decoration: none;
     color: inherit;
+
+    /* Focus state for accessibility */
+    @apply transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-primary-300 rounded;
 }
 
-ul{
+/* Link hover color */
+a:hover {
+    @apply text-primary-600 dark:text-primary-400;
+}
+
+/* ========================================
+   LIST RESETS
+   ======================================== */
+
+ul,
+ol {
     list-style: none;
 }
 
-button{
+/* ========================================
+   BUTTON RESETS
+   ======================================== */
+
+button {
     cursor: pointer;
+    border: none;
+    background: none;
+
+    /* Disable browser button styling */
+    font: inherit;
 }
 
-img{
+button:disabled {
+    @apply cursor-not-allowed opacity-50;
+}
+
+/* ========================================
+   IMAGE STYLES
+   ======================================== */
+
+img {
     max-width: 100%;
+    height: auto;
     display: block;
+}
+
+/* ========================================
+   FORM ELEMENT STYLES
+   ======================================== */
+
+input,
+textarea,
+select {
+    font: inherit;
+    color: inherit;
+}
+
+/* ========================================
+   DARK MODE TRANSITIONS
+   ======================================== */
+
+/* Smooth transition for theme changes */
+html {
+    transition: background-color 0.2s ease, color 0.2s ease;
+}
+
+input:focus,
+textarea:focus,
+select:focus {
+    outline: none;
+}
+
+/* ========================================
+   SCROLLBAR STYLES (Optional)
+   ======================================== */
+
+/* Customize scrollbar appearance for webkit browsers */
+::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+}
+
+::-webkit-scrollbar-track {
+    background: #f1f1f1;
+}
+
+::-webkit-scrollbar-thumb {
+    background: #888;
+    border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: #555;
+}
+
+/* ========================================
+   SELECTION STYLES
+   ======================================== */
+
+::selection {
+    @apply bg-primary-200 text-neutral-900;
+}
+
+/* ========================================
+   UTILITY CLASSES
+   ======================================== */
+
+/* Remove outline for keyboard focus (use ring instead) */
+*:focus-visible {
+    @apply outline-none;
+}
+
+/* Smooth scroll behavior */
+html {
+    scroll-behavior: smooth;
+}
+
+/* ========================================
+   ANIMATION UTILITIES
+   ======================================== */
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+    }
+
+    to {
+        opacity: 1;
+    }
+}
+
+@keyframes slideInUp {
+    from {
+        transform: translateY(10px);
+        opacity: 0;
+    }
+
+    to {
+        transform: translateY(0);
+        opacity: 1;
+    }
+}
+
+.fade-in {
+    animation: fadeIn 0.3s ease-in-out;
+}
+
+.slide-in-up {
+    animation: slideInUp 0.3s ease-out;
 }
