@@ -1,4 +1,19 @@
-import React from 'react';
-export default function Login() { return <div>
-    Shahd Task  && Arwa Task  && Ranim Task
-</div>; }
+import React from 'react'
+import {
+    PrimaryButton,
+} from "@/components";
+
+export default function DashboardHome() {
+    return (
+        <>
+<PrimaryButton size="lg">
+    click me
+</PrimaryButton>
+
+        </>
+
+
+
+
+    )
+}
