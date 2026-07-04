@@ -1,5 +1,7 @@
-import { useEffect, useRef, useState } from "react";
-import { useUsers } from "../context/UsersContext";
+/* eslint-disable no-unused-vars */
+import { createContext, useContext, useState, useCallback, useMemo, useEffect, useRef } from "react";
+import api from "../api/api";
+import { toast } from "react-toastify";
 import {
   Users as UsersIcon,
   Shield,
@@ -16,6 +18,197 @@ import {
   UserPlus,
 } from "lucide-react";
 
+/* CONTEXT */
+const UsersContext = createContext();
+
+const ENDPOINTS = ["/users/all", "/users", "/api/users", "/api/v1/users"];
+const POST_ENDPOINTS = ["/users/add", "/users", "/api/users/add", "/api/v1/users/add", "/api/users", "/api/v1/users"];
+
+const normalizeUsersResponse = (data) => {
+  if (Array.isArray(data)) return data;
+  if (Array.isArray(data?.users)) return data.users;
+  if (Array.isArray(data?.data)) return data.data;
+  if (Array.isArray(data?.result)) return data.result;
+  const firstArray = Object.values(data || {}).find((v) => Array.isArray(v));
+  return firstArray || [];
+};
+
+const normalizeCreateUserResponse = (data) => {
+  if (!data) return null;
+  if (data?.user) return data.user;
+  if (data?.data && typeof data.data === "object") return data.data;
+  return data;
+};
+
+const UsersProvider = ({ children }) => {
+  const [users, setUsers] = useState([]);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(null);
+  const [actionLoading, setActionLoading] = useState({});
+
+  const fetchUsers = useCallback(async () => {
+    setLoading(true);
+    setError(null);
+    let lastError = null;
+
+    for (const endpoint of ENDPOINTS) {
+      try {
+        const response = await api.get(endpoint);
+        const data = normalizeUsersResponse(response.data);
+        if (Array.isArray(data)) {
+          setUsers(data);
+          setLoading(false);
+          return;
+        }
+      } catch (err) {
+        lastError = err;
+        console.error(`Failed ${endpoint}:`, err.response?.status, err.message);
+      }
+    }
+
+    setUsers([]);
+    setLoading(false);
+
+    if (lastError?.response?.status === 401) {
+      setError("Please log in again to access the users list.");
+      toast.error("Please log in again to access the users list.");
+    } else {
+      setError("Unable to load users from the API right now.");
+      toast.error("Unable to load users from the API right now.");
+    }
+  }, []);
+
+  const addUser = useCallback(async (userData) => {
+    const requestBody = {
+      ...userData,
+      username: userData.username,
+      name: userData.username,
+    };
+    let lastError = null;
+
+    for (const endpoint of POST_ENDPOINTS) {
+      try {
+        const response = await api.post(endpoint, requestBody);
+        const newUser = normalizeCreateUserResponse(response.data);
+        if (newUser && typeof newUser === "object") {
+          setUsers((prev) => [...prev, newUser]);
+          toast.success("User created successfully");
+          return { success: true, data: newUser };
+        }
+      } catch (err) {
+        lastError = err;
+        if (err.response?.status === 404) continue;
+        break;
+      }
+    }
+
+    const serverMessage =
+      lastError?.response?.data?.message ||
+      lastError?.response?.data?.error ||
+      lastError?.message ||
+      "Failed to create user";
+
+    toast.error(serverMessage);
+    return { success: false, message: serverMessage };
+  }, []);
+
+  const deleteUser = useCallback(async (userId) => {
+    setActionLoading((prev) => ({ ...prev, [userId]: "delete" }));
+    try {
+      try {
+        await api.delete(`/users/${userId}`);
+      } catch (err) {
+        console.log("API delete failed, using local delete");
+      }
+      setUsers((prev) => prev.filter((u) => u._id !== userId));
+      toast.success("User deleted successfully");
+      return { success: true };
+    } catch (err) {
+      const message = "Failed to delete user";
+      toast.error(message);
+      return { success: false, message };
+    } finally {
+      setActionLoading((prev) => ({ ...prev, [userId]: null }));
+    }
+  }, []);
+
+  const verifyUser = useCallback(async (userId) => {
+    setActionLoading((prev) => ({ ...prev, [userId]: "verify" }));
+    try {
+      try {
+        await api.patch(`/users/${userId}/verify`);
+      } catch (err) {
+        console.log("API verify failed, using local toggle");
+      }
+      setUsers((prev) =>
+        prev.map((u) => (u._id === userId ? { ...u, isVerified: !u.isVerified } : u))
+      );
+      toast.success("User status updated");
+      return { success: true };
+    } catch (err) {
+      const message = "Failed to update user";
+      toast.error(message);
+      return { success: false, message };
+    } finally {
+      setActionLoading((prev) => ({ ...prev, [userId]: null }));
+    }
+  }, []);
+
+  const updateUserRole = useCallback(async (userId, role) => {
+    setActionLoading((prev) => ({ ...prev, [userId]: "role" }));
+    try {
+      try {
+        await api.patch(`/users/${userId}`, { role });
+      } catch (err) {
+        console.log("API role update failed, using local update");
+      }
+      setUsers((prev) => prev.map((u) => (u._id === userId ? { ...u, role } : u)));
+      toast.success("Role updated");
+      return { success: true };
+    } catch (err) {
+      const message = "Failed to update user";
+      toast.error(message);
+      return { success: false, message };
+    } finally {
+      setActionLoading((prev) => ({ ...prev, [userId]: null }));
+    }
+  }, []);
+
+  const stats = useMemo(
+    () => ({
+      totalUsers: users.length,
+      admins: users.filter((u) => u.role?.toLowerCase() === "admin").length,
+      customers: users.filter((u) => u.role?.toLowerCase() === "customer").length,
+      verified: users.filter((u) => u.isVerified || u.verified).length,
+    }),
+    [users]
+  );
+
+  const value = {
+    users,
+    stats,
+    loading,
+    error,
+    actionLoading,
+    fetchUsers,
+    addUser,
+    deleteUser,
+    verifyUser,
+    updateUserRole,
+  };
+
+  return <UsersContext.Provider value={value}>{children}</UsersContext.Provider>;
+};
+
+const useUsers = () => {
+  const context = useContext(UsersContext);
+  if (!context) {
+    throw new Error("useUsers must be used within a UsersProvider");
+  }
+  return context;
+};
+
+/* UI-->*/
 const StatCard = ({ title, value, icon: Icon, color }) => (
   <div className="bg-white rounded-2xl p-5 flex items-center justify-between shadow-sm border border-gray-100">
     <div>
@@ -88,8 +281,7 @@ const DeleteModal = ({ user, onConfirm, onCancel, deleting }) => (
   </div>
 );
 
-// Add User Form Component
-const AddUserForm = ({ onClose, onSubmit, autoStartField }) => {
+const AddUserForm = ({ onClose, onSubmit }) => {
   const [formData, setFormData] = useState({
     username: "",
     email: "",
@@ -102,10 +294,8 @@ const AddUserForm = ({ onClose, onSubmit, autoStartField }) => {
   const nameInputRef = useRef(null);
 
   useEffect(() => {
-    if (autoStartField === "name" && nameInputRef.current) {
-      nameInputRef.current.focus();
-    }
-  }, [autoStartField]);
+    nameInputRef.current?.focus();
+  }, []);
 
   const handleChange = (e) => {
     setFormError("");
@@ -124,7 +314,7 @@ const AddUserForm = ({ onClose, onSubmit, autoStartField }) => {
     setSubmitting(false);
     if (result.success) {
       onClose();
-      setFormData({ name: "", email: "", password: "", phone: "", role: "customer" });
+      setFormData({ username: "", email: "", password: "", phone: "", role: "customer" });
     } else {
       setFormError(result.message || "Unable to create user. Please try again.");
     }
@@ -148,7 +338,7 @@ const AddUserForm = ({ onClose, onSubmit, autoStartField }) => {
       </div>
       <form onSubmit={handleSubmit} className="p-6">
         {formError && (
-          <div className="mb-4 rounded-2xl border border-rose-200 bg-rose-50 px-4 py-3 text-sm text-rose-700">
+          <div className="mb-4 rounded-xl border border-rose-200 bg-rose-50 px-4 py-3 text-sm text-rose-700">
             {formError}
           </div>
         )}
@@ -235,12 +425,12 @@ const AddUserForm = ({ onClose, onSubmit, autoStartField }) => {
   );
 };
 
+/*Main--> */
 const Users = () => {
   const { users, stats, loading, error, fetchUsers, deleteUser, verifyUser, updateUserRole, addUser } = useUsers();
 
   const [searchQuery, setSearchQuery] = useState("");
   const [showAddForm, setShowAddForm] = useState(false);
-  const [autoStartField, setAutoStartField] = useState(null);
   const [deleteModalOpen, setDeleteModalOpen] = useState(false);
   const [userToDelete, setUserToDelete] = useState(null);
   const [deleting, setDeleting] = useState(false);
@@ -313,11 +503,7 @@ const Users = () => {
             />
           </div>
           <button
-            onClick={() => {
-              const opening = !showAddForm;
-              setShowAddForm(opening);
-              setAutoStartField(opening ? "username" : null);
-            }}
+            onClick={() => setShowAddForm(!showAddForm)}
             className="px-4 py-2.5 bg-cyan-500 text-white rounded-xl text-sm font-medium hover:bg-cyan-600 transition-colors flex items-center gap-2"
           >
             <Plus className="w-4 h-4" />
@@ -330,12 +516,8 @@ const Users = () => {
       {/* Add User Form */}
       {showAddForm && (
         <AddUserForm
-          onClose={() => {
-            setShowAddForm(false);
-            setAutoStartField(null);
-          }}
+          onClose={() => setShowAddForm(false)}
           onSubmit={addUser}
-          autoStartField={autoStartField}
         />
       )}
 
@@ -446,4 +628,10 @@ const Users = () => {
   );
 };
 
-export default Users;
+const UsersWithProvider = () => (
+  <UsersProvider>
+    <Users />
+  </UsersProvider>
+);
+
+export default UsersWithProvider;

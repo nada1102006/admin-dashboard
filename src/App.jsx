@@ -1,5 +1,4 @@
 import { BrowserRouter, Routes, Route } from "react-router-dom";
-import { UsersProvider } from "./context/UsersContext";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import DashboardHome from "./pages/DashboardHome";
@@ -16,20 +15,18 @@ import "./App.css";
 function App() {
   return (
     <BrowserRouter>
-      <UsersProvider>
-        <ToastContainer position="top-right" autoClose={3000} />
-        <Routes>
-          <Route path="/" element={<DashboardHome />} />
-          <Route path="/users" element={<Users />} />
-          <Route path="/products" element={<Products />} />
-          <Route path="/add-product" element={<AddProduct />} />
-          <Route path="/product-details/:id" element={<ProductDetails />} />
-          <Route path="/orders" element={<Orders />} />
-          <Route path="/carts" element={<Carts />} />
-          <Route path="/settings" element={<Setting />} />
-          <Route path="/login" element={<Login />} />
-        </Routes>
-      </UsersProvider>
+      <ToastContainer position="top-right" autoClose={3000} />
+      <Routes>
+        <Route path="/" element={<DashboardHome />} />
+        <Route path="/users" element={<Users />} />
+        <Route path="/products" element={<Products />} />
+        <Route path="/add-product" element={<AddProduct />} />
+        <Route path="/product-details/:id" element={<ProductDetails />} />
+        <Route path="/orders" element={<Orders />} />
+        <Route path="/carts" element={<Carts />} />
+        <Route path="/settings" element={<Setting />} />
+        <Route path="/login" element={<Login />} />
+      </Routes>
     </BrowserRouter>
   );
 }
