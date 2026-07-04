@@ -1,36 +1,36 @@
-import React from 'react';
-
-import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
-
-import Login from './pages/Login';
-import DashboardHome from './pages/DashboardHome';
-import Products from './pages/Products';
-import ProductDetails from './pages/ProductDetails';
-import AddProduct from './pages/AddProduct';
-import Orders from './pages/Orders';
-import Users from './pages/Users';
-import Carts from './pages/Carts';  
-import Settings from './pages/Setting';
-
+import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { UsersProvider } from "./context/UsersContext";
+import { ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
+import DashboardHome from "./pages/DashboardHome";
+import Users from "./pages/Users";
+import Products from "./pages/Products";
+import AddProduct from "./pages/AddProduct";
+import ProductDetails from "./pages/ProductDetails";
+import Orders from "./pages/Orders";
+import Carts from "./pages/Carts";
+import Setting from "./pages/Setting";
+import Login from "./pages/Login";
+import "./App.css";
 
 function App() {
   return (
-    <Router>
-      <Routes>
-        <Route path="/login" element={<Login />} />
-        <Route path="/dashboard" element={<DashboardHome />} />
-        <Route path="/products" element={<Products />} />
-        <Route path="/products/:id" element={<ProductDetails />} />
-        <Route path="/add-product" element={<AddProduct />} />
-        <Route path="/orders" element={<Orders />} />
-        <Route path="/users" element={<Users />} />
-        <Route path="/carts" element={<Carts />} />
-        <Route path="/settings" element={<Settings />} />
-
-        <Route path="*" element={<Navigate to="/dashboard" replace />} />
-
-      </Routes>
-      </Router>
+    <BrowserRouter>
+      <UsersProvider>
+        <ToastContainer position="top-right" autoClose={3000} />
+        <Routes>
+          <Route path="/" element={<DashboardHome />} />
+          <Route path="/users" element={<Users />} />
+          <Route path="/products" element={<Products />} />
+          <Route path="/add-product" element={<AddProduct />} />
+          <Route path="/product-details/:id" element={<ProductDetails />} />
+          <Route path="/orders" element={<Orders />} />
+          <Route path="/carts" element={<Carts />} />
+          <Route path="/settings" element={<Setting />} />
+          <Route path="/login" element={<Login />} />
+        </Routes>
+      </UsersProvider>
+    </BrowserRouter>
   );
 }
 
