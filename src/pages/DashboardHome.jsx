@@ -19,13 +19,13 @@ const statusConfig = {
     badgeText: 'text-amber-500'
   },
   processing: {
-    label: 'PROCESSING',
-    color: 'text-blue-400',
-    bg: 'bg-blue-50/50',
-    border: 'border-blue-200/60',
-    badgeBg: 'bg-emerald-100/50', 
-    badgeText: 'text-emerald-500' 
-  },
+  label: 'PROCESSING',
+  color: 'text-blue-400',
+  bg: 'bg-blue-50/50',
+  border: 'border-blue-200/60',
+  badgeBg: 'bg-emerald-100/50',
+  badgeText: 'text-emerald-500'
+},
 };
 
 const actualStatusConfig = {
