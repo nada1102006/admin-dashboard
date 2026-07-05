@@ -1,27 +1,90 @@
-*{
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
+@import url("https://fonts.googleapis.com/css2?family=Lato:wght@100;300;400;700&display=swap");
+
+@import "tailwindcss";
+
+
+
+
+@theme {
+
+  --color-black: #000;
+  --color-white: #fff;
+
+  --color-gray-dark: #343a40;
+  --color-neutral-100: #f8f9fa;
+  --color-neutral-200: #e9ecef;
+  --color-neutral-300: #dee2e6;
+  --color-neutral-400: #ced4da;
+  --color-neutral-500: #adb5bd;
+  --color-neutral-600: #6c757d;
+  --color-neutral-700: #495057;
+  --color-neutral-800: #343a40;
+  --color-neutral-900: #212529;
+
+  --color-primary-500: #1AC0EC;
+  --color-secondary-500: #161F31;
+  --color-success-500: #198754;
+  --color-info-500: #0dcaf0;
+  --color-warning-500: #ffc107;
+  --color-danger-500: #dc3545;
+  --color-light-500: #F1F5F9;
+  --color-dark-500: #020617;
+
+
 }
 
-body{
-    font-family: Arial, Helvetica, sans-serif;
-}
 
-a{
+
+
+@layer base {
+
+  * {
+    @apply m-0 p-0 box-border;
+  }
+
+  body {
+
+    background-color: var(--bg-body);
+    font-family: "Lato", sans-serif;
+    overflow-x: hidden;
+    background-color: var(--color-light-500);
+    
+  }
+
+  img{
+    @apply block w-full h-full;
+  }
+
+  a {
     text-decoration: none;
     color: inherit;
 }
 
-ul{
+ul {
     list-style: none;
 }
 
-button{
-    cursor: pointer;
 }
 
-img{
-    max-width: 100%;
-    display: block;
+@layer components {
+
+  .container {
+    @apply mx-auto overflow-x-hidden;
+  }
+
+
+
+
+}
+
+
+
+
+
+
+
+@layer utilities {
+
+  .active { @apply text-primary-500 font-bold;}
+
 }
