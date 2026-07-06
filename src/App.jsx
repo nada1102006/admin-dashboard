@@ -1,64 +1,76 @@
+import { lazy, Suspense } from "react";
 import {
   createBrowserRouter,
   RouterProvider,
   Navigate,
 } from "react-router-dom";
 
-import Login from "./pages/Login";
-import DashboardHome from "./pages/DashboardHome";
-import Products from "./pages/Products";
-import ProductDetails from "./pages/ProductDetails";
-import AddProduct from "./pages/AddProduct";
-import Orders from "./pages/Orders";
-import Users from "./pages/Users";
-import Carts from "./pages/Carts";
-import Settings from "./pages/Setting";
-import Layout from "./Layout/Layout";
+import HandleLottie from "./components/HandleLottie/HandleLottie";
+
+// تعديل المسارات بناءً على الفولدرات الحقيقية في شجرة المشروع
+const Login          = lazy(() => import("./pages/Login/Login.jsx"));
+const DashboardHome  = lazy(() => import("./pages/DashboardHome"));
+const Products       = lazy(() => import("./pages/Products"));
+const ProductDetails = lazy(() => import("./pages/ProductDetails"));
+const AddProduct     = lazy(() => import("./pages/AddProduct"));
+const Orders         = lazy(() => import("./pages/Orders"));
+const Users          = lazy(() => import("./pages/Users"));
+const Carts          = lazy(() => import("./pages/Carts"));
+const Settings       = lazy(() => import("./pages/Setting"));
+
+// المكون الوسيط للـ Loader
+const withSuspense = (Component) => (
+  <Suspense fallback={<HandleLottie state={"secondary"} />}>
+    <Component />
+  </Suspense>
+);
 
 const router = createBrowserRouter([
   {
     path: "/login",
-    element: <Login />,
+    element: withSuspense(Login),
   },
   {
     path: "/",
-    element: <Layout />,
+    // شيلنا الـ Layout مؤقتاً هنا وحطينا مكانها الـ Routes الأساسية عشان المشروع يفتح
+    // وبمجرد ما المشروع يشتغل، تقدري تشوفي فولدر Layout مستخبي جوه pages ولا فين وتعدلي مساره
+    element: withSuspense(DashboardHome), 
     children: [
       {
         path: "dashboard",
-        element: <DashboardHome />,
+        element: withSuspense(DashboardHome),
       },
       {
         path: "products",
-        element: <Products />,
+        element: withSuspense(Products),
       },
       {
         path: "products/:id",
-        element: <ProductDetails />,
+        element: withSuspense(ProductDetails),
       },
       {
         path: "add-product",
-        element: <AddProduct />,
+        element: withSuspense(AddProduct),
       },
       {
         path: "orders",
-        element: <Orders />,
+        element: withSuspense(Orders),
       },
       {
         path: "users",
-        element: <Users />,
+        element: withSuspense(Users),
       },
       {
         path: "carts",
-        element: <Carts />,
+        element: withSuspense(Carts),
       },
       {
         path: "settings",
-        element: <Settings />,
+        element: withSuspense(Settings),
       },
       {
         path: "*",
-        element: <Navigate to="/dashboard" replace />,
+        element: <HandleLottie state={"error"} />,
       },
     ],
   },
