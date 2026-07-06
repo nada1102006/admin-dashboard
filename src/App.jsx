@@ -4,6 +4,7 @@ import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-d
 
 import Login from './pages/Login';
 import DashboardHome from './pages/DashboardHome';
+import Edit from './pages/Edit';
 import Products from './pages/Products';
 import ProductDetails from './pages/ProductDetails';
 import AddProduct from './pages/AddProduct';
@@ -11,6 +12,7 @@ import Orders from './pages/Orders';
 import Users from './pages/Users';
 import Carts from './pages/Carts';  
 import Settings from './pages/Setting';
+import QuickEdit from './pages/quickEdit';
 
 
 function App() {
@@ -19,6 +21,8 @@ function App() {
       <Routes>
         <Route path="/login" element={<Login />} />
         <Route path="/dashboard" element={<DashboardHome />} />
+        <Route path="/edit" element={<Edit />} />
+        <Route path="/quick-edit" element={<QuickEdit />} />
         <Route path="/products" element={<Products />} />
         <Route path="/products/:id" element={<ProductDetails />} />
         <Route path="/add-product" element={<AddProduct />} />
