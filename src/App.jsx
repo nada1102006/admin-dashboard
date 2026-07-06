@@ -92,7 +92,7 @@ function App() {
         <Route
           path="*"
           element={
-            <Suspense fallback={<HandleLottie state={"error"} />}></Suspense>
+           <HandleLottie state={"error"} />
           }
         />
       </Routes>

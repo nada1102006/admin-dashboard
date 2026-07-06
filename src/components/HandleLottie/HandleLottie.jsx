@@ -1,8 +1,5 @@
 import Lottie from "react-lottie-player";
 import "./HandleLottie.css";
-
-// import SecondaryPageLoader from "../../assets/lottieFiles/secondaryLoader.json";
-import MainPageLoader from "../../assets/lottieFiles/mainLoader.json";
 import ErrorPageLoader from "../../assets/lottieFiles/errorLoader.json";
 import { useNavigate } from "react-router-dom";
 import { useEffect } from "react";
@@ -46,7 +43,7 @@ function HandleLottie({ state }) {
               loop
               animationData={ErrorPageLoader}
               play
-              className="w-[100%] min-[500px]:w-[70%] min-[500px]:w-[60%] min-[600px]:w-[60%] min-[900px]:w-[55%] mx-auto "
+              className="w-[100%] min-[300px]:w-[70%]  min-[500px]:w-[50%]  min-[800px]:w-[45%]  min-[1024px]:w-[35%] mx-auto "
             />
             <p
               onClick={() => navigate("/dashboard")}
