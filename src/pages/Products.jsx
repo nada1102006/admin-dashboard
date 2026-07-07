@@ -118,7 +118,7 @@ export default function Products() {
         </div>
 
         {/* Stats Section */}
-        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4 lg:gap-6">
+        <div className="grid grid-cols-2 gap-4 lg:grid-cols-4 lg:gap-6">
           <StatCard icon={<FiBox />} value={stats.total} label="Total" tone="cyan" />
           <StatCard icon={<FiStar />} value={stats.featured} label="Featured" tone="amber" />
           <StatCard icon={<FiTrendingUp />} value={stats.inStock} label="In Stock" tone="emerald" />
