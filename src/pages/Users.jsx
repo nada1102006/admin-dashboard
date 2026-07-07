@@ -247,6 +247,72 @@ const VerifiedBadge = ({ isVerified }) => {
   );
 };
 
+const MobileUserCard = ({ user, onEdit, onToggleRole, onDelete, actionLoading }) => (
+  <div className="rounded-3xl border border-gray-100 bg-white p-5 shadow-sm mb-4">
+    <div className="flex items-start gap-4">
+      <div className="w-12 h-12 rounded-2xl bg-gray-200 flex items-center justify-center overflow-hidden">
+        {user.avatar ? (
+          <img src={user.avatar} alt={user.name} className="w-full h-full object-cover" />
+        ) : (
+          <svg className="w-6 h-6 text-gray-400" fill="currentColor" viewBox="0 0 24 24">
+            <path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z" />
+          </svg>
+        )}
+      </div>
+      <div className="flex-1">
+        <div className="flex flex-col gap-1 sm:flex-row sm:items-center sm:justify-between">
+          <div>
+            <p className="font-semibold text-gray-800">{user.name}</p>
+            <p className="text-gray-500 text-sm">{user.email}</p>
+          </div>
+          <div className="flex gap-2 text-right">
+            <RoleBadge role={user.role} />
+          </div>
+        </div>
+        <div className="mt-4 grid grid-cols-2 gap-3 text-sm text-gray-600">
+          <div className="rounded-2xl bg-gray-50 px-3 py-2">
+            <span className="block text-xs text-gray-400">Verified</span>
+            <VerifiedBadge isVerified={user.isVerified} />
+          </div>
+          <div className="rounded-2xl bg-gray-50 px-3 py-2">
+            <span className="block text-xs text-gray-400">Role</span>
+            <span className="mt-1 inline-flex items-center rounded-full bg-slate-100 px-2.5 py-1 text-xs font-medium text-slate-700 capitalize">
+              {user.role || "customer"}
+            </span>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div className="mt-4 flex flex-wrap gap-2">
+      <button
+        type="button"
+        onClick={() => onEdit(user)}
+        className="inline-flex items-center justify-center gap-2 rounded-2xl border border-gray-200 bg-white px-3 py-2 text-sm text-gray-700 hover:bg-gray-50 transition"
+      >
+        <Pencil className="w-4 h-4" /> Edit
+      </button>
+      <button
+        type="button"
+        onClick={() => onToggleRole(user)}
+        className="inline-flex items-center justify-center gap-2 rounded-2xl bg-emerald-500 px-3 py-2 text-sm text-white hover:bg-emerald-600 transition disabled:opacity-60"
+        disabled={actionLoading[user._id] === "role"}
+      >
+        {actionLoading[user._id] === "role" ? <Loader2 className="w-4 h-4 animate-spin" /> : <ShieldCheck className="w-4 h-4" />}
+        {user.role === "admin" ? "Demote" : "Promote"}
+      </button>
+      <button
+        type="button"
+        onClick={() => onDelete(user)}
+        className="inline-flex items-center justify-center gap-2 rounded-2xl bg-red-500 px-3 py-2 text-sm text-white hover:bg-red-600 transition disabled:opacity-60"
+        disabled={actionLoading[user._id] === "delete"}
+      >
+        {actionLoading[user._id] === "delete" ? <Loader2 className="w-4 h-4 animate-spin" /> : <Trash2 className="w-4 h-4" />}
+        Delete
+      </button>
+    </div>
+  </div>
+);
+
 const ActionButton = ({ icon: Icon, color, onClick, title }) => (
   <button
     onClick={onClick}
@@ -484,50 +550,48 @@ const Users = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 p-8">
-      {/* Page Title & Search */}
-      <div className="flex items-center justify-between mb-8">
-        <div>
-          <p className="text-cyan-500 text-xs font-bold tracking-widest uppercase mb-1">User Management</p>
-          <h2 className="text-2xl font-bold text-gray-800">Manage Users</h2>
-        </div>
-        <div className="flex items-center gap-4">
-          <div className="relative">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
-            <input
-              type="text"
-              placeholder="Search users..."
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              className="pl-10 pr-4 py-2.5 w-64 bg-white border border-gray-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-cyan-500 focus:border-transparent"
-            />
+    <div className="min-h-screen bg-gray-50 py-8 px-4 sm:px-6 lg:px-8">
+      <div className="mx-auto max-w-7xl">
+        {/* Page Title & Search */}
+        <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between mb-8">
+          <div>
+            <p className="text-cyan-500 text-xs font-bold tracking-widest uppercase mb-1">User Management</p>
+            <h2 className="text-3xl font-bold text-gray-800">Manage Users</h2>
           </div>
-          <button
-            onClick={() => setShowAddForm(!showAddForm)}
-            className="px-4 py-2.5 bg-cyan-500 text-white rounded-xl text-sm font-medium hover:bg-cyan-600 transition-colors flex items-center gap-2"
-          >
-            <Plus className="w-4 h-4" />
-            Add User
-            <ChevronDown className={`w-3 h-3 transition-transform ${showAddForm ? "rotate-180" : ""}`} />
-          </button>
+          <div className="flex flex-col gap-3 sm:flex-row sm:items-center">
+            <div className="relative w-full sm:w-80">
+              <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
+              <input
+                type="text"
+                placeholder="Search users..."
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                className="pl-10 pr-4 py-3 w-full bg-white border border-gray-200 rounded-2xl text-sm focus:outline-none focus:ring-2 focus:ring-cyan-500 focus:border-transparent"
+              />
+            </div>
+            <button
+              onClick={() => setShowAddForm(!showAddForm)}
+              className="inline-flex items-center justify-center gap-2 px-4 py-3 bg-cyan-500 text-white rounded-2xl text-sm font-medium hover:bg-cyan-600 transition-colors"
+            >
+              <Plus className="w-4 h-4" />
+              Add User
+              <ChevronDown className={`w-3 h-3 transition-transform ${showAddForm ? "rotate-180" : ""}`} />
+            </button>
+          </div>
         </div>
-      </div>
 
-      {/* Add User Form */}
-      {showAddForm && (
-        <AddUserForm
-          onClose={() => setShowAddForm(false)}
-          onSubmit={addUser}
-        />
-      )}
+        {/* Add User Form */}
+        {showAddForm && (
+          <AddUserForm onClose={() => setShowAddForm(false)} onSubmit={addUser} />
+        )}
 
-      {/* Stats Cards */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5 mb-8">
-        <StatCard title="Total Users" value={stats.totalUsers} icon={UsersIcon} color="bg-cyan-500" />
-        <StatCard title="Admins" value={stats.admins} icon={Shield} color="bg-cyan-500" />
-        <StatCard title="Customers" value={stats.customers} icon={UsersIcon} color="bg-cyan-500" />
-        <StatCard title="Verified" value={stats.verified} icon={UserCheck} color="bg-cyan-500" />
-      </div>
+        {/* Stats Cards */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-5 mb-8">
+          <StatCard title="Total Users" value={stats.totalUsers} icon={UsersIcon} color="bg-cyan-500" />
+          <StatCard title="Admins" value={stats.admins} icon={Shield} color="bg-purple-500" />
+          <StatCard title="Customers" value={stats.customers} icon={UsersIcon} color="bg-emerald-500" />
+          <StatCard title="Verified" value={stats.verified} icon={UserCheck} color="bg-sky-500" />
+        </div>
 
       {/* Loading State */}
       {loading && (
@@ -549,68 +613,89 @@ const Users = () => {
 
       {/* Users Table */}
       {!loading && !error && (
-        <div className="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
-          <div className="overflow-x-auto">
-            <table className="w-full">
-              <thead>
-                <tr className="border-b border-gray-100">
-                  <th className="text-left text-sm font-medium text-gray-500 px-6 py-4">User</th>
-                  <th className="text-left text-sm font-medium text-gray-500 px-6 py-4">Role</th>
-                  <th className="text-left text-sm font-medium text-gray-500 px-6 py-4">Verified</th>
-                  <th className="text-left text-sm font-medium text-gray-500 px-6 py-4">Actions</th>
-                </tr>
-              </thead>
-              <tbody>
-                {filteredUsers.length === 0 ? (
-                  <tr>
-                    <td colSpan={4} className="text-center py-12 text-gray-400">
-                      {searchQuery ? "No users match your search." : "No users found."}
-                    </td>
+        <div className="space-y-4">
+          <div className="hidden lg:block bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
+            <div className="overflow-x-auto">
+              <table className="w-full">
+                <thead>
+                  <tr className="border-b border-gray-100">
+                    <th className="text-left text-sm font-medium text-gray-500 px-6 py-4">User</th>
+                    <th className="text-left text-sm font-medium text-gray-500 px-6 py-4">Role</th>
+                    <th className="text-left text-sm font-medium text-gray-500 px-6 py-4">Verified</th>
+                    <th className="text-left text-sm font-medium text-gray-500 px-6 py-4">Actions</th>
                   </tr>
-                ) : (
-                  filteredUsers.map((user) => (
-                    <tr key={user._id} className="border-b border-gray-50 hover:bg-gray-50/50 transition-colors">
-                      <td className="px-6 py-4">
-                        <div className="flex items-center gap-3">
-                          <div className="w-10 h-10 rounded-full bg-gray-200 flex items-center justify-center overflow-hidden">
-                            {user.avatar ? (
-                              <img src={user.avatar} alt={user.name} className="w-full h-full object-cover" />
-                            ) : (
-                              <svg className="w-5 h-5 text-gray-400" fill="currentColor" viewBox="0 0 24 24">
-                                <path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z" />
-                              </svg>
-                            )}
-                          </div>
-                          <div>
-                            <p className="font-semibold text-gray-800 text-sm">{user.name}</p>
-                            <p className="text-gray-500 text-xs">{user.email}</p>
-                          </div>
-                        </div>
-                      </td>
-                      <td className="px-6 py-4"><RoleBadge role={user.role} /></td>
-                      <td className="px-6 py-4"><VerifiedBadge isVerified={user.isVerified} /></td>
-                      <td className="px-6 py-4">
-                        <div className="flex items-center gap-2">
-                          <ActionButton icon={Pencil} color="bg-blue-500 hover:bg-blue-600" onClick={() => handleEdit(user)} title="Edit" />
-                          <ActionButton
-                            icon={actionLoading[user._id] === "role" ? Loader2 : ShieldCheck}
-                            color={`${user.role === "admin" ? "bg-purple-500 hover:bg-purple-600" : "bg-emerald-500 hover:bg-emerald-600"} ${actionLoading[user._id] === "role" ? "animate-spin" : ""}`}
-                            onClick={() => handleToggleRole(user)}
-                            title={user.role === "admin" ? "Demote to Customer" : "Promote to Admin"}
-                          />
-                          <ActionButton
-                            icon={actionLoading[user._id] === "delete" ? Loader2 : Trash2}
-                            color="bg-red-500 hover:bg-red-600"
-                            onClick={() => handleDeleteClick(user)}
-                            title="Delete"
-                          />
-                        </div>
+                </thead>
+                <tbody>
+                  {filteredUsers.length === 0 ? (
+                    <tr>
+                      <td colSpan={4} className="text-center py-12 text-gray-400">
+                        {searchQuery ? "No users match your search." : "No users found."}
                       </td>
                     </tr>
-                  ))
-                )}
-              </tbody>
-            </table>
+                  ) : (
+                    filteredUsers.map((user) => (
+                      <tr key={user._id} className="border-b border-gray-50 hover:bg-gray-50/50 transition-colors">
+                        <td className="px-6 py-4">
+                          <div className="flex items-center gap-3">
+                            <div className="w-10 h-10 rounded-full bg-gray-200 flex items-center justify-center overflow-hidden">
+                              {user.avatar ? (
+                                <img src={user.avatar} alt={user.name} className="w-full h-full object-cover" />
+                              ) : (
+                                <svg className="w-5 h-5 text-gray-400" fill="currentColor" viewBox="0 0 24 24">
+                                  <path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z" />
+                                </svg>
+                              )}
+                            </div>
+                            <div>
+                              <p className="font-semibold text-gray-800 text-sm">{user.name}</p>
+                              <p className="text-gray-500 text-xs">{user.email}</p>
+                            </div>
+                          </div>
+                        </td>
+                        <td className="px-6 py-4"><RoleBadge role={user.role} /></td>
+                        <td className="px-6 py-4"><VerifiedBadge isVerified={user.isVerified} /></td>
+                        <td className="px-6 py-4">
+                          <div className="flex items-center gap-2">
+                            <ActionButton icon={Pencil} color="bg-blue-500 hover:bg-blue-600" onClick={() => handleEdit(user)} title="Edit" />
+                            <ActionButton
+                              icon={actionLoading[user._id] === "role" ? Loader2 : ShieldCheck}
+                              color={`${user.role === "admin" ? "bg-purple-500 hover:bg-purple-600" : "bg-emerald-500 hover:bg-emerald-600"} ${actionLoading[user._id] === "role" ? "animate-spin" : ""}`}
+                              onClick={() => handleToggleRole(user)}
+                              title={user.role === "admin" ? "Demote to Customer" : "Promote to Admin"}
+                            />
+                            <ActionButton
+                              icon={actionLoading[user._id] === "delete" ? Loader2 : Trash2}
+                              color="bg-red-500 hover:bg-red-600"
+                              onClick={() => handleDeleteClick(user)}
+                              title="Delete"
+                            />
+                          </div>
+                        </td>
+                      </tr>
+                    ))
+                  )}
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+          <div className="lg:hidden">
+            {filteredUsers.length === 0 ? (
+              <div className="rounded-3xl border border-gray-100 bg-white p-8 text-center text-gray-400">
+                {searchQuery ? "No users match your search." : "No users found."}
+              </div>
+            ) : (
+              filteredUsers.map((user) => (
+                <MobileUserCard
+                  key={user._id}
+                  user={user}
+                  onEdit={handleEdit}
+                  onToggleRole={handleToggleRole}
+                  onDelete={handleDeleteClick}
+                  actionLoading={actionLoading}
+                />
+              ))
+            )}
           </div>
         </div>
       )}
@@ -625,6 +710,7 @@ const Users = () => {
         />
       )}
     </div>
+  </div>
   );
 };
 
