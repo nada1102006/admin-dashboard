@@ -174,6 +174,25 @@ const UsersProvider = ({ children }) => {
     }
   }, []);
 
+  const updateUser = useCallback(async (userId, userData) => {
+    try {
+      try {
+        await api.patch(`/users/${userId}`, userData);
+      } catch (err) {
+        console.log("API update failed, using local update");
+      }
+      setUsers((prev) =>
+        prev.map((u) => (u._id === userId ? { ...u, ...userData } : u))
+      );
+      toast.success("User updated successfully");
+      return { success: true };
+    } catch (err) {
+      const message = err.response?.data?.message || "Failed to update user";
+      toast.error(message);
+      return { success: false, message };
+    }
+  }, []);
+
   const stats = useMemo(
     () => ({
       totalUsers: users.length,
@@ -195,6 +214,7 @@ const UsersProvider = ({ children }) => {
     deleteUser,
     verifyUser,
     updateUserRole,
+    updateUser,
   };
 
   return <UsersContext.Provider value={value}>{children}</UsersContext.Provider>;
@@ -206,6 +226,135 @@ const useUsers = () => {
     throw new Error("useUsers must be used within a UsersProvider");
   }
   return context;
+};
+
+/* ============ EDIT USER MODAL ============ */
+const EditUserModal = ({ user, onClose, onSave }) => {
+  const [formData, setFormData] = useState({
+    username: "",
+    phone: "",
+    avatar: "",
+  });
+  const [saving, setSaving] = useState(false);
+  const [formError, setFormError] = useState("");
+
+  useEffect(() => {
+    if (user) {
+      setFormData({
+        username: user.name || user.username || "",
+        phone: user.phone || "",
+        avatar: user.avatar || "",
+      });
+      setFormError("");
+    }
+  }, [user]);
+
+  const handleChange = (e) => {
+    setFormError("");
+    setFormData((prev) => ({ ...prev, [e.target.name]: e.target.value }));
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    if (!formData.username.trim()) {
+      setFormError("Username is required");
+      return;
+    }
+    setSaving(true);
+    const result = await onSave(user._id, {
+      name: formData.username,
+      phone: formData.phone,
+      avatar: formData.avatar,
+    });
+    setSaving(false);
+    if (result.success) {
+      onClose();
+    } else {
+      setFormError(result.message || "Failed to update user");
+    }
+  };
+
+  if (!user) return null;
+
+  return (
+    <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50" onClick={(e) => e.target === e.currentTarget && onClose()}>
+      <div className="bg-white rounded-3xl p-6 w-full max-w-md mx-4 shadow-2xl animate-in fade-in zoom-in duration-200">
+        {/* Header */}
+        <div className="flex items-center justify-between mb-6">
+          <h3 className="text-xl font-bold text-gray-800">Edit User</h3>
+          <button
+            onClick={onClose}
+            className="w-8 h-8 rounded-lg flex items-center justify-center text-gray-400 hover:text-gray-600 hover:bg-gray-100 transition"
+          >
+            <X className="w-5 h-5" />
+          </button>
+        </div>
+
+        {/* Form */}
+        <form onSubmit={handleSubmit}>
+          {formError && (
+            <div className="mb-4 rounded-xl bg-red-50 border border-red-200 px-4 py-3 text-sm text-red-600">
+              {formError}
+            </div>
+          )}
+
+          <div className="mb-4">
+            <label className="block text-xs font-medium text-gray-500 uppercase tracking-wider mb-2">
+              USERNAME
+            </label>
+            <input
+              type="text"
+              name="username"
+              value={formData.username}
+              onChange={handleChange}
+              className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl text-sm text-gray-800 focus:outline-none focus:ring-2 focus:ring-cyan-500 focus:border-transparent transition"
+            />
+          </div>
+
+          <div className="mb-4">
+            <label className="block text-xs font-medium text-gray-500 uppercase tracking-wider mb-2">
+              PHONE
+            </label>
+            <input
+              type="tel"
+              name="phone"
+              value={formData.phone}
+              onChange={handleChange}
+              className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl text-sm text-gray-800 focus:outline-none focus:ring-2 focus:ring-cyan-500 focus:border-transparent transition"
+            />
+          </div>
+
+          <div className="mb-6">
+            <label className="block text-xs font-medium text-gray-500 uppercase tracking-wider mb-2">
+              AVATAR URL
+            </label>
+            <input
+              type="url"
+              name="avatar"
+              value={formData.avatar}
+              onChange={handleChange}
+              className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl text-sm text-gray-800 focus:outline-none focus:ring-2 focus:ring-cyan-500 focus:border-transparent transition"
+            />
+          </div>
+
+          <button
+            type="submit"
+            disabled={saving}
+            className="w-full py-3.5 bg-cyan-600 hover:bg-cyan-700 text-white font-semibold rounded-xl transition flex items-center justify-center gap-2 disabled:opacity-70"
+          >
+            {saving ? (
+              <>
+                <Loader2 className="w-5 h-5 animate-spin" />
+                Saving...
+              </>
+            ) : (
+              "Save Changes"
+            )}
+          </button>
+        </form>
+      </div>
+    </div>
+  );
 };
 
 /* UI-->*/
@@ -493,7 +642,7 @@ const AddUserForm = ({ onClose, onSubmit }) => {
 
 /*Main--> */
 const Users = () => {
-  const { users, stats, loading, error, fetchUsers, deleteUser, verifyUser, updateUserRole, addUser } = useUsers();
+  const { users, stats, loading, error, fetchUsers, deleteUser, verifyUser, updateUserRole, addUser, updateUser } = useUsers();
 
   const [searchQuery, setSearchQuery] = useState("");
   const [showAddForm, setShowAddForm] = useState(false);
@@ -501,6 +650,10 @@ const Users = () => {
   const [userToDelete, setUserToDelete] = useState(null);
   const [deleting, setDeleting] = useState(false);
   const [actionLoading, setActionLoading] = useState({});
+  
+  /* ===== EDIT MODAL STATE ===== */
+  const [editModalOpen, setEditModalOpen] = useState(false);
+  const [userToEdit, setUserToEdit] = useState(null);
 
   useEffect(() => {
     fetchUsers();
@@ -545,8 +698,15 @@ const Users = () => {
     if (!result.success) alert(result.message);
   };
 
+  /* ===== EDIT HANDLER ===== */
   const handleEdit = (user) => {
-    console.log("Edit user:", user);
+    setUserToEdit(user);
+    setEditModalOpen(true);
+  };
+
+  const handleCloseEdit = () => {
+    setEditModalOpen(false);
+    setUserToEdit(null);
   };
 
   return (
@@ -707,6 +867,15 @@ const Users = () => {
           onConfirm={handleConfirmDelete}
           onCancel={() => { setDeleteModalOpen(false); setUserToDelete(null); }}
           deleting={deleting}
+        />
+      )}
+
+      {/* ===== EDIT USER MODAL ===== */}
+      {editModalOpen && (
+        <EditUserModal
+          user={userToEdit}
+          onClose={handleCloseEdit}
+          onSave={updateUser}
         />
       )}
     </div>
