@@ -7,18 +7,17 @@ import { FaCheck } from "react-icons/fa";
 import { MdOutlineEmail } from "react-icons/md";
 import { IoLockClosedOutline } from "react-icons/io5";
 import { useState } from "react";
-import axios from "axios";
+import api from "../../api/api.jsx";
 import { useNavigate } from "react-router-dom";
 import { ToastContainer, toast } from "react-toastify";
 import { LuLoaderCircle } from "react-icons/lu";
-const API_URL = import.meta.env.VITE_API_URL;
 
 function Login() {
   const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
   const [credentials, setCredentials] = useState({
-    email: "",
-    password: "",
+    email: "admin@gmail.com",
+    password: "admin1212",
   });
 
   const handleChange = (e) => {
@@ -30,7 +29,7 @@ function Login() {
     e.preventDefault();
     setLoading(true);
     try {
-      let response = await axios.post(`${API_URL}/auth/login`, credentials);
+      let response = await api.post("auth/login", credentials);
       if (response.data.success) {
         const admin = response.data;
         localStorage.setItem("userToken", JSON.stringify(admin.token));

@@ -1,19 +1,10 @@
 import { useProduct } from "../Context/ProductContext";
-import Slider from "../Components/ProductDetails/Slider";
-import ProductOverview from "../Components/ProductDetails/ProductOverview";
-import ProductNotFound from "../Components/ProductDetails/ProductNotFound";
-import HeaderPadge from "../Components/ProductDetails/HeaderPadge";
+import Slider from "../Components/Slider";
+import ProductOverview from "../Components/ProductOverview";
+import ProductNotFound from "../Components/ProductNotFound";
+import HeaderPadge from "../Components/HeaderPadge";
 import { useParams } from "react-router-dom";
 import { useEffect } from "react";
-
-
-
-
-
-
-
-
-
 
 
 export default function ProductDetails() {

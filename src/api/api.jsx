@@ -9,10 +9,11 @@ const api = axios.create({
 api.interceptors.request.use(
   (config) => {
     // Get the user's token from local storage
-    const token = localStorage.getItem("userToken")
+    let token = localStorage.getItem("userToken")
 
     if (token) {
-      config.headers.Authorization = `Bearer ${token}`
+     const cleanToken = token.replace(/['"]+/g, '').trim();// Remove quotes from the token
+      config.headers.Authorization = `Bearer ${cleanToken}`; // Set the Authorization header with the token
     }
 
     return config;
