@@ -13,7 +13,7 @@ const DashboardHome = lazy(() => import("./pages/DashboardHome"));
 const Products = lazy(() => import("./pages/Products"));
 const ProductDetails = lazy(() => import("./pages/ProductDetails"));
 const AddProduct = lazy(() => import("./pages/AddProduct"));
-const Orders = lazy(() => import("./pages/Orders"));
+const Orders = lazy(() => import("./pages/Orders/Orders.jsx"));
 const Users = lazy(() => import("./pages/Users"));
 const Carts = lazy(() => import("./pages/Carts"));
 const Settings = lazy(() => import("./pages/Setting"));
@@ -35,7 +35,7 @@ const DashboardLayout = () => {
 
   return (
     <div className="dashboard-container">
-      <main className="p-4">
+      <main className=" bg-slate-100 dark:bg-slate-950">
         <Outlet />
       </main>
     </div>

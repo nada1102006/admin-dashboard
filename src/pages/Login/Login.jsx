@@ -34,6 +34,7 @@ function Login() {
         const admin = response.data;
         localStorage.setItem("userToken", JSON.stringify(admin.token));
 
+        // localStorage.setItem("token", JSON.stringify(admin));
         toast.info("Logged in successfully");
         setTimeout(() => {
           const x = navigate("/dashboard");
