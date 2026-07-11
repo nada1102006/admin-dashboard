@@ -16,6 +16,7 @@ import Users from "./pages/Users";
 import Carts from "./pages/Carts";
 import Settings from "./pages/Setting";
 import DashboardLayout from "./layout/DashboardLayout";
+import Edit from "./pages/Edit";
 
 function App() {
   return (
@@ -27,6 +28,7 @@ function App() {
           <Route path="/dashboard" element={<DashboardHome />} />
           <Route path="/products" element={<Products />} />
           <Route path="/products/:id" element={<ProductDetails />} />
+          <Route path="/products/edit/:id" element={<Edit />} />
           <Route path="/add-product" element={<AddProduct />} />
           <Route path="/orders" element={<Orders />} />
           <Route path="/users" element={<Users />} />

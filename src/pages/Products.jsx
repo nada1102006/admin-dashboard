@@ -1,17 +1,21 @@
 import { useState, useEffect, useMemo } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
-import { 
-  FiPackage, FiPlus, FiSearch, FiSliders, FiEye, 
-  FiEdit2, FiTrash2, FiStar, FiTrendingUp, FiBox, 
-  FiLayers, FiTag, FiChevronLeft, FiChevronRight 
+import {
+  FiPackage, FiPlus, FiSearch, FiSliders, FiEye,
+  FiEdit2, FiTrash2, FiStar, FiTrendingUp, FiBox,
+  FiLayers, FiTag, FiChevronLeft, FiChevronRight
 } from 'react-icons/fi';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import api from "../api/api";
+import QuickEdit from "./quickEdit";
 
 const categories = ["Electronics", "Phones", "Fashion", "Home", "Beauty", "Sports"];
 export default function Products() {
+
   const navigate = useNavigate();
+  const [isQuickEditOpen, setIsQuickEditOpen] = useState(false);
+  const [selectedProductId, setSelectedProductId] = useState(null);
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
@@ -73,11 +77,11 @@ export default function Products() {
 
   const deleteProduct = async (id) => {
     if (!window.confirm("Are you sure you want to delete this product?")) return;
-    
+
     // Optimistically update the UI
     const previousProducts = [...products];
     setProducts(products.filter(p => p._id !== id));
-    
+
     try {
       setDeletingId(id);
       await api.delete(`/products/${id}`);
@@ -95,7 +99,7 @@ export default function Products() {
   return (
     <div className="min-h-screen p-4 sm:p-6 lg:p-8 text-slate-900 bg-slate-50/50">
       <div className="mx-auto max-w-[1600px] space-y-6 lg:space-y-8">
-        
+
         {/* Header Card */}
         <div className="flex flex-col sm:flex-row sm:items-center justify-between p-6 rounded-[28px] bg-linear-to-r from-[#fafdfd] via-[#f2fbfe] to-[#e0f7fc] shadow-[0_2px_20px_rgba(0,0,0,0.02)] gap-4 border border-[#e0f7fc]/50">
           <div className="flex items-center gap-5">
@@ -142,16 +146,15 @@ export default function Products() {
             <div className="flex gap-3">
               <button
                 onClick={() => setFiltersOpen(!filtersOpen)}
-                className={`flex h-13 items-center justify-center gap-2 rounded-2xl border px-6 text-[15px] font-semibold transition-colors ${
-                  filtersOpen 
-                    ? "border-[#00bad5] bg-[#e0f7fc] text-[#008ba0]" 
-                    : "border-slate-200 bg-white text-slate-600 hover:bg-slate-50"
-                }`}
+                className={`flex h-13 items-center justify-center gap-2 rounded-2xl border px-6 text-[15px] font-semibold transition-colors ${filtersOpen
+                  ? "border-[#00bad5] bg-[#e0f7fc] text-[#008ba0]"
+                  : "border-slate-200 bg-white text-slate-600 hover:bg-slate-50"
+                  }`}
               >
                 <FiSliders className="w-4 h-4" />
                 Filters
               </button>
-              <button 
+              <button
                 onClick={applyFilters}
                 className="flex h-13 items-center justify-center gap-2 rounded-2xl bg-[#00bad5] hover:bg-[#00a3bb] px-8 text-[15px] font-semibold text-white transition-all shadow-[0_4px_14px_0_rgba(0,186,213,0.2)]"
               >
@@ -164,7 +167,7 @@ export default function Products() {
             <div className="overflow-hidden">
               <div className="grid grid-cols-1 gap-5 border-t border-slate-100 pt-6 sm:grid-cols-2">
                 <FilterField label="CATEGORY" icon={<FiLayers />}>
-                  <select 
+                  <select
                     value={filters.category}
                     onChange={(e) => updateFilter("category", e.target.value)}
                     className="h-[52px] w-full rounded-[16px] border border-slate-200 bg-white px-4 text-[15px] text-slate-700 outline-none transition-colors hover:border-slate-300 focus:border-[#00bad5] focus:ring-1 focus:ring-[#00bad5]"
@@ -173,14 +176,14 @@ export default function Products() {
                     {categories.map(c => <option key={c} value={c}>{c}</option>)}
                   </select>
                 </FilterField>
-                
+
                 <FilterField label="SUBCATEGORY" icon={<FiTag />}>
-                  <input 
-                    type="text" 
-                    placeholder="e.g. smartphones" 
+                  <input
+                    type="text"
+                    placeholder="e.g. smartphones"
                     value={filters.subcategory}
                     onChange={(e) => updateFilter("subcategory", e.target.value)}
-                    className="h-13 w-full rounded-2xl border border-slate-200 bg-white px-4 text-[15px] text-slate-700 outline-none transition-colors hover:border-slate-300 focus:border-[#00bad5] focus:ring-1 focus:ring-[#00bad5] placeholder:text-slate-400" 
+                    className="h-13 w-full rounded-2xl border border-slate-200 bg-white px-4 text-[15px] text-slate-700 outline-none transition-colors hover:border-slate-300 focus:border-[#00bad5] focus:ring-1 focus:ring-[#00bad5] placeholder:text-slate-400"
                   />
                 </FilterField>
               </div>
@@ -205,15 +208,17 @@ export default function Products() {
           <>
             <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
               {products.map(product => (
-                <ProductCard 
-                  key={product._id} 
-                  product={product} 
+                <ProductCard
+                  key={product._id}
+                  product={product}
                   isDeleting={deletingId === product._id}
                   onDelete={() => deleteProduct(product._id)}
+                  setSelectedProductId={setSelectedProductId}
+                  setIsQuickEditOpen={setIsQuickEditOpen}
                 />
               ))}
             </div>
-            
+
             {/* Pagination Placeholder */}
             {totalPages > 1 && (
               <div className="flex items-center justify-center gap-2 pt-8 pb-4">
@@ -237,6 +242,15 @@ export default function Products() {
           </div>
         )}
       </div>
+
+      {isQuickEditOpen && (
+        <QuickEdit
+          productId={selectedProductId}
+          isOpen={isQuickEditOpen}
+          onClose={() => setIsQuickEditOpen(false)}
+        />
+      )}
+
       <ToastContainer position="bottom-right" />
     </div>
   );
@@ -273,22 +287,22 @@ function FilterField({ label, icon, children }) {
   );
 }
 
-function ProductCard({ product, isDeleting, onDelete }) {
+function ProductCard({ product, isDeleting, onDelete, setSelectedProductId, setIsQuickEditOpen, }) {
   const stock = Number(product.stock) || 0;
-  
+
   return (
     <div className={`group relative flex flex-col overflow-hidden rounded-4xl border border-slate-100 bg-white shadow-[0_2px_20px_rgba(0,0,0,0.02)] transition-all hover:shadow-[0_8px_30px_rgba(0,0,0,0.06)] ${isDeleting ? "opacity-60 grayscale" : ""}`}>
       {/* Image Container */}
       <div className="relative aspect-4/3 w-full shrink-0 overflow-hidden bg-slate-50">
         <ImageSlider images={product.images?.map(img => img.url)} altText={product.name} />
-        
+
         {/* Badges */}
         {product.featured && (
           <div className="absolute left-4 top-4 inline-flex items-center gap-1.5 rounded-full bg-amber-400 px-3 py-1.5 text-[11px] font-bold uppercase tracking-wider text-amber-950 shadow-sm z-10">
             <FiStar size={12} className="fill-amber-950" /> Featured
           </div>
         )}
-        
+
         <div className={`absolute bottom-4 right-4 rounded-full px-3 py-1.5 text-[12px] font-bold shadow-sm z-10 ${stock > 0 ? "bg-[#dcfce7] text-[#16a34a]" : "bg-rose-100 text-rose-700"}`}>
           {stock > 0 ? `${stock} in stock` : "Out of stock"}
         </div>
@@ -299,11 +313,11 @@ function ProductCard({ product, isDeleting, onDelete }) {
         <Link to={`/products/${product._id}`} className="text-[19px] font-extrabold text-[#121926] transition-colors hover:text-[#00bad5] line-clamp-1">
           {product.name}
         </Link>
-        
+
         <p className="mt-1.5 text-[10px] font-bold uppercase tracking-[0.2em] text-slate-400">
           {[product.category, product.subcategory, product.brand].filter(Boolean).join(" · ")}
         </p>
-        
+
         <p className="mt-3 line-clamp-1 text-[14px] text-slate-500">
           {product.shortDescription || product.description || "No description available."}
         </p>
@@ -320,7 +334,7 @@ function ProductCard({ product, isDeleting, onDelete }) {
               </span>
             )}
           </div>
-          
+
           <div className="mt-3.5 flex flex-wrap gap-2">
             {product.tags?.slice(0, 3).map(tag => (
               <span key={tag} className="rounded-xl border border-slate-100 bg-slate-50 px-3 py-1 text-[12px] font-medium text-slate-600">
@@ -334,10 +348,14 @@ function ProductCard({ product, isDeleting, onDelete }) {
         <div className="mt-6 flex flex-wrap items-center justify-between gap-3 border-t border-slate-100 pt-5">
           <div className="flex flex-wrap gap-2">
             <ActionBtn icon={<FiEye />} label="View" to={`/products/${product._id}`} />
-            <ActionBtn icon={<FiEdit2 />} label="Edit" />
-            <ActionBtn icon={<FiSliders />} label="Quick Edit" />
+            <ActionBtn icon={<FiEdit2 />} label="Edit" to={`/products/edit/${product._id}`} />
+
+            <ActionBtn icon={<FiSliders />} label="Quick Edit" onClick={() => {
+              setSelectedProductId(product._id);
+              setIsQuickEditOpen(true);
+            }} />
           </div>
-          <button 
+          <button
             disabled={isDeleting}
             onClick={onDelete}
             className="flex items-center gap-1.5 rounded-[14px] border border-rose-100 bg-rose-50 px-3.5 py-2 text-[12px] font-semibold text-rose-600 transition-colors hover:bg-rose-100 disabled:opacity-50"
@@ -351,7 +369,7 @@ function ProductCard({ product, isDeleting, onDelete }) {
   );
 }
 
-function ActionBtn({ icon, label, to }) {
+function ActionBtn({ icon, label, to, onClick }) {
   const content = (
     <>
       <span className="text-slate-400">{icon}</span>
@@ -359,25 +377,29 @@ function ActionBtn({ icon, label, to }) {
     </>
   );
 
-  const baseClass = "flex items-center gap-1.5 rounded-[14px] border border-slate-100 bg-white px-3.5 py-2 text-[12px] font-semibold text-slate-600 transition-colors hover:bg-slate-50 hover:border-slate-200 shadow-sm shadow-slate-100/50";
+  const baseClass = "flex cursor-pointer items-center gap-1.5 rounded-[14px] border border-slate-100 bg-white px-3.5 py-2 text-[12px] font-semibold text-slate-600 transition-colors hover:bg-slate-50 hover:border-slate-200 shadow-sm shadow-slate-100/50";
 
   if (to) {
     return <Link to={to} className={baseClass}>{content}</Link>;
   }
-  return <button className={baseClass}>{content}</button>;
+  return (
+    <button onClick={onClick} className={baseClass}>
+      {content}
+    </button>
+  );
 }
 
 function ImageSlider({ images, altText }) {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [isHovered, setIsHovered] = useState(false);
-  
+
   const displayImages = images?.length > 0 ? images : ["https://placehold.co/600x450/f8fafc/94a3b8?text=No+Image"];
-  
+
   const goToNext = (e) => {
     if (e) e.preventDefault();
     setCurrentIndex((prev) => (prev + 1) % displayImages.length);
   };
-  
+
   const goToPrev = (e) => {
     if (e) e.preventDefault();
     setCurrentIndex((prev) => (prev - 1 + displayImages.length) % displayImages.length);
@@ -386,32 +408,32 @@ function ImageSlider({ images, altText }) {
   useEffect(() => {
     // Pause autoplay on hover or if there is only one image
     if (isHovered || displayImages.length <= 1) return;
-    
+
     const interval = setInterval(() => {
       setCurrentIndex((prev) => (prev + 1) % displayImages.length);
     }, 3500); // Change image every 3.5 seconds
-    
+
     return () => clearInterval(interval);
   }, [isHovered, displayImages.length]);
 
   return (
-    <div 
+    <div
       className="relative w-full h-full group/slider"
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
     >
-      <div 
+      <div
         className="flex h-full w-full transition-transform duration-500 ease-in-out"
         style={{ transform: `translateX(-${currentIndex * 100}%)` }}
       >
         {displayImages.map((src, idx) => (
-          <img 
-            key={idx} src={src} alt={`${altText} - ${idx}`} 
+          <img
+            key={idx} src={src} alt={`${altText} - ${idx}`}
             className="w-full h-full object-cover shrink-0"
           />
         ))}
       </div>
-      
+
       {displayImages.length > 1 && isHovered && (
         <>
           <button onClick={goToPrev} className="absolute left-3 top-1/2 -translate-y-1/2 w-8 h-8 flex items-center justify-center rounded-full bg-white/90 text-slate-800 shadow-sm hover:bg-white hover:scale-105 transition-all z-20">
@@ -422,7 +444,7 @@ function ImageSlider({ images, altText }) {
           </button>
         </>
       )}
-      
+
       {displayImages.length > 1 && (
         <div className="absolute bottom-4 left-1/2 -translate-x-1/2 flex gap-1.5 z-20">
           {displayImages.map((_, idx) => (
