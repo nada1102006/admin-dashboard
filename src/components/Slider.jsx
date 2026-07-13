@@ -1,18 +1,20 @@
+
 import { useRef, useState } from 'react';
 import { Swiper, SwiperSlide } from 'swiper/react';
 import { Autoplay, FreeMode, Thumbs } from 'swiper/modules';
 import 'swiper/css';
 import 'swiper/css/free-mode';
 import 'swiper/css/thumbs';
-import { useProduct } from '../Context/ProductContext';
 
-export default function Slider() {
-  const { product } = useProduct();
+// استقبلنا الـ images كـ prop هنا
+export default function Slider({ images }) {
   const [thumbsSwiper, setThumbsSwiper] = useState(null);
   const mainSwiperRef = useRef(null);
-  const images = product?.images || [];
+  
+ 
+  const imageList = images || [];
 
-  if (!images.length) {
+  if (!imageList.length) {
     return (
       <div className="flex h-[320px] items-center justify-center rounded-[28px] border border-slate-200 bg-slate-50 text-sm text-slate-500">
         No images available
@@ -21,7 +23,7 @@ export default function Slider() {
   }
 
   return (
-    <div className="">
+    <div className="w-full">
       <Swiper
         loop={true}
         spaceBetween={10}
@@ -33,16 +35,12 @@ export default function Slider() {
           mainSwiperRef.current = swiper;
         }}
       >
-        {images.map((image, index) => (
-          <SwiperSlide key={image?.public_id || `${image?.url}-${index}`}>
+        {imageList.map((url, index) => (
+          <SwiperSlide key={index}>
             <img
-              src={image?.url}
+              src={url}
               alt={`Product ${index + 1}`}
-              className="h-[400px]  w-full rounded-[22px] object-contain cursor-pointer"
-              onClick={() => {
-                mainSwiperRef.current?.slideTo(index);
-                thumbsSwiper?.slideTo(index);
-              }}
+              className="h-[400px] w-full rounded-[22px] object-contain cursor-pointer"
             />
           </SwiperSlide>
         ))}
@@ -58,18 +56,14 @@ export default function Slider() {
         freeMode={true}
         watchSlidesProgress={true}
         modules={[FreeMode, Thumbs]}
-        className="thumbs-slider p-4  "
+        className="thumbs-slider p-4"
       >
-        {images.map((image, index) => (
-          <SwiperSlide key={`${image?.public_id || image?.url}-${index}`} className="bg-white  shadow-sm rounded-[16px]">
+        {imageList.map((url, index) => (
+          <SwiperSlide key={`thumb-${index}`} className="bg-white shadow-sm rounded-[16px]">
             <img
-              src={image?.url}
+              src={url}
               alt={`Thumbnail ${index + 1}`}
-              className=" h-[150px] rounded-[16px] object-contain cursor-pointer "
-              onClick={() => {
-                mainSwiperRef.current?.slideTo(index);
-                thumbsSwiper?.slideTo(index);
-              }}
+              className="h-[150px] w-full rounded-[16px] object-cover cursor-pointer"
             />
           </SwiperSlide>
         ))}

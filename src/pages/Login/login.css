@@ -4,7 +4,7 @@
     transform-origin: top;
     animation: slideUp 0.4s ease-in-out forwards;
     will-change: transform, opacity;
-    /* إعلام المتصفح بالتغيير */
+  
 }
 
 @keyframes slideUp {

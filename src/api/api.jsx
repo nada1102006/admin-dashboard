@@ -3,7 +3,12 @@ import axios from "axios";
 // Create an Axios instance with a base URL
 const api = axios.create({
   baseURL: "https://e-commerce-api-3wara.vercel.app/",
-})
+  headers: {
+    "Content-Type": "application/json",
+    Accept: "application/json",
+  },
+  withCredentials: true, // ✅ السماح بإرسال الكوكيز
+});
 
 // Add an interceptor to the Axios instance
 api.interceptors.request.use(

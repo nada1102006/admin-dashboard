@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { Outlet, Navigate } from "react-router-dom";
-import Navbar from "../Navbar"; // اتأكدي إن المسار ده بيوصل لملف الـ Navbar
-import Sidebar from "../Sidebar"; // اتأكدي إن المسار ده بيوصل لملف الـ Sidebar
+import Navbar from "../Navbar"; 
+import Sidebar from "../Sidebar";
 
 export default function DashboardLayout() {
   const token = localStorage.getItem("userToken");

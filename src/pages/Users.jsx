@@ -278,10 +278,10 @@ const EditUserModal = ({ user, onClose, onSave }) => {
 
   return (
     <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50" onClick={(e) => e.target === e.currentTarget && onClose()}>
-      <div className="bg-white rounded-3xl p-6 w-full max-w-md mx-4 shadow-2xl animate-in fade-in zoom-in duration-200">
+      <div className="bg-white rounded-3xl p-6 w-full max-w-md mx-4 shadow-2xl animate-in fade-in zoom-in duration-200 dark:bg-slate-950">
         {/* Header */}
-        <div className="flex items-center justify-between mb-6">
-          <h3 className="text-xl font-bold text-gray-800">Edit User</h3>
+        <div className="flex items-center justify-between mb-6 ">
+          <h3 className="text-xl font-bold text-gray-800 dark:text-white">Edit User</h3>
           <button
             onClick={onClose}
             className="w-8 h-8 rounded-lg flex items-center justify-center text-gray-400 hover:text-gray-600 hover:bg-gray-100 transition"
@@ -299,7 +299,7 @@ const EditUserModal = ({ user, onClose, onSave }) => {
           )}
 
           <div className="mb-4">
-            <label className="block text-xs font-medium text-gray-500 uppercase tracking-wider mb-2">
+            <label className="block text-xs font-medium text-gray-500 uppercase tracking-wider mb-2 dark:text-white">
               USERNAME
             </label>
             <input
@@ -307,12 +307,12 @@ const EditUserModal = ({ user, onClose, onSave }) => {
               name="username"
               value={formData.username}
               onChange={handleChange}
-              className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl text-sm text-gray-800 focus:outline-none focus:ring-2 focus:ring-cyan-500 focus:border-transparent transition"
+              className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl text-sm text-gray-800 focus:outline-none focus:ring-2 focus:ring-cyan-500 focus:border-transparent transition dark:bg-slate-900 dark:border-slate-700 dark:text-white"
             />
           </div>
 
           <div className="mb-4">
-            <label className="block text-xs font-medium text-gray-500 uppercase tracking-wider mb-2">
+            <label className="block text-xs font-medium text-gray-500 uppercase tracking-wider mb-2 dark:text-white">
               PHONE
             </label>
             <input
@@ -320,12 +320,12 @@ const EditUserModal = ({ user, onClose, onSave }) => {
               name="phone"
               value={formData.phone}
               onChange={handleChange}
-              className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl text-sm text-gray-800 focus:outline-none focus:ring-2 focus:ring-cyan-500 focus:border-transparent transition"
+              className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl text-sm text-gray-800 focus:outline-none focus:ring-2 focus:ring-cyan-500 focus:border-transparent transition dark:bg-slate-900 dark:border-slate-700 dark:text-white"
             />
           </div>
 
           <div className="mb-6">
-            <label className="block text-xs font-medium text-gray-500 uppercase tracking-wider mb-2">
+            <label className="block text-xs font-medium text-gray-500 uppercase tracking-wider mb-2 dark:text-white">
               AVATAR URL
             </label>
             <input
@@ -333,7 +333,7 @@ const EditUserModal = ({ user, onClose, onSave }) => {
               name="avatar"
               value={formData.avatar}
               onChange={handleChange}
-              className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl text-sm text-gray-800 focus:outline-none focus:ring-2 focus:ring-cyan-500 focus:border-transparent transition"
+              className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl text-sm text-gray-800 focus:outline-none focus:ring-2 focus:ring-cyan-500 focus:border-transparent transition dark:bg-slate-900 dark:border-slate-700 dark:text-white"
             />
           </div>
 
@@ -359,10 +359,10 @@ const EditUserModal = ({ user, onClose, onSave }) => {
 
 /* UI-->*/
 const StatCard = ({ title, value, icon: Icon, color }) => (
-  <div className="bg-white rounded-2xl p-5 flex items-center justify-between shadow-sm border border-gray-100">
+  <div className="bg-white rounded-2xl p-5 flex items-center justify-between shadow-sm border border-gray-100 dark:bg-slate-950 dark:border-slate-800">
     <div>
       <p className="text-gray-500 text-sm font-medium mb-1">{title}</p>
-      <p className="text-3xl font-bold text-gray-800">{value}</p>
+      <p className="text-3xl font-bold text-gray-800 dark:text-white">{value}</p>
     </div>
     <div className={`w-12 h-12 rounded-xl flex items-center justify-center ${color}`}>
       <Icon className="w-6 h-6 text-white" />
@@ -397,7 +397,7 @@ const VerifiedBadge = ({ isVerified }) => {
 };
 
 const MobileUserCard = ({ user, onEdit, onToggleRole, onDelete, actionLoading }) => (
-  <div className="rounded-3xl border border-gray-100 bg-white p-5 shadow-sm mb-4">
+  <div className="rounded-3xl border border-gray-100 bg-white p-5 shadow-sm mb-4 ">
     <div className="flex items-start gap-4">
       <div className="w-12 h-12 rounded-2xl bg-gray-200 flex items-center justify-center overflow-hidden">
         {user.avatar ? (
@@ -474,9 +474,9 @@ const ActionButton = ({ icon: Icon, color, onClick, title }) => (
 
 const DeleteModal = ({ user, onConfirm, onCancel, deleting }) => (
   <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
-    <div className="bg-white rounded-2xl p-6 w-full max-w-md mx-4 shadow-2xl">
-      <h3 className="text-xl font-bold text-gray-800 mb-2">Delete User</h3>
-      <p className="text-gray-600 mb-6">
+    <div className="bg-white rounded-2xl p-6 w-full max-w-md mx-4 shadow-2xl dark:bg-slate-950">
+      <h3 className="text-xl font-bold text-gray-800 mb-2 dark:text-white">Delete User</h3>
+      <p className="text-gray-600 mb-6 dark:text-white">
         Are you sure you want to delete <strong>{user.name}</strong>? This action cannot be undone.
       </p>
       <div className="flex gap-3 justify-end">
@@ -536,14 +536,14 @@ const AddUserForm = ({ onClose, onSubmit }) => {
   };
 
   return (
-    <div className="bg-white rounded-2xl shadow-sm border border-gray-100 mb-8 overflow-hidden">
-      <div className="bg-cyan-50 px-6 py-4 flex items-center justify-between">
+    <div className="bg-white rounded-2xl shadow-sm border border-gray-400 mb-8 overflow-hidden dark:bg-slate-900">
+      <div className="bg-cyan-50 px-6 py-4 flex items-center justify-between dark:bg-slate-950">
         <div className="flex items-center gap-3">
           <div className="w-10 h-10 bg-cyan-500 rounded-xl flex items-center justify-center">
             <UserPlus className="w-5 h-5 text-white" />
           </div>
           <div>
-            <h3 className="font-semibold text-gray-800">Create New User</h3>
+            <h3 className="font-semibold text-gray-800 dark:text-white">Create New User</h3>
             <p className="text-xs text-gray-500">Fill in the details below to add a new user</p>
           </div>
         </div>
@@ -559,7 +559,7 @@ const AddUserForm = ({ onClose, onSubmit }) => {
         )}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-4">
           <div>
-            <label className="block text-xs font-medium text-gray-600 mb-1.5">
+            <label className="block text-xs font-medium text-gray-600 mb-1.5 dark:text-gray-300">
               USERNAME <span className="text-red-500">*</span>
             </label>
             <input
@@ -574,7 +574,7 @@ const AddUserForm = ({ onClose, onSubmit }) => {
             />
           </div>
           <div>
-            <label className="block text-xs font-medium text-gray-600 mb-1.5">
+            <label className="block text-xs font-medium text-gray-600 mb-1.5 dark:text-white">
               EMAIL <span className="text-red-500">*</span>
             </label>
             <input
@@ -588,7 +588,7 @@ const AddUserForm = ({ onClose, onSubmit }) => {
             />
           </div>
           <div>
-            <label className="block text-xs font-medium text-gray-600 mb-1.5">
+            <label className="block text-xs font-medium text-gray-600 mb-1.5 dark:text-white">
               PASSWORD <span className="text-red-500">*</span>
             </label>
             <input
@@ -603,7 +603,9 @@ const AddUserForm = ({ onClose, onSubmit }) => {
             />
           </div>
           <div>
-            <label className="block text-xs font-medium text-gray-600 mb-1.5">PHONE</label>
+            <label className="block text-xs font-medium text-gray-600 mb-1.5 dark:text-white">
+              PHONE
+            </label>
             <input
               type="tel"
               name="phone"
@@ -620,7 +622,7 @@ const AddUserForm = ({ onClose, onSubmit }) => {
             <button
               type="button"
               onClick={() => setFormData({ username: "", email: "", password: "", phone: "", role: "customer" })}
-              className="px-5 py-2.5 text-sm font-medium text-gray-600 bg-gray-100 rounded-xl hover:bg-gray-200 transition-colors"
+              className="px-5 py-2.5 text-sm font-medium text-gray-600 bg-gray-100 rounded-xl hover:bg-gray-200 transition-colors dark:bg-slate-800 dark:text-gray-400 dark:hover:bg-slate-700"
             >
               Clear
             </button>
@@ -710,13 +712,13 @@ const Users = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 py-8 px-4 sm:px-6 lg:px-8">
+    <div className="min-h-screen bg-gray-50 py-8 px-4 sm:px-6 lg:px-8 dark:bg-slate-900">
       <div className="mx-auto max-w-7xl">
         {/* Page Title & Search */}
         <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between mb-8">
           <div>
             <p className="text-cyan-500 text-xs font-bold tracking-widest uppercase mb-1">User Management</p>
-            <h2 className="text-3xl font-bold text-gray-800">Manage Users</h2>
+            <h2 className="text-3xl font-bold text-gray-800 dark:text-white">Manage Users</h2>
           </div>
           <div className="flex flex-col gap-3 sm:flex-row sm:items-center">
             <div className="relative w-full sm:w-80">
@@ -726,7 +728,7 @@ const Users = () => {
                 placeholder="Search users..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                className="pl-10 pr-4 py-3 w-full bg-white border border-gray-200 rounded-2xl text-sm focus:outline-none focus:ring-2 focus:ring-cyan-500 focus:border-transparent"
+                className="pl-10 pr-4 py-3 w-full bg-white border border-gray-400 border-3 rounded-2xl text-sm focus:outline-none focus:ring-2 focus:ring-cyan-500 focus:border-transparent dark:bg-slate-900 dark:text-gray-400"
               />
             </div>
             <button
@@ -746,8 +748,8 @@ const Users = () => {
         )}
 
         {/* Stats Cards */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-5 mb-8">
-          <StatCard title="Total Users" value={stats.totalUsers} icon={UsersIcon} color="bg-cyan-500" />
+        <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-5 mb-8 dark:bg-slate-900">
+          <StatCard title="Total Users" value={stats.totalUsers} icon={UsersIcon} color="bg-cyan-500" className="dark:bg-slate-900" />
           <StatCard title="Admins" value={stats.admins} icon={Shield} color="bg-purple-500" />
           <StatCard title="Customers" value={stats.customers} icon={UsersIcon} color="bg-emerald-500" />
           <StatCard title="Verified" value={stats.verified} icon={UserCheck} color="bg-sky-500" />
@@ -774,11 +776,11 @@ const Users = () => {
       {/* Users Table */}
       {!loading && !error && (
         <div className="space-y-4">
-          <div className="hidden lg:block bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
+          <div className="hidden lg:block bg-white rounded-2xl shadow-sm border-0 border-slate-700/50 overflow-hidden">
             <div className="overflow-x-auto">
-              <table className="w-full">
+              <table className="w-full  dark:bg-slate-900">
                 <thead>
-                  <tr className="border-b border-gray-100">
+                  <tr className="border-b dark:border-gray-100">
                     <th className="text-left text-sm font-medium text-gray-500 px-6 py-4">User</th>
                     <th className="text-left text-sm font-medium text-gray-500 px-6 py-4">Role</th>
                     <th className="text-left text-sm font-medium text-gray-500 px-6 py-4">Verified</th>
@@ -788,13 +790,13 @@ const Users = () => {
                 <tbody>
                   {filteredUsers.length === 0 ? (
                     <tr>
-                      <td colSpan={4} className="text-center py-12 text-gray-400">
+                      <td colSpan={4} className="text-center py-12 text-gray-400 ">
                         {searchQuery ? "No users match your search." : "No users found."}
                       </td>
                     </tr>
                   ) : (
                     filteredUsers.map((user) => (
-                      <tr key={user._id} className="border-b border-gray-50 hover:bg-gray-50/50 transition-colors">
+                      <tr key={user._id} className=" border-gray-50 hover:bg-gray-50/50 transition-colors dark:border-slate-800 dark:hover:bg-slate-800 border-slate-700/50 dark:border-b dark:border">
                         <td className="px-6 py-4">
                           <div className="flex items-center gap-3">
                             <div className="w-10 h-10 rounded-full bg-gray-200 flex items-center justify-center overflow-hidden">
