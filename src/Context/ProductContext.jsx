@@ -13,11 +13,13 @@ export function ProductProvider({ children }) {
 
         setLoading(true);
         setError(null);
+        setProduct(null);
 
         try {
             const data = await getProduct(id);
             setProduct(data);
         } catch (err) {
+            setProduct(null);
             setError(err?.message || 'Unable to load product details');
         } finally {
             setLoading(false);
@@ -33,47 +35,11 @@ export function ProductProvider({ children }) {
 }
 
 export function useProduct() {
-   const context = useContext(ProductContext);
+    const context = useContext(ProductContext);
 
-  
     if (!context) {
-        return {
-            product: null,
-            loading: false,
-            error: null,
-            fetchProductById: () => console.warn("ProductProvider not found"),
-            setProduct: () => {}
-        };
+        throw new Error('useProduct must be used within a ProductProvider');
     }
 
     return context;
 }
-
-
-
-
-
-
-
-
-// import { createContext, useContext, useState } from "react";
-
-// const ProductContext = createContext();
-
-// export const ProductProvider = ({ children }) => {
-//   const [products, setProducts] = useState([]);
-
-//   return (
-//     <ProductContext.Provider value={{ products, setProducts }}>
-//       {children}
-//     </ProductContext.Provider>
-//   );
-// };
-
-// export const useProduct = () => {
-//   const context = useContext(ProductContext);
-//   if (!context) {
-//     throw new Error("useProduct must be used within a ProductProvider");
-//   }
-//   return context;
-// };

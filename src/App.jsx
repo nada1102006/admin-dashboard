@@ -4,8 +4,6 @@ import { lazy, Suspense } from "react";
 import {
   createBrowserRouter,
   RouterProvider,
-  Outlet,
-  Navigate,
 } from "react-router-dom";
 
 import HandleLottie from "./components/HandleLottie/HandleLottie";

@@ -1,8 +1,8 @@
-import axios from 'axios';
-
-const API_BASE_URL = '/api';
+import api from '../api';
 
 export default async function getProduct(productId) {
-    const response = await axios.get(`${API_BASE_URL}/products/${productId}`);
+    // Use the shared client so this request has the same base URL and
+    // authorization header as the products list request.
+    const response = await api.get(`/products/${productId}`);
     return response?.data?.product || null;
 }
