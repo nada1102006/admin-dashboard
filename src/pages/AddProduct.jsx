@@ -111,14 +111,14 @@ export default function AddProduct() {
   };
 
   return (
-    <main className="p-4 sm:p-6 lg:p-8 space-y-6 lg:space-y-8 min-h-screen bg-slate-50/50 text-slate-900 mx-auto max-w-[1600px]">
+    <main className="p-4 sm:p-6 lg:p-8 space-y-6 lg:space-y-8 min-h-screen bg-slate-50/50 text-slate-900 mx-auto max-w-[1600px] dark:bg-slate-950">
 
       <div className="relative overflow-hidden rounded-[32px] border border-slate-800 bg-gradient-to-br from-[#0a0f1c] via-[#0d1526] to-[#0a0f1c] p-8 shadow-2xl">
        
-        <div className="absolute -right-14 -top-14 h-44 w-44 rounded-full bg-[#00bad5]/15 blur-3xl"></div>
-        <div className="absolute bottom-0 left-0 h-44 w-44 rounded-full bg-blue-500/15 blur-3xl"></div>
+        <div className="absolute -right-14 -top-14 h-44 w-44 rounded-full bg-[#00bad5]/15 blur-3xl "></div>
+        <div className="absolute bottom-0 left-0 h-44 w-44 rounded-full bg-blue-500/15 blur-3xl "></div>
         
-        <div className="relative z-10 flex flex-col gap-6 lg:flex-row lg:items-end lg:justify-between">
+        <div className="relative z-10 flex flex-col gap-6 lg:flex-row lg:items-end lg:justify-between ">
           <div>
             
             <Link to="/products" className="inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/5 px-4 py-2 text-sm text-slate-300 hover:bg-white/10 transition-colors">
@@ -187,7 +187,7 @@ export default function AddProduct() {
           )}
           
           {images.length < 5 && (
-            <label className="mt-6 flex cursor-pointer flex-col items-center justify-center rounded-[24px] border-2 border-dashed border-[#00bad5]/30 bg-[#f2fbfe] p-10 text-center transition-all hover:bg-[#e0f7fc] hover:border-[#00bad5]/50 group bg-white dark:bg-gray-950 dark: hover:bg-slate-900 ">
+            <label className="mt-6 flex cursor-pointer flex-col items-center justify-center rounded-[24px] border-2 border-dashed border-[#00bad5]/30 bg-[#f2fbfe] p-10 text-center transition-all hover:bg-[#e0f7fc] hover:border-[#00bad5]/50 group bg-white dark:bg-gray-950 dark:hover:bg-slate-900 ">
               <div className="mb-4 flex h-14 w-14 items-center justify-center rounded-full bg-white shadow-sm transition-transform group-hover:scale-110 group-hover:shadow-md">
                 <FiImage size={24}  className="text-[#00bad5] dark:text-blue-500 dark:bg-blue-500/10" />
               </div>
@@ -212,47 +212,47 @@ export default function AddProduct() {
             
             <label className="block">
               <span className="mb-2 block text-[13px] font-bold text-slate-700 uppercase tracking-wide dark:text-white">Product Name *</span>
-              <input required name="name" value={formData.name} onChange={handleChange} placeholder="e.g. iPhone 16 Pro" className="h-14 w-full rounded-2xl border border-slate-200 bg-[#fafdfd] px-5 text-[15px] outline-none transition-all focus:border-[#00bad5] focus:ring-1 focus:ring-[#00bad5] placeholder:text-slate-400 dark:bg-slate-950 border border-gray-800 text-white rounded-lg p-3" />
+              <input required name="name" value={formData.name} onChange={handleChange} placeholder="e.g. iPhone 16 Pro" className="h-14 w-full px-5 outline-none transition-all text-[15px] rounded-2xl border border-slate-200 bg-[#fafdfd] text-black placeholder:text-slate-400 focus:border-[#00bad5] focus:ring-1 focus:ring-[#00bad5] dark:border-gray-800 dark:bg-slate-900 dark:text-white" />
             </label>
 
             
             <label className="block">
               <span className="mb-2 block text-[13px] font-bold text-slate-700 uppercase tracking-wide dark:text-white dark:text-white">Short Description *</span>
-              <input required name="shortDescription" value={formData.shortDescription} onChange={handleChange} placeholder="Minimum 10 characters" className="h-14 w-full rounded-2xl border border-slate-200 bg-[#fafdfd] px-5 text-[15px] outline-none transition-all focus:border-[#00bad5] focus:ring-1 focus:ring-[#00bad5] placeholder:text-slate-400 dark:bg-slate-950 border border-gray-800 text-white rounded-lg p-3" />
+              <input required name="shortDescription" value={formData.shortDescription} onChange={handleChange} placeholder="Minimum 10 characters" className="h-14 w-full px-5 text-[15px] outline-none transition-all rounded-2xl border border-slate-200 bg-[#fafdfd] text-black placeholder:text-slate-400 focus:border-[#00bad5] focus:ring-1 focus:ring-[#00bad5] dark:border-gray-800 dark:bg-slate-900 dark:text-white" />
             </label>
 
             <label className="block">
               <span className="mb-2 block text-[13px] font-bold text-slate-700 uppercase tracking-wide dark:text-white dark:text-white">Description *</span>
-              <textarea required name="description" value={formData.description} onChange={handleChange} rows="5" placeholder="Minimum 20 characters" className="w-full rounded-2xl border border-slate-200 bg-[#fafdfd] px-5 py-4 text-[15px] outline-none transition-all focus:border-[#00bad5] focus:ring-1 focus:ring-[#00bad5] placeholder:text-slate-400 dark:bg-slate-950 border border-gray-800 text-white rounded-lg p-3 dark:bg-slate-950 border border-gray-800 text-white rounded-lg p-3"></textarea>
+              <textarea required name="description" value={formData.description} onChange={handleChange} rows="5" placeholder="Minimum 20 characters" className="w-full rounded-2xl border border-slate-200 bg-[#fafdfd] px-5 py-4 text-[15px] outline-none transition-all focus:border-[#00bad5] focus:ring-1 focus:ring-[#00bad5] placeholder:text-slate-400 dark:bg-slate-950 border border-gray-800 text-black rounded-lg p-3 dark:bg-slate-950 border border-gray-800 dark:text-white rounded-lg p-3"></textarea>
             </label>
 
             <div className="grid gap-6 md:grid-cols-2">
               <label className="block">
                 <span className="mb-2 block text-[13px] font-bold text-slate-700 uppercase tracking-wide dark:text-white">Price ($) *</span>
-                <input required type="number" step="1" name="price" value={formData.price} onChange={handleChange} placeholder="0" className="h-14 w-full rounded-2xl border border-slate-200 bg-[#fafdfd] px-5 text-[15px] outline-none transition-all focus:border-[#00bad5] focus:ring-1 focus:ring-[#00bad5] placeholder:text-slate-400 dark:bg-slate-950 border border-gray-800 text-white rounded-lg p-3" />
+                <input required type="number" step="1" name="price" value={formData.price} onChange={handleChange} placeholder="0" className="h-14 w-full rounded-2xl border border-slate-200 bg-[#fafdfd] px-5 text-[15px] outline-none transition-all focus:border-[#00bad5] focus:ring-1 focus:ring-[#00bad5] placeholder:text-slate-400 dark:bg-slate-950 dark:text-white border border-gray-800 text-black rounded-lg p-3" />
               </label>
               <label className="block">
                 <span className="mb-2 block text-[13px] font-bold text-slate-700 uppercase tracking-wide dark:text-white">Discount Price ($)</span>
-                <input type="number" step="1" name="discountPrice" value={formData.discountPrice} onChange={handleChange} placeholder="0" className="h-14 w-full rounded-2xl border border-slate-200 bg-[#fafdfd] px-5 text-[15px] outline-none transition-all focus:border-[#00bad5] focus:ring-1 focus:ring-[#00bad5] placeholder:text-slate-400 dark:bg-slate-950 border border-gray-800 text-white rounded-lg p-3" />
+                <input type="number" step="1" name="discountPrice" value={formData.discountPrice} onChange={handleChange} placeholder="0" className="h-14 w-full rounded-2xl border border-slate-200 bg-[#fafdfd] px-5 text-[15px] outline-none transition-all focus:border-[#00bad5] focus:ring-1 focus:ring-[#00bad5] placeholder:text-slate-400 dark:bg-slate-950 border border-gray-800 text-black rounded-lg p-3 dark:text-white" />
               </label>
             </div>
 
             
             <div className="grid gap-6 md:grid-cols-2">
               <label className="block">
-                <span className="mb-2 block text-[13px] font-bold text-slate-700 uppercase tracking-wide dark:text-white">Stock *</span>
-                <input required type="number" name="stock" value={formData.stock} onChange={handleChange} placeholder="0" className="h-14 w-full rounded-2xl border border-slate-200 bg-[#fafdfd] px-5 text-[15px] outline-none transition-all focus:border-[#00bad5] focus:ring-1 focus:ring-[#00bad5] placeholder:text-slate-400 dark:bg-slate-950 border border-gray-800 text-white rounded-lg p-3 dark:bg-slate-950 border border-gray-800 text-white rounded-lg p-3" />
+                <span className="mb-2 block text-[13px] font-bold text-slate-700 uppercase  tracking-wide dark:text-white">Stock *</span>
+                <input required type="number" name="stock" value={formData.stock} onChange={handleChange} placeholder="0" className="h-14 w-full rounded-2xl border border-slate-200 bg-[#fafdfd] px-5 text-[15px] outline-none transition-all focus:border-[#00bad5] focus:ring-1 focus:ring-[#00bad5] placeholder:text-slate-400 dark:bg-slate-950 border border-gray-800 text-black rounded-lg p-3 dark:bg-slate-950  dark:text-white" />
               </label>
               <label className="block">
-                <span className="mb-2 block text-[13px] font-bold text-slate-700 uppercase tracking-wide dark:text-white">SKU</span>
-                <input name="sku" value={formData.sku} onChange={handleChange} placeholder="e.g. IPH-16-PRO" className="h-14 w-full rounded-2xl border border-slate-200 bg-[#fafdfd] px-5 text-[15px] outline-none transition-all focus:border-[#00bad5] focus:ring-1 focus:ring-[#00bad5] placeholder:text-slate-400 dark:bg-slate-950 border border-gray-800 text-white rounded-lg p-3 dark:bg-slate-950 border border-gray-800 text-white rounded-lg p-3" />
+                <span className="mb-2 block text-[13px] font-bold text-slate-700 uppercase  tracking-wide dark:text-white">SKU</span>
+                <input name="sku" value={formData.sku} onChange={handleChange} placeholder="e.g. IPH-16-PRO" className="h-14 w-full rounded-2xl border border-slate-200 bg-[#fafdfd] px-5 text-[15px] outline-none transition-all focus:border-[#00bad5] focus:ring-1 focus:ring-[#00bad5] placeholder:text-slate-400 dark:bg-slate-950 border border-gray-800 text-black rounded-lg p-3 dark:bg-slate-950 dark:text-white" />
               </label>
             </div>
 
             <div className="grid gap-6 md:grid-cols-2">
               <label className="block">
                 <span className="mb-2 block text-[13px] font-bold text-slate-700 uppercase tracking-wide dark:text-white">Category *</span>
-                <select required name="category" value={formData.category} onChange={handleChange} className="h-14 w-full rounded-2xl border border-slate-200 bg-[#fafdfd] px-5 text-[15px] outline-none transition-all focus:border-[#00bad5] focus:ring-1 focus:ring-[#00bad5] dark:bg-slate-950 border border-gray-800 text-white rounded-lg p-3">
+                <select required name="category" value={formData.category} onChange={handleChange} className="h-14 w-full rounded-2xl border border-slate-200 bg-[#fafdfd] px-5 text-[15px] outline-none transition-all focus:border-[#00bad5] focus:ring-1 focus:ring-[#00bad5] dark:bg-slate-950 border border-gray-800 text-black rounded-lg p-3 dark:text-white">
                   <option value="">Select Category</option>
                   <option value="Electronics">Electronics</option>
                   <option value="Phones">Phones</option>
@@ -264,25 +264,25 @@ export default function AddProduct() {
               </label>
               <label className="block">
                 <span className="mb-2 block text-[13px] font-bold text-slate-700 uppercase tracking-wide dark:text-white dark:text-white">Subcategory</span>
-                <input name="subcategory" value={formData.subcategory} onChange={handleChange} placeholder="e.g. smartphones" className="h-14 w-full rounded-2xl border border-slate-200 bg-[#fafdfd] px-5 text-[15px] outline-none transition-all focus:border-[#00bad5] focus:ring-1 focus:ring-[#00bad5] placeholder:text-slate-400 dark:bg-slate-950 border border-gray-800 text-white rounded-lg p-3 dark:bg-slate-950 border border-gray-800 text-white rounded-lg p-3" />
+                <input name="subcategory" value={formData.subcategory} onChange={handleChange} placeholder="e.g. smartphones" className="h-14 w-full rounded-2xl border border-slate-200 bg-[#fafdfd] px-5 text-[15px] outline-none transition-all focus:border-[#00bad5] focus:ring-1 focus:ring-[#00bad5] placeholder:text-slate-400 dark:bg-slate-950 border border-gray-800 text-black rounded-lg p-3 dark:bg-slate-950 dark:text-white" />
               </label>
             </div>
 
             <label className="block">
               <span className="mb-2 block text-[13px] font-bold text-slate-700 uppercase tracking-wide dark:text-white">Brand</span>
-              <input name="brand" value={formData.brand} onChange={handleChange} placeholder="e.g. Apple" className="h-14 w-full rounded-2xl border border-slate-200 bg-[#fafdfd] px-5 text-[15px] outline-none transition-all focus:border-[#00bad5] focus:ring-1 focus:ring-[#00bad5] placeholder:text-slate-400 dark:bg-slate-950 border border-gray-800 text-white rounded-lg p-3 dark:bg-slate-950 border border-gray-800 text-white rounded-lg p-3" />
+              <input name="brand" value={formData.brand} onChange={handleChange} placeholder="e.g. Apple" className="h-14 w-full rounded-2xl border border-slate-200 bg-[#fafdfd] px-5 text-[15px] outline-none transition-all focus:border-[#00bad5] focus:ring-1 focus:ring-[#00bad5] placeholder:text-slate-400 dark:bg-slate-950 border border-gray-800 text-black rounded-lg p-3 dark:bg-slate-950 dark:text-white" />
             </label>
 
             <div className="rounded-[24px] border border-slate-100 bg-slate-50 p-6 dark:bg-slate-950 border border-gray-800 text-white rounded-lg p-3">
               <label className="block">
-                <span className="mb-3 block text-[13px] font-bold text-slate-700 uppercase tracking-wide dark:bg-slate-950 border border-gray-800 text-white rounded-lg p-3">Tags</span>
+                <span className="mb-3 block text-[13px] font-bold text-slate-700 uppercase tracking-wide dark:bg-slate-950 border border-gray-800 text-black rounded-lg p-3 dark:text-white">Tags</span>
                 <div className="flex gap-3 dark:bg-slate-950 border border-gray-800 text-white rounded-lg p-3">
                   <input 
                     value={tagInput}
                     onChange={(e) => setTagInput(e.target.value)}
                     onKeyDown={handleTagKeyDown}
                     placeholder="Type a tag and press +" 
-                    className="h-14 flex-1 rounded-2xl border border-slate-200 bg-white px-5 text-[15px] outline-none transition-all focus:border-[#00bad5] focus:ring-1 focus:ring-[#00bad5] placeholder:text-slate-400 dark:bg-slate-950 border border-gray-800 text-white rounded-lg p-3" 
+                    className="h-14 flex-1 rounded-2xl border border-slate-200 bg-white px-5 text-[15px] outline-none transition-all focus:border-[#00bad5] focus:ring-1 focus:ring-[#00bad5] placeholder:text-slate-400 dark:bg-slate-950 border border-gray-800 text-black rounded-lg p-3 dark:text-white" 
                   />
                   <button type="button" onClick={handleAddTag} className="inline-flex h-14 w-14 items-center justify-center rounded-2xl bg-slate-200 text-slate-600 shadow-sm transition hover:bg-slate-300">
                     <FiPlus size={24} />
