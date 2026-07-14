@@ -1,6 +1,6 @@
 import React from "react";
 import { useNavigate } from "react-router-dom";
-import { Bell, Moon, Sun, LogOut, Menu } from "lucide-react";
+import { Moon, Sun, LogOut, Menu } from "lucide-react";
 import kodaLogo from "../assets/images/KodaLogo2.png";
 
 export default function Navbar({ onMenuClick, darkMode, toggleDarkMode }) {
@@ -34,11 +34,6 @@ export default function Navbar({ onMenuClick, darkMode, toggleDarkMode }) {
       </div>
 
       <div className="flex items-center gap-3">
-        <button className="relative w-10 h-10 rounded-full border border-slate-200 dark:border-slate-600 flex items-center justify-center text-slate-500 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800">
-          <Bell size={17} />
-          <span className="absolute top-2 right-2.5 w-2 h-2 bg-red-500 rounded-full" />
-        </button>
-
         <button
           onClick={toggleDarkMode}
           className="w-10 h-10 rounded-full border border-slate-200 dark:border-slate-600 flex items-center justify-center text-slate-500 dark:text-yellow-300 hover:bg-slate-50 dark:hover:bg-slate-800"

@@ -1,586 +1,79 @@
-// import React, { useState, useEffect, useRef } from 'react';
-
-// function Edit() {
-//   const [product, setProduct] = useState({
-//     title: "",
-//     shortDescription: "",
-//     description: "",
-//     price: 0,
-//     discountPrice: 0,
-//     stock: 0,
-//     sku: "",
-//     category: "fashion",
-//     subcategory: "clothes",
-//     brand: "",
-//     tags: [], 
-//     featured: false,
-//     active: true
-//   });
-
-//   const [loading, setLoading] = useState(true);
-//   const [tagInput, setTagInput] = useState(""); 
-//   const [images, setImages] = useState([
-//     "/docs/images/blog/image-1.jpg",
-//     "/docs/images/blog/image-2.jpg",
-//     "/docs/images/blog/image-3.jpg",
-//     "/docs/images/blog/image-4.jpg"
-//   ]);
-
-//   const productId = "1"; 
-//   const fileInputRef = useRef(null);
-
-//   // ==========================================
-//   // Effects
-//   // ==========================================
-//   useEffect(() => {
-//     setLoading(true);
-//     fetch(`https://e-commerce-api-3wara.vercel.app/api/products/${productId}`)
-//       .then((response) => {
-//         if (!response.ok) {
-//           throw new Error("Network response was not ok");
-//         }
-//         return response.json();
-//       })
-//       .then((data) => {
-//         if (data) {
-//           setProduct({
-//             title: data.title || "",
-//             shortDescription: data.shortDescription || "",
-//             description: data.description || "",
-//             price: data.price || 0,
-//             discountPrice: data.discountPrice || 0,
-//             stock: data.stock || 0,
-//             sku: data.sku || "",
-//             category: data.category || "fashion",
-//             subcategory: data.subcategory || "clothes",
-//             brand: data.brand || "",
-//             tags: data.tags || [],
-//             featured: data.featured || false,
-//             active: data.active !== undefined ? data.active : true
-//           });
-
-//           if (data.images && data.images.length > 0) {
-//             setImages(data.images);
-//           }
-//         }
-//         setLoading(false);
-//       })
-//       .catch((error) => {
-//         console.error("Error fetching product:", error);
-//         setLoading(false);
-//       });
-//   }, [productId]);
-
-//   // ==========================================
-//   // Form & Input Handlers
-//   // ==========================================
-//   const handleChange = (e) => {
-//     const { name, value, type, checked } = e.target;
-//     setProduct((prev) => ({
-//       ...prev,
-//       [name]: type === 'checkbox' ? checked : value
-//     }));
-//   };
-
-//   // ==========================================
-//   // Tag Management
-//   // ==========================================
-//   const handleAddTag = () => {
-//     const trimmedTag = tagInput.trim();
-//     if (trimmedTag && !product.tags.includes(trimmedTag)) {
-//       setProduct((prev) => ({
-//         ...prev,
-//         tags: [...prev.tags, trimmedTag]
-//       }));
-//       setTagInput(""); 
-//     }
-//   };
-
-//   const handleRemoveTag = (tagToRemove) => {
-//     setProduct((prev) => ({
-//       ...prev,
-//       tags: prev.tags.filter((tag) => tag !== tagToRemove)
-//     }));
-//   };
-
-//   // ==========================================
-//   // Image Management
-//   // ==========================================
-//   const handleDivClick = () => {
-//     fileInputRef.current.click();
-//   };
-
-//   const handleFileChange = (e) => {
-//     const files = e.target.files;
-//     if (files.length > 0) {
-//       const newImageUrls = Array.from(files).map(file => URL.createObjectURL(file));
-//       setImages((prevImages) => [...prevImages, ...newImageUrls]);
-//     }
-//   };
-
-//   const handleRemoveImage = (indexToRemove) => {
-//     setImages((prevImages) => prevImages.filter((_, index) => index !== indexToRemove));
-//   };
-
-//   // ==========================================
-//   // Save Action
-//   // ==========================================
-//   const handleSave = (e) => {
-//     e.preventDefault(); 
-
-//     const updatedProduct = {
-//       ...product,
-//       images: images 
-//     };
-
-//     fetch(`https://e-commerce-api-3wara.vercel.app/api/products/${productId}`, {
-//       method: "PUT", 
-//       headers: {
-//         "Content-Type": "application/json",
-//       },
-//       body: JSON.stringify(updatedProduct),
-//     })
-//       .then((response) => response.json())
-//       .then((data) => {
-//         alert("تم تحديث المنتج بنجاح!");
-//         console.log("البيانات المحدثة:", data);
-//       })
-//       .catch((error) => {
-//         console.error("حدث خطأ أثناء التحديث:", error);
-//         alert("فشل تحديث المنتج.");
-//       });
-//   };
-
-//   // ==========================================
-//   // Loading State Render
-//   // ==========================================
-//   if (loading) {
-//     return (
-//       <div className="w-full h-screen flex items-center justify-center bg-[#f1f5f9]">
-//         <div className="flex flex-col items-center gap-2">
-//           <div className="w-10 h-10 border-4 border-purple-600 border-t-transparent rounded-full animate-spin"></div>
-//           <p className="text-lg font-bold text-slate-600">Loading Product Data...</p>
-//         </div>
-//       </div>
-//     );
-//   }
-
-//   // ==========================================
-//   // Main Component Render
-//   // ==========================================
-//   return (
-//     <>
-//       <section className="edit-section w-full bg-[#f1f5f9] p-4 md:p-6">
-        
-//         {/* Header Block */}
-//         <div className="edit-container w-full mb-6">
-//           <div className="edit-header w-full h-auto p-6 bg-gradient-to-r from-[#0f172a] via-[#1e1b4b] to-[#0f172a] text-white rounded-3xl ">
-//             <div className="back-btn mb-6">
-//               <button 
-//                 type="button" 
-//                 className="inline-flex items-center gap-2 bg-[#ffffff10] border border-[#ffffff15] hover:bg-[#ffffff20] text-gray-200 hover:text-white cursor-pointer font-medium rounded-full text-xs px-4 py-2 transition-all duration-200 focus:outline-none"
-//               >
-//                 <i className="fa-solid fa-arrow-left text-sm"></i>
-//                 Back to products
-//               </button>
-//             </div>
-
-//             <div className="edit-mid flex gap-4">
-//               <div className="edit-mid-icon p-4 inline-flex items-center gap-2 bg-[#ffffff10] font-medium rounded-xl text-xl px-4 py-4 transition-all duration-200 focus:outline-none">
-//                 <i className="fa-solid fa-box"></i>
-//               </div>
-              
-//               <div className="edit-mid-text flex flex-col gap-4">
-//                 <div className="edit-mid-title">
-//                   <p className='tracking-widest text-[#c4b5fd]'>Edit Product</p>
-//                 </div>
-//                 <div className="edit-mid-desc">
-//                   <h1 className='text-2xl md:text-4xl font-extrabold'>Update and refine the product entry</h1>
-//                 </div>
-//               </div>
-//             </div>
-
-//             <div className="edit-header-end flex flex-col lg:flex-row justify-between items-start lg:items-center gap-4 py-2">
-//               <div className="edit-end-desc">
-//                 <p className='text-[#cbd5e1]'>Review the current product data, add new images, remove existing ones, and save your updates safely.</p>
-//               </div>
-
-//               <div className="live-container bg-[#ffffff10] border border-[#ffffff15] p-6 rounded-3xl w-full lg:w-auto">
-//                 <div className="live-top">
-//                   <p className='tracking-widest text-[#c4b5fd]'>LIVE</p>
-//                 </div>
-//                 <div className="live-bottom">
-//                   <p>Connected to the real product update API.</p>
-//                 </div>
-//               </div>
-//             </div>
-//           </div>
-//         </div>
-
-//         {/* Content Wrapper */}
-//         <div className="forms flex flex-col lg:flex-row gap-6 items-stretch">
-          
-//           {/* Gallery Sidebar */}
-//           <div className="left-side w-full lg:flex-1 p-6 bg-white shadow-xl rounded-3xl flex flex-col gap-6">
-//             <div className="edit-left flex gap-4">
-//               <div className="edit-left-icon p-4 inline-flex items-center gap-2 bg-[#8b5cf61a] text-[#a78bfa] font-medium rounded-xl text-xl px-4 py-4 transition-all duration-200 focus:outline-none">
-//                 <i className="fa-regular fa-image"></i>
-//               </div>
-              
-//               <div className="edit-left-text flex flex-col gap-2">
-//                 <div className="edit-left-title">
-//                   <p className='font-extrabold text-xl'>Product Gallery</p>
-//                 </div>
-//                 <div className="edit-left-desc">
-//                   <h1 className='text-[#64748b] text-sm'>Keep existing images, add new ones, or remove selected assets before saving.</h1>
-//                 </div>
-//               </div>
-//             </div>
-            
-//             <div className="edit-left-cards grid grid-cols-1 sm:grid-cols-2 gap-4">
-//               {images.map((imgSrc, index) => (
-//                 <div key={index} className="bg-slate-50 pb-3 border border-slate-100 rounded-3xl text-center relative group">
-//                   <img className="rounded-t-2xl w-full h-40 object-cover" src={imgSrc} alt={`Product Asset ${index + 1}`} />
-//                   <span className="text-[11px] font-bold tracking-widest text-slate-400 uppercase block mt-3">
-//                     IMAGE {index + 1}
-//                   </span>
-//                   <button
-//                     type="button"
-//                     onClick={() => handleRemoveImage(index)}
-//                     className="absolute top-5 right-5 bg-red-500 text-white w-6 h-6 rounded-full flex items-center justify-center text-xs opacity-0 group-hover:opacity-100 transition-opacity duration-200 shadow-md cursor-pointer"
-//                     title="Remove Image"
-//                   >
-//                     <i className="fa-solid fa-xmark"></i>
-//                   </button>
-//                 </div>
-//               ))}
-//             </div>
-
-//             <input 
-//               type="file"
-//               ref={fileInputRef}
-//               onChange={handleFileChange}
-//               multiple
-//               accept=".png, .jpg, .jpeg, .webp"
-//               className="hidden"
-//               style={{ display: 'none' }}
-//             />
-
-//             <div 
-//               onClick={handleDivClick}
-//               className="add-image flex flex-col items-center text-center gap-2 p-6 border-2 border-dashed border-[#a78bfa4d] rounded-3xl bg-[#8b5cf60d] cursor-pointer hover:bg-[#8b5cf615] transition-all"
-//             >
-//               <div className="add-icon text-[#8b5cf6]">
-//                 <i className="fa-regular fa-image text-xl"></i>
-//               </div>
-//               <div className="add-title capitalize font-semibold text-slate-700">
-//                 <p>add more images</p>
-//               </div>
-//               <div className="add-text text-xs text-slate-400">
-//                 <p>PNG, JPG, WEBP . multiple files supported</p>
-//               </div>
-//             </div>
-
-//             <div className="senior p-6 rounded-3xl border border-[#e2e8f0] bg-[#10b9810d] flex flex-col gap-4">
-//               <div className="senior-title flex items-center gap-2 text-[#10b981] font-semibold">
-//                 <i className="fa-regular fa-star"></i>
-//                 <p>Senior UX</p>
-//               </div>
-//               <div className="senior-text text-sm text-slate-600">
-//                 <p>Edit without losing the existing product story, while still adding fresh media.</p>
-//               </div>
-//             </div>
-
-//             <div className="hidden lg:block flex-grow"></div>
-//           </div>
-
-//           {/* Form Fields Section */}
-//           <form onSubmit={handleSave} className="right-side w-full lg:flex-1 p-6 bg-white shadow-xl rounded-3xl flex flex-col gap-5">
-            
-//             <div className="flex flex-col gap-2">
-//               <label className="text-xs font-bold text-slate-400 tracking-wide uppercase">Product Name</label>
-//               <input 
-//                 type="text" 
-//                 name="title"
-//                 value={product.title}
-//                 onChange={handleChange}
-//                 className="w-full bg-slate-50 border border-slate-100 rounded-2xl px-4 py-3 text-slate-700 text-sm focus:outline-none focus:border-purple-300 focus:bg-white transition-all"
-//               />
-//             </div>
-
-//             <div className="flex flex-col gap-2">
-//               <label className="text-xs font-bold text-slate-400 tracking-wide uppercase">Short Description</label>
-//               <input 
-//                 type="text" 
-//                 name="shortDescription"
-//                 value={product.shortDescription}
-//                 onChange={handleChange}
-//                 className="w-full bg-slate-50 border border-slate-100 rounded-2xl px-4 py-3 text-slate-700 text-sm focus:outline-none focus:border-purple-300 focus:bg-white transition-all"
-//               />
-//             </div>
-
-//             <div className="flex flex-col gap-2">
-//               <label className="text-xs font-bold text-slate-400 tracking-wide uppercase">Description</label>
-//               <textarea 
-//                 rows="4"
-//                 name="description"
-//                 value={product.description}
-//                 onChange={handleChange}
-//                 className="w-full bg-slate-50 border border-slate-100 rounded-2xl px-4 py-3 text-slate-700 text-sm focus:outline-none focus:border-purple-300 focus:bg-white transition-all resize-none"
-//               ></textarea>
-//             </div>
-
-//             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-//               <div className="flex flex-col gap-2">
-//                 <label className="text-xs font-bold text-slate-400 tracking-wide uppercase">Price</label>
-//                 <input 
-//                   type="number" 
-//                   name="price"
-//                   value={product.price}
-//                   onChange={handleChange}
-//                   className="w-full bg-slate-50 border border-slate-100 rounded-2xl px-4 py-3 text-slate-700 text-sm focus:outline-none focus:border-purple-300 focus:bg-white transition-all"
-//                 />
-//               </div>
-//               <div className="flex flex-col gap-2">
-//                 <label className="text-xs font-bold text-slate-400 tracking-wide uppercase">Discount Price</label>
-//                 <input 
-//                   type="number" 
-//                   name="discountPrice"
-//                   value={product.discountPrice}
-//                   onChange={handleChange}
-//                   className="w-full bg-slate-50 border border-slate-100 rounded-2xl px-4 py-3 text-slate-700 text-sm focus:outline-none focus:border-purple-300 focus:bg-white transition-all"
-//                 />
-//               </div>
-//             </div>
-
-//             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-//               <div className="flex flex-col gap-2">
-//                 <label className="text-xs font-bold text-slate-400 tracking-wide uppercase">Stock</label>
-//                 <input 
-//                   type="number" 
-//                   name="stock"
-//                   value={product.stock}
-//                   onChange={handleChange}
-//                   className="w-full bg-slate-50 border border-slate-100 rounded-2xl px-4 py-3 text-slate-700 text-sm focus:outline-none focus:border-purple-300 focus:bg-white transition-all"
-//                 />
-//               </div>
-//               <div className="flex flex-col gap-2">
-//                 <label className="text-xs font-bold text-slate-400 tracking-wide uppercase">SKU</label>
-//                 <input 
-//                   type="text" 
-//                   name="sku"
-//                   value={product.sku}
-//                   onChange={handleChange}
-//                   className="w-full bg-slate-50 border border-slate-100 rounded-2xl px-4 py-3 text-slate-700 text-sm focus:outline-none focus:border-purple-300 focus:bg-white transition-all"
-//                 />
-//               </div>
-//             </div>
-
-//             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-//               <div className="flex flex-col gap-2">
-//                 <label className="text-xs font-bold text-slate-400 tracking-wide uppercase">Category</label>
-//                 <select 
-//                   name="category"
-//                   value={product.category}
-//                   onChange={handleChange}
-//                   className="w-full bg-slate-50 border border-slate-100 rounded-2xl px-4 py-3 text-slate-700 text-sm focus:outline-none focus:border-purple-300 focus:bg-white transition-all appearance-none cursor-pointer"
-//                 >
-//                   <option value="fashion">fashion</option>
-//                   <option value="electronics">electronics</option>
-//                 </select>
-//               </div>
-//               <div className="flex flex-col gap-2">
-//                 <label className="text-xs font-bold text-slate-400 tracking-wide uppercase">Subcategory</label>
-//                 <select 
-//                   name="subcategory"
-//                   value={product.subcategory}
-//                   onChange={handleChange}
-//                   className="w-full bg-slate-50 border border-slate-100 rounded-2xl px-4 py-3 text-slate-700 text-sm focus:outline-none focus:border-purple-300 focus:bg-white transition-all appearance-none cursor-pointer"
-//                 >
-//                   <option value="clothes">clothes</option>
-//                   <option value="shoes">shoes</option>
-//                 </select>
-//               </div>
-//             </div>
-
-//             <div className="flex flex-col gap-2">
-//               <label className="text-xs font-bold text-slate-400 tracking-wide uppercase">Brand</label>
-//               <input 
-//                 type="text" 
-//                 name="brand"
-//                 value={product.brand}
-//                 onChange={handleChange}
-//                 className="w-full bg-slate-50 border border-slate-100 rounded-2xl px-4 py-3 text-slate-700 text-sm focus:outline-none focus:border-purple-300 focus:bg-white transition-all"
-//               />
-//             </div>
-
-//             <div className="flex flex-col gap-4 bg-[#f8fafc] rounded-3xl p-6">
-//               <label className="text-xs font-bold text-slate-400 tracking-wide uppercase">Tags</label>
-//               <div className="flex gap-2">
-//                 <input 
-//                   type="text" 
-//                   value={tagInput}
-//                   onChange={(e) => setTagInput(e.target.value)}
-//                   onKeyDown={(e) => {
-//                     if (e.key === 'Enter') {
-//                       e.preventDefault(); 
-//                       handleAddTag();
-//                     }
-//                   }}
-//                   placeholder="Type a tag and press +" 
-//                   className="w-full bg-white border border-slate-100 rounded-2xl p-4 text-slate-700 text-sm focus:outline-none focus:border-purple-300 focus:bg-white transition-all"
-//                 />
-//                 <button 
-//                   type="button" 
-//                   onClick={handleAddTag}
-//                   className="bg-[#8b5cf6] text-white px-5 rounded-2xl hover:bg-[#7c3aed] transition-all flex items-center justify-center cursor-pointer"
-//                 >
-//                   <i className="fa-solid fa-plus text-sm"></i>
-//                 </button>
-//               </div>
-
-//               <div className="flex flex-wrap gap-2 mt-2">
-//                 {product.tags.length > 0 ? (
-//                   product.tags.map((tag, index) => (
-//                     <span 
-//                       key={index} 
-//                       className="inline-flex items-center gap-2 bg-[#8b5cf615] text-[#7c3aed] text-xs font-semibold px-3 py-1.5 rounded-full border border-[#8b5cf62a]"
-//                     >
-//                       {tag}
-//                       <button 
-//                         type="button" 
-//                         onClick={() => handleRemoveTag(tag)}
-//                         className="text-slate-400 hover:text-red-500 transition-colors focus:outline-none font-bold"
-//                       >
-//                         <i className="fa-solid fa-xmark text-[10px]"></i>
-//                       </button>
-//                     </span>
-//                   ))
-//                 ) : (
-//                   <p className="text-xs text-slate-400">
-//                     Add one or more tags to organize this product.
-//                   </p>
-//                 )}
-//               </div>
-//             </div>
-
-//             <div className="flex flex-wrap gap-6 py-2">
-//               <label className="flex items-center gap-2 cursor-pointer text-sm font-semibold text-slate-700">
-//                 <input 
-//                   type="checkbox" 
-//                   name="featured"
-//                   checked={product.featured}
-//                   onChange={handleChange}
-//                   className="w-4 h-4 accent-[#8b5cf6] rounded-md" 
-//                 />
-//                 Featured
-//               </label>
-//               <label className="flex items-center gap-2 cursor-pointer text-sm font-semibold text-slate-700">
-//                 <input 
-//                   type="checkbox" 
-//                   name="active"
-//                   checked={product.active}
-//                   onChange={handleChange}
-//                   className="w-4 h-4 accent-[#8b5cf6] rounded-md" 
-//                 />
-//                 Active
-//               </label>
-//             </div>
-
-//             <div className="flex flex-col sm:flex-row justify-start gap-3 mt-2">
-//               <button 
-//                 type="button" 
-//                 className="w-full sm:w-auto px-6 py-3 cursor-pointer border border-slate-200 text-slate-500 font-medium rounded-2xl text-xs hover:bg-slate-50 transition-all uppercase tracking-wider text-center"
-//               >
-//                 Cancel
-//               </button>
-//               <button 
-//                 type="submit" 
-//                 className="w-full sm:w-auto px-6 py-3 cursor-pointer bg-[#8b5cf6] text-white font-medium rounded-2xl text-xs hover:bg-[#7c3aed] transition-all uppercase tracking-wider shadow-lg shadow-purple-100 text-center"
-//               >
-//                 Save Changes
-//               </button>
-//             </div>
-
-//           </form>
-
-//         </div>
-//       </section>
-//     </>
-//   );
-// }
-
-// export default Edit;
-
-// /////////////////////////////////////////////////////////////////////////
-
-
-
-
-
-
-
-import React, { useState, useEffect, useRef } from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
+import React, { useState, useEffect } from 'react';
+import { Link, useNavigate, useParams } from 'react-router-dom';
+import { FiArrowLeft, FiPackage, FiImage, FiPlus, FiStar, FiX } from 'react-icons/fi';
+import api from '../api/api';
 import { toast } from 'react-toastify';
 
-function Edit() {
+export default function Edit() {
   const { id } = useParams();
   const navigate = useNavigate();
+  const [loading, setLoading] = useState(false);
+  const [isFetching, setIsFetching] = useState(true);
   
-  const [product, setProduct] = useState({
-    name: "", shortDescription: "", description: "", price: 0, discountPrice: 0,
-    stock: 0, sku: "", category: "fashion", subcategory: "clothes", brand: "", tags: [], 
-    featured: false, active: true
+  const [formData, setFormData] = useState({
+    name: "",
+    shortDescription: "",
+    description: "",
+    price: "",
+    discountPrice: "",
+    stock: "",
+    sku: "",
+    category: "",
+    subcategory: "",
+    brand: "",
+    featured: false,
+    isActive: true,
   });
 
-  const [loading, setLoading] = useState(true);
-  const [saving, setSaving] = useState(false);
-  const [tagInput, setTagInput] = useState(""); 
+  const [tags, setTags] = useState([]);
+  const [tagInput, setTagInput] = useState("");
+
+  const [deletedImages, setDeletedImages] = useState([]);
+  const [existingImages, setExistingImages] = useState([]);
   const [images, setImages] = useState([]);
-  const fileInputRef = useRef(null);
+  const [imagePreviews, setImagePreviews] = useState([]);
 
   useEffect(() => {
-    if (!id) { toast.error("No product ID provided"); setLoading(false); return; }
-
+    if (!id) return;
     const fetchProduct = async () => {
-      setLoading(true);
       try {
-        // HARDCODED URL USING NATIVE FETCH
-        const FULL_URL = `https://e-commerce-api-3wara.vercel.app/api/products/${id}`;
-        const token = localStorage.getItem('token'); 
-        const headers = { 'Content-Type': 'application/json' };
-        if (token) headers['Authorization'] = `Bearer ${token}`;
-
-        const response = await fetch(FULL_URL, { headers });
-        const data = await response.json();
-
-        if (!response.ok) throw new Error(data.message || 'Failed to fetch');
+        const response = await api.get(`/products/${id}`);
+        const data = response.data?.product || response.data?.data || response.data;
         
-        setProduct({
+        const formatCategory = (cat) => {
+          if (!cat) return "";
+          const options = ["Electronics", "Phones", "Fashion", "Home", "Beauty", "Sports"];
+          const matched = options.find(opt => opt.toLowerCase() === cat.toLowerCase());
+          return matched || cat;
+        };
+
+        setFormData({
           name: data.name || data.title || "",
           shortDescription: data.shortDescription || "",
           description: data.description || "",
-          price: data.price || 0,
-          discountPrice: data.discountPrice || 0,
-          stock: data.stock || 0,
+          price: data.price || "",
+          discountPrice: data.discountPrice || "",
+          stock: data.stock || "",
           sku: data.sku || "",
-          category: data.category || "fashion",
-          subcategory: data.subcategory || "clothes",
+          category: formatCategory(data.category),
+          subcategory: data.subcategory || "",
           brand: data.brand || "",
-          tags: Array.isArray(data.tags) ? data.tags : [],
           featured: data.featured || false,
-          active: data.active !== undefined ? data.active : true
+          isActive: data.isActive !== undefined ? data.isActive : (data.active !== undefined ? data.active : true),
         });
 
-        if (data.images && data.images.length > 0) {
-          setImages(data.images.map(img => typeof img === 'string' ? { url: img, isNew: false } : { ...img, isNew: false }));
+        if (Array.isArray(data.tags)) {
+          setTags(data.tags);
+        }
+
+        if (Array.isArray(data.images) && data.images.length > 0) {
+          setExistingImages(data.images);
+          setImagePreviews(data.images.map(img => typeof img === 'string' ? img : img.url || ""));
         }
       } catch (error) {
-        console.error("Fetch Error:", error);
-        toast.error(error.message || "Failed to load product");
+        toast.error(error.response?.data?.message || "Failed to load product details.");
       } finally {
-        setLoading(false);
+        setIsFetching(false);
       }
     };
     fetchProduct();
@@ -588,218 +81,325 @@ function Edit() {
 
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target;
-    setProduct((prev) => ({ ...prev, [name]: type === 'checkbox' ? checked : value }));
+    setFormData(prev => ({
+      ...prev,
+      [name]: type === 'checkbox' ? checked : value
+    }));
+  };
+
+  const handleImageChange = (e) => {
+    const files = Array.from(e.target.files);
+    if (!files.length) return;
+
+    const availableSlots = 5 - imagePreviews.length;
+    const allowedFiles = files.slice(0, availableSlots);
+
+    if (files.length > availableSlots) {
+      toast.error(`You can only upload up to 5 images. Only ${allowedFiles.length} were added.`);
+    }
+
+    if (allowedFiles.length === 0) return;
+
+    const newPreviews = allowedFiles.map(file => URL.createObjectURL(file));
+    setImages(prev => [...prev, ...allowedFiles]);
+    setImagePreviews(prev => [...prev, ...newPreviews]);
+  };
+
+  const removeImage = (indexToRemove) => {
+    if (indexToRemove < existingImages.length) {
+      const imgToRemove = existingImages[indexToRemove];
+      if (imgToRemove && imgToRemove.public_id) {
+        setDeletedImages(prev => [...prev, imgToRemove.public_id]);
+      }
+      setExistingImages(prev => prev.filter((_, idx) => idx !== indexToRemove));
+    } else {
+      const newImageIndex = indexToRemove - existingImages.length;
+      setImages(prev => prev.filter((_, idx) => idx !== newImageIndex));
+    }
+    setImagePreviews(prev => prev.filter((_, idx) => idx !== indexToRemove));
   };
 
   const handleAddTag = () => {
-    const trimmedTag = tagInput.trim();
-    if (trimmedTag && !product.tags.includes(trimmedTag)) {
-      setProduct((prev) => ({ ...prev, tags: [...prev.tags, trimmedTag] }));
+    const trimmed = tagInput.trim();
+    if (trimmed && !tags.includes(trimmed)) {
+      setTags(prev => [...prev, trimmed]);
       setTagInput("");
     }
   };
 
-  const handleRemoveTag = (tagToRemove) => {
-    setProduct((prev) => ({ ...prev, tags: prev.tags.filter((tag) => tag !== tagToRemove) }));
-  };
-
-  const handleDivClick = () => fileInputRef.current.click();
-
-  const handleFileChange = (e) => {
-    const files = e.target.files;
-    if (files.length > 0) {
-      const newImages = Array.from(files).map(file => ({ url: URL.createObjectURL(file), file: file, isNew: true }));
-      setImages((prevImages) => [...prevImages, ...newImages]);
+  const handleTagKeyDown = (e) => {
+    if (e.key === 'Enter') {
+      e.preventDefault();
+      handleAddTag();
     }
-    if (fileInputRef.current) fileInputRef.current.value = "";
   };
 
-  const handleRemoveImage = (indexToRemove) => {
-    setImages((prevImages) => prevImages.filter((_, index) => index !== indexToRemove));
+  const removeTag = (tagToRemove) => {
+    setTags(prev => prev.filter(tag => tag !== tagToRemove));
   };
 
-  const handleSave = async (e) => {
-    e.preventDefault(); 
-    setSaving(true);
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    if (imagePreviews.length === 0) {
+      toast.error("Please ensure there is at least one image.");
+      return;
+    }
 
+    setLoading(true);
     try {
-      const existingImageUrls = images.filter(img => !img.isNew).map(img => img.url);
-
-      const updatedProduct = {
-        name: product.name,
-        shortDescription: product.shortDescription,
-        description: product.description,
-        price: Number(product.price) || 0,
-        discountPrice: Number(product.discountPrice) || 0,
-        stock: Number(product.stock) || 0,
-        sku: product.sku,
-        category: product.category,
-        subcategory: product.subcategory,
-        brand: product.brand,
-        tags: product.tags,
-        featured: product.featured,
-        active: product.active,
-        images: existingImageUrls
-      };
-
-      // HARDCODED URL USING NATIVE FETCH
-      const FULL_URL = `https://e-commerce-api-3wara.vercel.app/api/products/${id}`;
+      const data = new FormData();
+      Object.keys(formData).forEach(key => {
+        if (formData[key] !== "") {
+          data.append(key, formData[key]);
+        }
+      });
       
-      const token = localStorage.getItem('token'); 
-      const headers = { 'Content-Type': 'application/json' };
-      if (token) headers['Authorization'] = `Bearer ${token}`;
+      if (tags.length > 0) {
+        data.append("tags", JSON.stringify(tags));
+      }
 
-      const response = await fetch(FULL_URL, {
-        method: 'PUT',
-        headers: headers,
-        body: JSON.stringify(updatedProduct)
+      if (deletedImages.length > 0) {
+        data.append("deletedImages", JSON.stringify(deletedImages));
+      }
+
+      images.forEach(image => {
+        data.append("images", image);
       });
 
-      const data = await response.json();
-
-      if (!response.ok) {
-        throw new Error(data.message || 'Failed to update');
-      }
-      
+      await api.patch(`/products/update/${id}`, data, {
+        headers: {
+          "Content-Type": "multipart/form-data"
+        }
+      });
       toast.success("Product updated successfully!");
+      navigate("/products");
     } catch (error) {
-      console.error("Fetch Error:", error);
-      toast.error(error.message || "Failed to update product.");
+      toast.error(error.response?.data?.message || "Failed to update product");
     } finally {
-      setSaving(false);
+      setLoading(false);
     }
   };
 
-  if (loading) {
+  if (isFetching) {
     return (
-      <div className="w-full h-screen flex items-center justify-center bg-[#f1f5f9]">
-        <div className="flex flex-col items-center gap-2">
-          <div className="w-10 h-10 border-4 border-purple-600 border-t-transparent rounded-full animate-spin"></div>
-          <p className="text-lg font-bold text-slate-600">Loading Product Data...</p>
-        </div>
+      <div className="flex h-screen w-full items-center justify-center bg-slate-50/50 dark:bg-slate-950">
+        <div className="h-10 w-10 animate-spin rounded-full border-4 border-[#00bad5] border-t-transparent"></div>
       </div>
     );
   }
 
   return (
-    <section className="edit-section w-full bg-[#f1f5f9] p-4 md:p-6 min-h-screen">
-      <div className="edit-container w-full mb-6">
-        <div className="edit-header w-full h-auto p-6 bg-gradient-to-r from-[#0f172a] via-[#1e1b4b] to-[#0f172a] text-white rounded-3xl">
-          <div className="back-btn mb-6">
-            <button type="button" onClick={() => navigate('/products')} className="inline-flex items-center gap-2 bg-[#ffffff10] border border-[#ffffff15] hover:bg-[#ffffff20] text-gray-200 hover:text-white cursor-pointer font-medium rounded-full text-xs px-4 py-2 transition-all duration-200 focus:outline-none">
-              <i className="fa-solid fa-arrow-left text-sm"></i> Back to products
-            </button>
-          </div>
-          <div className="edit-mid flex gap-4">
-            <div className="edit-mid-icon p-4 inline-flex items-center gap-2 bg-[#ffffff10] font-medium rounded-xl text-xl px-4 py-4"><i className="fa-solid fa-box"></i></div>
-            <div className="edit-mid-text flex flex-col gap-4">
-              <p className='tracking-widest text-[#c4b5fd]'>Edit Product</p>
-              <h1 className='text-2xl md:text-4xl font-extrabold'>{product.name || 'Update Product'}</h1>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <div className="forms flex flex-col lg:flex-row gap-6 items-stretch">
-        <div className="left-side w-full lg:flex-1 p-6 bg-white shadow-xl rounded-3xl flex flex-col gap-6">
-          <div className="edit-left-cards grid grid-cols-1 sm:grid-cols-2 gap-4">
-            {images.map((imgObj, index) => (
-              <div key={index} className="bg-slate-50 pb-3 border border-slate-100 rounded-3xl text-center relative group">
-                <img className="rounded-t-2xl w-full h-40 object-cover" src={imgObj.url} alt={`Product ${index + 1}`} />
-                {imgObj.isNew && <span className="absolute top-3 left-3 bg-purple-500 text-white text-[9px] font-bold px-2 py-0.5 rounded-full">NEW</span>}
-                <span className="text-[11px] font-bold tracking-widest text-slate-400 uppercase block mt-3">IMAGE {index + 1}</span>
-                <button type="button" onClick={() => handleRemoveImage(index)} className="absolute top-5 right-5 bg-red-500 text-white w-6 h-6 rounded-full flex items-center justify-center text-xs opacity-0 group-hover:opacity-100 transition-opacity duration-200 shadow-md cursor-pointer"><i className="fa-solid fa-xmark"></i></button>
+    <main className="p-4 sm:p-6 lg:p-8 space-y-6 lg:space-y-8 min-h-screen bg-slate-50/50 text-slate-900 mx-auto max-w-[1600px] dark:bg-slate-950">
+      <div className="relative overflow-hidden rounded-[32px] border border-slate-800 bg-gradient-to-br from-[#0a0f1c] via-[#0d1526] to-[#0a0f1c] p-8 shadow-2xl">
+        <div className="absolute -right-14 -top-14 h-44 w-44 rounded-full bg-[#00bad5]/15 blur-3xl "></div>
+        <div className="absolute bottom-0 left-0 h-44 w-44 rounded-full bg-blue-500/15 blur-3xl "></div>
+        
+        <div className="relative z-10 flex flex-col gap-6 lg:flex-row lg:items-end lg:justify-between ">
+          <div>
+            <Link to="/products" className="inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/5 px-4 py-2 text-sm text-slate-300 hover:bg-white/10 transition-colors">
+              <FiArrowLeft size={16} />
+              Back to products
+            </Link>
+            
+            <div className="mt-5 flex items-center gap-4">
+              <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-[#14283f] text-[#38bdf8]">
+                <FiPackage size={24} />
               </div>
-            ))}
-          </div>
-          <input type="file" ref={fileInputRef} onChange={handleFileChange} multiple accept=".png, .jpg, .jpeg, .webp" className="hidden" />
-          <div onClick={handleDivClick} className="add-image flex flex-col items-center text-center gap-2 p-6 border-2 border-dashed border-[#a78bfa4d] rounded-3xl bg-[#8b5cf60d] cursor-pointer hover:bg-[#8b5cf615] transition-all">
-            <i className="fa-regular fa-image text-xl text-[#8b5cf6]"></i>
-            <p className="capitalize font-semibold text-slate-700">add more images</p>
-            <p className="text-xs text-slate-400">PNG, JPG, WEBP</p>
-          </div>
-        </div>
-
-        <form onSubmit={handleSave} className="right-side w-full lg:flex-1 p-6 bg-white shadow-xl rounded-3xl flex flex-col gap-5">
-          <div className="flex flex-col gap-2">
-            <label className="text-xs font-bold text-slate-400 tracking-wide uppercase">Product Name</label>
-            <input type="text" name="name" value={product.name} onChange={handleChange} className="w-full bg-slate-50 border border-slate-100 rounded-2xl px-4 py-3 text-slate-700 text-sm focus:outline-none focus:border-purple-300 focus:bg-white transition-all" required />
-          </div>
-          <div className="flex flex-col gap-2">
-            <label className="text-xs font-bold text-slate-400 tracking-wide uppercase">Short Description</label>
-            <input type="text" name="shortDescription" value={product.shortDescription} onChange={handleChange} className="w-full bg-slate-50 border border-slate-100 rounded-2xl px-4 py-3 text-slate-700 text-sm focus:outline-none focus:border-purple-300 focus:bg-white transition-all" />
-          </div>
-          <div className="flex flex-col gap-2">
-            <label className="text-xs font-bold text-slate-400 tracking-wide uppercase">Description</label>
-            <textarea rows="4" name="description" value={product.description} onChange={handleChange} className="w-full bg-slate-50 border border-slate-100 rounded-2xl px-4 py-3 text-slate-700 text-sm focus:outline-none focus:border-purple-300 focus:bg-white transition-all resize-none"></textarea>
+              <div className="flex flex-col justify-center">
+                <span className="text-[11px] font-bold tracking-[0.25em] text-[#38bdf8] uppercase mb-1">
+                  Edit Product
+                </span>
+                <h1 className="text-[32px] sm:text-4xl leading-none font-black text-white tracking-tight">
+                  Update product details
+                </h1>
+              </div>
+            </div>
+            <p className="mt-4 max-w-2xl text-[15px] text-slate-400 font-medium">Edit product information, manage gallery, and adjust availability seamlessly.</p>
           </div>
           
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-            <div className="flex flex-col gap-2">
-              <label className="text-xs font-bold text-slate-400 tracking-wide uppercase">Price</label>
-              <input type="number" name="price" value={product.price} onChange={handleChange} className="w-full bg-slate-50 border border-slate-100 rounded-2xl px-4 py-3 text-slate-700 text-sm focus:outline-none focus:border-purple-300 focus:bg-white transition-all" min="0" step="0.01" />
+          <div className="rounded-2xl border border-white/10 bg-white/5 p-5 shadow-xl backdrop-blur-md">
+            <p className="text-[11px] font-bold uppercase tracking-[0.25em] text-[#38bdf8]">Live Update</p>
+            <p className="mt-1.5 text-[14px] font-medium text-slate-300">Changes will be visible immediately.</p>
+          </div>
+        </div>
+      </div>
+
+      <form onSubmit={handleSubmit} className="grid gap-6 lg:gap-8 xl:grid-cols-[0.95fr_1.05fr] dark:dark:bg-slate-950">
+        <section className="rounded-[28px] border border-slate-100 bg-white p-6 shadow-[0_2px_20px_rgba(0,0,0,0.02)] dark:bg-gray-900 dark:border border-gray-800">
+          <div className="flex items-center gap-4">
+            <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-[#ccf0f6]/50 text-[#008ba0] dark:text-blue-500 dark:bg-blue-500/10">
+              <FiImage size={24} />
             </div>
-            <div className="flex flex-col gap-2">
-              <label className="text-xs font-bold text-slate-400 tracking-wide uppercase">Discount Price</label>
-              <input type="number" name="discountPrice" value={product.discountPrice} onChange={handleChange} className="w-full bg-slate-50 border border-slate-100 rounded-2xl px-4 py-3 text-slate-700 text-sm focus:outline-none focus:border-purple-300 focus:bg-white transition-all" min="0" step="0.01" />
+            <div>
+              <h3 className="text-xl font-black tracking-tight text-[#121926] dark:text-white dark:">Gallery *</h3>
+              <p className="text-sm font-medium text-slate-500 mt-0.5 dark:text-gray-400">Upload up to 5 images and preview instantly.</p>
             </div>
           </div>
-
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-            <div className="flex flex-col gap-2">
-              <label className="text-xs font-bold text-slate-400 tracking-wide uppercase">Stock</label>
-              <input type="number" name="stock" value={product.stock} onChange={handleChange} className="w-full bg-slate-50 border border-slate-100 rounded-2xl px-4 py-3 text-slate-700 text-sm focus:outline-none focus:border-purple-300 focus:bg-white transition-all" min="0" />
-            </div>
-            <div className="flex flex-col gap-2">
-              <label className="text-xs font-bold text-slate-400 tracking-wide uppercase">SKU</label>
-              <input type="text" name="sku" value={product.sku} onChange={handleChange} className="w-full bg-slate-50 border border-slate-100 rounded-2xl px-4 py-3 text-slate-700 text-sm focus:outline-none focus:border-purple-300 focus:bg-white transition-all" />
-            </div>
-          </div>
-
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-            <div className="flex flex-col gap-2">
-              <label className="text-xs font-bold text-slate-400 tracking-wide uppercase">Category</label>
-              <input type="text" name="category" value={product.category} onChange={handleChange} className="w-full bg-slate-50 border border-slate-100 rounded-2xl px-4 py-3 text-slate-700 text-sm focus:outline-none focus:border-purple-300 focus:bg-white transition-all" />
-            </div>
-            <div className="flex flex-col gap-2">
-              <label className="text-xs font-bold text-slate-400 tracking-wide uppercase">Brand</label>
-              <input type="text" name="brand" value={product.brand} onChange={handleChange} className="w-full bg-slate-50 border border-slate-100 rounded-2xl px-4 py-3 text-slate-700 text-sm focus:outline-none focus:border-purple-300 focus:bg-white transition-all" />
-            </div>
-          </div>
-
-          <div className="flex flex-col gap-4 bg-[#f8fafc] rounded-3xl p-6">
-            <label className="text-xs font-bold text-slate-400 tracking-wide uppercase">Tags</label>
-            <div className="flex gap-2">
-              <input type="text" value={tagInput} onChange={(e) => setTagInput(e.target.value)} onKeyDown={(e) => { if (e.key === 'Enter') { e.preventDefault(); handleAddTag(); }}} placeholder="Type a tag and press +" className="w-full bg-white border border-slate-100 rounded-2xl p-4 text-slate-700 text-sm focus:outline-none focus:border-purple-300 focus:bg-white transition-all" />
-              <button type="button" onClick={handleAddTag} className="bg-[#8b5cf6] text-white px-5 rounded-2xl hover:bg-[#7c3aed] transition-all flex items-center justify-center cursor-pointer"><i className="fa-solid fa-plus text-sm"></i></button>
-            </div>
-            <div className="flex flex-wrap gap-2 mt-2">
-              {product.tags.map((tag, index) => (
-                <span key={index} className="inline-flex items-center gap-2 bg-[#8b5cf615] text-[#7c3aed] text-xs font-semibold px-3 py-1.5 rounded-full border border-[#8b5cf62a]">
-                  {tag}
-                  <button type="button" onClick={() => handleRemoveTag(tag)} className="text-slate-400 hover:text-red-500 transition-colors focus:outline-none font-bold"><i className="fa-solid fa-xmark text-[10px]"></i></button>
-                </span>
+          
+          {imagePreviews.length > 0 && (
+            <div className="mt-8 grid gap-4 sm:grid-cols-2">
+              {imagePreviews.map((preview, idx) => (
+                <article key={idx} className="group relative overflow-hidden rounded-[20px] border border-slate-100 bg-slate-50 shadow-sm">
+                  <div className="flex h-48 items-center justify-center">
+                    <img src={preview} alt={`preview-${idx}`} className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105" />
+                  </div>
+                  <div className="absolute top-3 left-3 bg-white/90 backdrop-blur px-3 py-1.5 rounded-xl text-[10px] font-bold uppercase tracking-[0.2em] text-slate-600 shadow-sm">
+                    Image {idx + 1}
+                  </div>
+                  {idx >= existingImages.length && (
+                    <div className="absolute top-3 right-14 bg-[#00bad5]/90 backdrop-blur px-3 py-1.5 rounded-xl text-[10px] font-bold uppercase tracking-[0.2em] text-white shadow-sm">
+                      New
+                    </div>
+                  )}
+                  <button 
+                    type="button" 
+                    onClick={() => removeImage(idx)}
+                    className="absolute top-3 right-3 flex h-8 w-8 items-center justify-center rounded-full bg-red-500 text-white opacity-0 transition-opacity group-hover:opacity-100 shadow-md hover:bg-red-600"
+                  >
+                    <FiX size={16} />
+                  </button>
+                </article>
               ))}
             </div>
-          </div>
-
-          <div className="flex flex-wrap gap-6 py-2">
-            <label className="flex items-center gap-2 cursor-pointer text-sm font-semibold text-slate-700">
-              <input type="checkbox" name="featured" checked={product.featured} onChange={handleChange} className="w-4 h-4 accent-[#8b5cf6] rounded-md" /> Featured
+          )}
+          
+          {imagePreviews.length < 5 && (
+            <label className="mt-6 flex cursor-pointer flex-col items-center justify-center rounded-[24px] border-2 border-dashed border-[#00bad5]/30 bg-[#f2fbfe] p-10 text-center transition-all hover:bg-[#e0f7fc] hover:border-[#00bad5]/50 group bg-white dark:bg-gray-950 dark:hover:bg-slate-900 ">
+              <div className="mb-4 flex h-14 w-14 items-center justify-center rounded-full bg-white shadow-sm transition-transform group-hover:scale-110 group-hover:shadow-md">
+                <FiImage size={24}  className="text-[#00bad5] dark:text-blue-500 dark:bg-blue-500/10" />
+              </div>
+              <p className="text-[17px] font-bold text-[#121926] dark:text-white">Upload images</p>
+              <p className="mt-1.5 text-sm font-medium text-slate-500">PNG, JPG, WEBP • multiple files supported ({5 - imagePreviews.length} left)</p>
+              <input hidden type="file" accept="image/*" multiple onChange={handleImageChange} />
             </label>
-            <label className="flex items-center gap-2 cursor-pointer text-sm font-semibold text-slate-700">
-              <input type="checkbox" name="active" checked={product.active} onChange={handleChange} className="w-4 h-4 accent-[#8b5cf6] rounded-md" /> Active
-            </label>
+          )}
+          
+          <div className="mt-6 rounded-2xl border border-[#dcfce7] bg-[#f0fdf4] p-5 dark:bg-slate-900/50 dark:border-teal-900/50 ">
+            <div className="flex items-center gap-2 text-[13px] font-bold uppercase tracking-wider text-[#16a34a] dark:text-teal-400">
+              <FiStar size={16} className="fill-[#16a34a]/20" />
+              Upload Tips
+            </div>
+            <p className="mt-2 text-[14px] font-medium text-[#16a34a]/90 leading-relaxed dark:text-gray-300">Use high-quality images (preferably 1:1 ratio) for the best display on the store. The first image will be used as the thumbnail.</p>
           </div>
+        </section>
 
-          <div className="flex flex-col sm:flex-row justify-start gap-3 mt-2">
-            <button type="button" onClick={() => navigate('/products')} className="w-full sm:w-auto px-6 py-3 cursor-pointer border border-slate-200 text-slate-500 font-medium rounded-2xl text-xs hover:bg-slate-50 transition-all uppercase tracking-wider text-center">Cancel</button>
-            <button type="submit" disabled={saving} className="w-full sm:w-auto px-6 py-3 cursor-pointer bg-[#8b5cf6] text-white font-medium rounded-2xl text-xs hover:bg-[#7c3aed] transition-all uppercase tracking-wider shadow-lg shadow-purple-100 text-center disabled:opacity-50">{saving ? 'Saving...' : 'Save Changes'}</button>
+        <section className="rounded-[28px] border border-slate-100 bg-white p-6 shadow-[0_2px_20px_rgba(0,0,0,0.02)] dark:bg-gray-900 dark:border border-gray-800">
+          <div className="grid gap-6">
+            <label className="block">
+              <span className="mb-2 block text-[13px] font-bold text-slate-700 uppercase tracking-wide dark:text-white">Product Name *</span>
+              <input required name="name" value={formData.name} onChange={handleChange} placeholder="e.g. iPhone 16 Pro" className="h-14 w-full px-5 outline-none transition-all text-[15px] rounded-2xl border border-slate-200 bg-[#fafdfd] text-black placeholder:text-slate-400 focus:border-[#00bad5] focus:ring-1 focus:ring-[#00bad5] dark:border-gray-800 dark:bg-slate-900 dark:text-white" />
+            </label>
+
+            <label className="block">
+              <span className="mb-2 block text-[13px] font-bold text-slate-700 uppercase tracking-wide dark:text-white dark:text-white">Short Description *</span>
+              <input required name="shortDescription" value={formData.shortDescription} onChange={handleChange} placeholder="Minimum 10 characters" className="h-14 w-full px-5 text-[15px] outline-none transition-all rounded-2xl border border-slate-200 bg-[#fafdfd] text-black placeholder:text-slate-400 focus:border-[#00bad5] focus:ring-1 focus:ring-[#00bad5] dark:border-gray-800 dark:bg-slate-900 dark:text-white" />
+            </label>
+
+            <label className="block">
+              <span className="mb-2 block text-[13px] font-bold text-slate-700 uppercase tracking-wide dark:text-white dark:text-white">Description *</span>
+              <textarea required name="description" value={formData.description} onChange={handleChange} rows="5" placeholder="Minimum 20 characters" className="w-full rounded-2xl border border-slate-200 bg-[#fafdfd] px-5 py-4 text-[15px] outline-none transition-all focus:border-[#00bad5] focus:ring-1 focus:ring-[#00bad5] placeholder:text-slate-400 dark:bg-slate-950 border border-gray-800 text-black rounded-lg p-3 dark:bg-slate-950 border border-gray-800 dark:text-white rounded-lg p-3"></textarea>
+            </label>
+
+            <div className="grid gap-6 md:grid-cols-2">
+              <label className="block">
+                <span className="mb-2 block text-[13px] font-bold text-slate-700 uppercase tracking-wide dark:text-white">Price (EGP) *</span>
+                <input required type="number" step="0.01" name="price" value={formData.price} onChange={handleChange} placeholder="0" className="h-14 w-full rounded-2xl border border-slate-200 bg-[#fafdfd] px-5 text-[15px] outline-none transition-all focus:border-[#00bad5] focus:ring-1 focus:ring-[#00bad5] placeholder:text-slate-400 dark:bg-slate-950 dark:text-white border border-gray-800 text-black rounded-lg p-3" />
+              </label>
+              <label className="block">
+                <span className="mb-2 block text-[13px] font-bold text-slate-700 uppercase tracking-wide dark:text-white">Discount Price (EGP)</span>
+                <input type="number" step="0.01" name="discountPrice" value={formData.discountPrice} onChange={handleChange} placeholder="0" className="h-14 w-full rounded-2xl border border-slate-200 bg-[#fafdfd] px-5 text-[15px] outline-none transition-all focus:border-[#00bad5] focus:ring-1 focus:ring-[#00bad5] placeholder:text-slate-400 dark:bg-slate-950 border border-gray-800 text-black rounded-lg p-3 dark:text-white" />
+              </label>
+            </div>
+
+            <div className="grid gap-6 md:grid-cols-2">
+              <label className="block">
+                <span className="mb-2 block text-[13px] font-bold text-slate-700 uppercase  tracking-wide dark:text-white">Stock *</span>
+                <input required type="number" name="stock" value={formData.stock} onChange={handleChange} placeholder="0" className="h-14 w-full rounded-2xl border border-slate-200 bg-[#fafdfd] px-5 text-[15px] outline-none transition-all focus:border-[#00bad5] focus:ring-1 focus:ring-[#00bad5] placeholder:text-slate-400 dark:bg-slate-950 border border-gray-800 text-black rounded-lg p-3 dark:bg-slate-950  dark:text-white" />
+              </label>
+              <label className="block">
+                <span className="mb-2 block text-[13px] font-bold text-slate-700 uppercase  tracking-wide dark:text-white">SKU</span>
+                <input name="sku" value={formData.sku} onChange={handleChange} placeholder="e.g. IPH-16-PRO" className="h-14 w-full rounded-2xl border border-slate-200 bg-[#fafdfd] px-5 text-[15px] outline-none transition-all focus:border-[#00bad5] focus:ring-1 focus:ring-[#00bad5] placeholder:text-slate-400 dark:bg-slate-950 border border-gray-800 text-black rounded-lg p-3 dark:bg-slate-950 dark:text-white" />
+              </label>
+            </div>
+
+            <div className="grid gap-6 md:grid-cols-2">
+              <label className="block">
+                <span className="mb-2 block text-[13px] font-bold text-slate-700 uppercase tracking-wide dark:text-white">Category *</span>
+                <select required name="category" value={formData.category} onChange={handleChange} className="h-14 w-full rounded-2xl border border-slate-200 bg-[#fafdfd] px-5 text-[15px] outline-none transition-all focus:border-[#00bad5] focus:ring-1 focus:ring-[#00bad5] dark:bg-slate-950 border border-gray-800 text-black rounded-lg p-3 dark:text-white">
+                  <option value="">Select Category</option>
+                  <option value="Electronics">Electronics</option>
+                  <option value="Phones">Phones</option>
+                  <option value="Fashion">Fashion</option>
+                  <option value="Home">Home</option>
+                  <option value="Beauty">Beauty</option>
+                  <option value="Sports">Sports</option>
+                  {formData.category && !["Electronics", "Phones", "Fashion", "Home", "Beauty", "Sports"].includes(formData.category) && (
+                    <option value={formData.category}>{formData.category}</option>
+                  )}
+                </select>
+              </label>
+              <label className="block">
+                <span className="mb-2 block text-[13px] font-bold text-slate-700 uppercase tracking-wide dark:text-white dark:text-white">Subcategory</span>
+                <input name="subcategory" value={formData.subcategory} onChange={handleChange} placeholder="e.g. smartphones" className="h-14 w-full rounded-2xl border border-slate-200 bg-[#fafdfd] px-5 text-[15px] outline-none transition-all focus:border-[#00bad5] focus:ring-1 focus:ring-[#00bad5] placeholder:text-slate-400 dark:bg-slate-950 border border-gray-800 text-black rounded-lg p-3 dark:bg-slate-950 dark:text-white" />
+              </label>
+            </div>
+
+            <label className="block">
+              <span className="mb-2 block text-[13px] font-bold text-slate-700 uppercase tracking-wide dark:text-white">Brand</span>
+              <input name="brand" value={formData.brand} onChange={handleChange} placeholder="e.g. Apple" className="h-14 w-full rounded-2xl border border-slate-200 bg-[#fafdfd] px-5 text-[15px] outline-none transition-all focus:border-[#00bad5] focus:ring-1 focus:ring-[#00bad5] placeholder:text-slate-400 dark:bg-slate-950 border border-gray-800 text-black rounded-lg p-3 dark:bg-slate-950 dark:text-white" />
+            </label>
+
+            <div className="rounded-[24px] border border-slate-100 bg-slate-50 p-6 dark:bg-slate-950 border border-gray-800 text-white rounded-lg p-3">
+              <label className="block">
+                <span className="mb-3 block text-[13px] font-bold text-slate-700 uppercase tracking-wide dark:bg-slate-950 border border-gray-800 text-black rounded-lg p-3 dark:text-white">Tags</span>
+                <div className="flex gap-3 dark:bg-slate-950 border border-gray-800 text-white rounded-lg p-3">
+                  <input 
+                    value={tagInput}
+                    onChange={(e) => setTagInput(e.target.value)}
+                    onKeyDown={handleTagKeyDown}
+                    placeholder="Type a tag and press +" 
+                    className="h-14 flex-1 rounded-2xl border border-slate-200 bg-white px-5 text-[15px] outline-none transition-all focus:border-[#00bad5] focus:ring-1 focus:ring-[#00bad5] placeholder:text-slate-400 dark:bg-slate-950 border border-gray-800 text-black rounded-lg p-3 dark:text-white" 
+                  />
+                  <button type="button" onClick={handleAddTag} className="inline-flex h-14 w-14 items-center justify-center rounded-2xl bg-slate-200 text-slate-600 shadow-sm transition hover:bg-slate-300">
+                    <FiPlus size={24} />
+                  </button>
+                </div>
+              </label>
+              <div className="mt-4 flex flex-wrap gap-2 dark:bg-slate-950 border border-gray-800 text-white rounded-lg p-3">
+                {tags.length === 0 && <p className="text-sm font-medium text-slate-500">Add one or more tags to organize the product.</p>}
+                {tags.map((tag, idx) => (
+                  <span key={idx} className="inline-flex items-center gap-1.5 rounded-xl bg-white border border-slate-200 px-3 py-1.5 text-[13px] font-semibold text-slate-700 shadow-sm">
+                    {tag}
+                    <button type="button" onClick={() => removeTag(tag)} className="text-slate-400 hover:text-red-500 transition-colors">
+                      <FiX size={14} />
+                    </button>
+                  </span>
+                ))}
+              </div>
+            </div>
+
+            <div className="flex flex-wrap gap-4 mt-2">
+              <label className="flex flex-1 sm:flex-none items-center justify-center gap-3 rounded-2xl border border-slate-200 bg-white px-6 py-4 cursor-pointer hover:bg-slate-50 transition-colors shadow-sm dark:bg-slate-950 border border-gray-800 text-white rounded-lg p-3">
+                <input type="checkbox" name="featured" checked={formData.featured} onChange={handleChange} className="w-5 h-5 accent-[#00bad5]" />
+                <span className="text-[15px] font-bold text-slate-700 dark:text-white">Featured</span>
+              </label>
+              <label className="flex flex-1 sm:flex-none items-center justify-center gap-3 rounded-2xl border border-slate-200 bg-white px-6 py-4 cursor-pointer hover:bg-slate-50 transition-colors shadow-sm dark:bg-slate-950 border border-gray-800 text-white rounded-lg p-3">
+                <input type="checkbox" name="isActive" checked={formData.isActive} onChange={handleChange} className="w-5 h-5 accent-[#00bad5] dark:bg-slate-950 border border-gray-800 text-white rounded-lg p-3" />
+                <span className="text-[15px] font-bold text-slate-700 dark:text-white">Active</span>
+              </label>
+            </div>
+
+            <div className="flex items-center justify-start gap-3 border-t border-slate-100 pt-6 mt-2">
+              <Link to="/products" className="flex items-center justify-center gap-2 rounded-2xl px-6 py-3 text-[14px] font-bold transition-all bg-blue-600 text-black border border-slate-200 hover:bg-slate-50 active:scale-[0.98] dark:bg-blue-500 dark:text-white dark:hover:bg-blue-600 ">
+                Cancel
+              </Link>
+              <button disabled={loading} className="flex items-center justify-center gap-2 rounded-2xl px-6 py-3 text-[14px] font-bold transition-all bg-[#00bad5] text-white shadow-[0_4px_14px_0_rgba(0,186,213,0.3)] hover:bg-[#00a3bb] hover:shadow-[0_6px_20px_0_rgba(0,186,213,0.4)] active:scale-[0.98] disabled:opacity-50 disabled:cursor-not-allowed" type="submit">
+                {loading ? "Saving..." : "Save Changes"}
+              </button>
+            </div>
           </div>
-        </form>
-      </div>
-    </section>
+        </section>
+      </form>
+    </main>
   );
 }
-
-export default Edit;
