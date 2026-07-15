@@ -2,7 +2,8 @@ import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { FiArrowLeft, FiPackage, FiImage, FiPlus, FiStar, FiX } from 'react-icons/fi';
 import api from '../api/api';
-import { toast } from 'react-toastify';
+import { toast, ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 export default function AddProduct() {
   const navigate = useNavigate();
@@ -96,23 +97,48 @@ export default function AddProduct() {
       });
       
       if (tags.length > 0) {
-        data.append("tags", JSON.stringify(tags));
+        if (tags.length === 1) {
+          data.append("tags", tags[0]);
+          data.append("tags", tags[0]); // Force multer to treat as array
+        } else {
+          tags.forEach(tag => data.append("tags", tag));
+        }
       }
 
-      // Append images
-      images.forEach(image => {
-        data.append("images", image);
-      });
-
-      await api.post("/products", data, {
-        headers: {
-          "Content-Type": "multipart/form-data"
+      images.forEach((image, index) => {
+        const ext = image.name.split('.').pop() || 'jpg';
+        const safeName = `upload_${Date.now()}_${index}.${ext}`;
+        const safeFile = new File([image], safeName, { type: image.type });
+        data.append("images", safeFile);
+        
+        // Force backend to parse as array if there is only 1 image
+        if (images.length === 1) {
+          data.append("images", safeFile);
         }
       });
+
+      await api.post("/products", data);
       toast.success("Product created successfully!");
       navigate("/products");
     } catch (error) {
-      toast.error(error.response?.data?.message || "Failed to create product");
+      console.error("Create Product Error:", error);
+      if (error.response?.data?.errors) {
+        const errs = error.response.data.errors;
+        
+        // Handle Cloudinary failure silently returning empty objects
+        const hasCloudinaryError = Array.isArray(errs) && errs.some(e => e.includes("public_id") || e.includes("url"));
+        if (hasCloudinaryError) {
+           toast.error("Server failed to upload image (might be too large or unsupported). Please try a smaller/different image.");
+        } else if (Array.isArray(errs) && errs.length > 0) {
+          toast.error(errs.join(", "));
+        } else if (typeof errs === 'string') {
+          toast.error(errs);
+        } else {
+          toast.error(JSON.stringify(errs));
+        }
+      } else {
+        toast.error(error.response?.data?.message || "Failed to create product");
+      }
     } finally {
       setLoading(false);
     }
@@ -331,6 +357,7 @@ export default function AddProduct() {
           </div>
         </section>
       </form>
+      <ToastContainer position="bottom-right" theme="colored" />
     </main>
   );
 }

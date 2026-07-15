@@ -2,7 +2,8 @@ import React, { useState, useEffect } from 'react';
 import { Link, useNavigate, useParams } from 'react-router-dom';
 import { FiArrowLeft, FiPackage, FiImage, FiPlus, FiStar, FiX } from 'react-icons/fi';
 import api from '../api/api';
-import { toast } from 'react-toastify';
+import { toast, ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 export default function Edit() {
   const { id } = useParams();
@@ -155,7 +156,12 @@ export default function Edit() {
       });
       
       if (tags.length > 0) {
-        data.append("tags", JSON.stringify(tags));
+        if (tags.length === 1) {
+          data.append("tags", tags[0]);
+          data.append("tags", tags[0]); // Force multer to treat as array
+        } else {
+          tags.forEach(tag => data.append("tags", tag));
+        }
       }
 
       if (deletedImages.length > 0) {
@@ -174,7 +180,19 @@ export default function Edit() {
       toast.success("Product updated successfully!");
       navigate("/products");
     } catch (error) {
-      toast.error(error.response?.data?.message || "Failed to update product");
+      console.error("Update Product Error:", error);
+      if (error.response?.data?.errors) {
+        const errs = error.response.data.errors;
+        if (Array.isArray(errs) && errs.length > 0) {
+          toast.error(errs.join(", "));
+        } else if (typeof errs === 'string') {
+          toast.error(errs);
+        } else {
+          toast.error(JSON.stringify(errs));
+        }
+      } else {
+        toast.error(error.response?.data?.message || "Failed to update product");
+      }
     } finally {
       setLoading(false);
     }
@@ -224,7 +242,7 @@ export default function Edit() {
         </div>
       </div>
 
-      <form onSubmit={handleSubmit} className="grid gap-6 lg:gap-8 xl:grid-cols-[0.95fr_1.05fr] dark:dark:bg-slate-950">
+      <form onSubmit={handleSubmit} className="grid gap-6 lg:gap-8 xl:grid-cols-[0.95fr_1.05fr]">
         <section className="rounded-[28px] border border-slate-100 bg-white p-6 shadow-[0_2px_20px_rgba(0,0,0,0.02)] dark:bg-gray-900 dark:border border-gray-800">
           <div className="flex items-center gap-4">
             <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-[#ccf0f6]/50 text-[#008ba0] dark:text-blue-500 dark:bg-blue-500/10">
@@ -291,13 +309,13 @@ export default function Edit() {
             </label>
 
             <label className="block">
-              <span className="mb-2 block text-[13px] font-bold text-slate-700 uppercase tracking-wide dark:text-white dark:text-white">Short Description *</span>
-              <input required name="shortDescription" value={formData.shortDescription} onChange={handleChange} placeholder="Minimum 10 characters" className="h-14 w-full px-5 text-[15px] outline-none transition-all rounded-2xl border border-slate-200 bg-[#fafdfd] text-black placeholder:text-slate-400 focus:border-[#00bad5] focus:ring-1 focus:ring-[#00bad5] dark:border-gray-800 dark:bg-slate-900 dark:text-white" />
+              <span className="mb-2 block text-[13px] font-bold text-slate-700 uppercase tracking-wide dark:text-white dark:text-white">Short Description</span>
+              <input name="shortDescription" value={formData.shortDescription} onChange={handleChange} placeholder="Minimum 10 characters" className="h-14 w-full px-5 text-[15px] outline-none transition-all rounded-2xl border border-slate-200 bg-[#fafdfd] text-black placeholder:text-slate-400 focus:border-[#00bad5] focus:ring-1 focus:ring-[#00bad5] dark:border-gray-800 dark:bg-slate-900 dark:text-white" />
             </label>
 
             <label className="block">
-              <span className="mb-2 block text-[13px] font-bold text-slate-700 uppercase tracking-wide dark:text-white dark:text-white">Description *</span>
-              <textarea required name="description" value={formData.description} onChange={handleChange} rows="5" placeholder="Minimum 20 characters" className="w-full rounded-2xl border border-slate-200 bg-[#fafdfd] px-5 py-4 text-[15px] outline-none transition-all focus:border-[#00bad5] focus:ring-1 focus:ring-[#00bad5] placeholder:text-slate-400 dark:bg-slate-950 border border-gray-800 text-black rounded-lg p-3 dark:bg-slate-950 border border-gray-800 dark:text-white rounded-lg p-3"></textarea>
+              <span className="mb-2 block text-[13px] font-bold text-slate-700 uppercase tracking-wide dark:text-white dark:text-white">Description</span>
+              <textarea name="description" value={formData.description} onChange={handleChange} rows="5" placeholder="Minimum 20 characters" className="w-full rounded-2xl border border-slate-200 bg-[#fafdfd] px-5 py-4 text-[15px] outline-none transition-all focus:border-[#00bad5] focus:ring-1 focus:ring-[#00bad5] placeholder:text-slate-400 dark:bg-slate-950 border border-gray-800 text-black rounded-lg p-3 dark:bg-slate-950 border border-gray-800 dark:text-white rounded-lg p-3"></textarea>
             </label>
 
             <div className="grid gap-6 md:grid-cols-2">
@@ -313,8 +331,8 @@ export default function Edit() {
 
             <div className="grid gap-6 md:grid-cols-2">
               <label className="block">
-                <span className="mb-2 block text-[13px] font-bold text-slate-700 uppercase  tracking-wide dark:text-white">Stock *</span>
-                <input required type="number" name="stock" value={formData.stock} onChange={handleChange} placeholder="0" className="h-14 w-full rounded-2xl border border-slate-200 bg-[#fafdfd] px-5 text-[15px] outline-none transition-all focus:border-[#00bad5] focus:ring-1 focus:ring-[#00bad5] placeholder:text-slate-400 dark:bg-slate-950 border border-gray-800 text-black rounded-lg p-3 dark:bg-slate-950  dark:text-white" />
+                <span className="mb-2 block text-[13px] font-bold text-slate-700 uppercase  tracking-wide dark:text-white">Stock</span>
+                <input type="number" name="stock" value={formData.stock} onChange={handleChange} placeholder="0" className="h-14 w-full rounded-2xl border border-slate-200 bg-[#fafdfd] px-5 text-[15px] outline-none transition-all focus:border-[#00bad5] focus:ring-1 focus:ring-[#00bad5] placeholder:text-slate-400 dark:bg-slate-950 border border-gray-800 text-black rounded-lg p-3 dark:bg-slate-950  dark:text-white" />
               </label>
               <label className="block">
                 <span className="mb-2 block text-[13px] font-bold text-slate-700 uppercase  tracking-wide dark:text-white">SKU</span>
@@ -324,8 +342,8 @@ export default function Edit() {
 
             <div className="grid gap-6 md:grid-cols-2">
               <label className="block">
-                <span className="mb-2 block text-[13px] font-bold text-slate-700 uppercase tracking-wide dark:text-white">Category *</span>
-                <select required name="category" value={formData.category} onChange={handleChange} className="h-14 w-full rounded-2xl border border-slate-200 bg-[#fafdfd] px-5 text-[15px] outline-none transition-all focus:border-[#00bad5] focus:ring-1 focus:ring-[#00bad5] dark:bg-slate-950 border border-gray-800 text-black rounded-lg p-3 dark:text-white">
+                <span className="mb-2 block text-[13px] font-bold text-slate-700 uppercase tracking-wide dark:text-white">Category</span>
+                <select name="category" value={formData.category} onChange={handleChange} className="h-14 w-full rounded-2xl border border-slate-200 bg-[#fafdfd] px-5 text-[15px] outline-none transition-all focus:border-[#00bad5] focus:ring-1 focus:ring-[#00bad5] dark:bg-slate-950 border border-gray-800 text-black rounded-lg p-3 dark:text-white">
                   <option value="">Select Category</option>
                   <option value="Electronics">Electronics</option>
                   <option value="Phones">Phones</option>
@@ -400,6 +418,7 @@ export default function Edit() {
           </div>
         </section>
       </form>
+      <ToastContainer position="bottom-right" theme="colored" />
     </main>
   );
 }

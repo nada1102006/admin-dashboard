@@ -17,7 +17,7 @@ export default function QuickEdit({ product: initialProduct, onClose, onSuccess 
     subcategory: initialProduct.subcategory || "",
     brand: initialProduct.brand || "",
     featured: initialProduct.featured || false,
-    active: initialProduct.isActive !== undefined ? initialProduct.isActive : (initialProduct.active !== undefined ? initialProduct.active : true)
+    isActive: initialProduct.isActive !== undefined ? initialProduct.isActive : (initialProduct.active !== undefined ? initialProduct.active : true)
   });
   
   const [loading, setLoading] = useState(false);
@@ -104,7 +104,12 @@ export default function QuickEdit({ product: initialProduct, onClose, onSuccess 
       });
       
       if (tags.length > 0) {
-        data.append("tags", JSON.stringify(tags));
+        if (tags.length === 1) {
+          data.append("tags", tags[0]);
+          data.append("tags", tags[0]); // Force multer to treat as array
+        } else {
+          tags.forEach(tag => data.append("tags", tag));
+        }
       }
 
       newImages.forEach(image => {
@@ -125,7 +130,18 @@ export default function QuickEdit({ product: initialProduct, onClose, onSuccess 
       onSuccess();
     } catch (err) {
       console.error("Update Error:", err);
-      toast.error(err.response?.data?.message || "Failed to update product");
+      if (err.response?.data?.errors) {
+        const errs = err.response.data.errors;
+        if (Array.isArray(errs) && errs.length > 0) {
+          toast.error(errs.join(", "));
+        } else if (typeof errs === 'string') {
+          toast.error(errs);
+        } else {
+          toast.error(JSON.stringify(errs));
+        }
+      } else {
+        toast.error(err.response?.data?.message || "Failed to update product");
+      }
     } finally {
       setLoading(false);
     }
@@ -181,7 +197,7 @@ export default function QuickEdit({ product: initialProduct, onClose, onSuccess 
                      <span className="text-sm font-semibold text-slate-700 dark:text-slate-300 group-hover:text-[#00bad5] transition-colors">Featured Product</span>
                    </label>
                    <label className="flex items-center gap-3 cursor-pointer group">
-                     <input type="checkbox" name="active" checked={product.active} onChange={handleChange} className="w-5 h-5 accent-[#00bad5] rounded border-slate-300" /> 
+                     <input type="checkbox" name="isActive" checked={product.isActive} onChange={handleChange} className="w-5 h-5 accent-[#00bad5] rounded border-slate-300" /> 
                      <span className="text-sm font-semibold text-slate-700 dark:text-slate-300 group-hover:text-[#00bad5] transition-colors">Active Listing</span>
                    </label>
                  </div>
