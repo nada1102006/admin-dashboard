@@ -1,0 +1,75 @@
+@media (max-width: 350px) {
+    .skeleton-counter {
+        width: 20px !important;
+        height: 20px !important;
+    }
+
+    .skeleton-order-id {
+        width: 30px !important;
+        height: 12px !important;
+    }
+
+    .skeleton-avatar {
+        width: 20px !important;
+        height: 20px !important;
+    }
+
+    .skeleton-name {
+        width: 50px !important;
+        height: 12px !important;
+    }
+
+    .skeleton-email {
+        width: 60px !important;
+        height: 10px !important;
+    }
+
+    .skeleton-date {
+        width: 40px !important;
+        height: 12px !important;
+    }
+
+    .skeleton-status {
+        width: 40px !important;
+        height: 18px !important;
+    }
+
+    .skeleton-payment-method {
+        width: 30px !important;
+        height: 12px !important;
+    }
+
+    .skeleton-payment-status {
+        width: 25px !important;
+        height: 10px !important;
+    }
+
+    .skeleton-total {
+        width: 40px !important;
+        height: 12px !important;
+    }
+
+    .skeleton-header-title {
+        width: 80px !important;
+        height: 10px !important;
+    }
+
+    .skeleton-header-subtitle {
+        width: 80px !important;
+        height: 24px !important;
+    }
+
+    .skeleton-header-count {
+        width: 50px !important;
+        height: 10px !important;
+    }
+
+    .skeleton-filter-input {
+        height: 32px !important;
+    }
+
+    .skeleton-filter-btn {
+        width: 80px !important;
+        height: 28px !important;
+    }
+}
