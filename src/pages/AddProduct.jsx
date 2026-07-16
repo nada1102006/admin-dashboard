@@ -119,7 +119,9 @@ export default function AddProduct() {
 
       await api.post("/products", data);
       toast.success("Product created successfully!");
-      navigate("/products");
+      setTimeout(() => {
+        navigate("/products");
+      }, 1500);
     } catch (error) {
       console.error("Create Product Error:", error);
       if (error.response?.data?.errors) {
