@@ -1,3 +1,4 @@
+/* eslint-disable react/prop-types */
 /* eslint-disable no-unused-vars */
 import { createContext, useContext, useState, useCallback, useMemo, useEffect, useRef } from "react";
 import api from "../api/api";
@@ -17,6 +18,7 @@ import {
   Plus,
   UserPlus,
 } from "lucide-react";
+import { useLanguage } from "../Context/LanguageContext";
 
 /* CONTEXT */
 const UsersContext = createContext();
@@ -45,6 +47,7 @@ const UsersProvider = ({ children }) => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
   const [actionLoading, setActionLoading] = useState({});
+  const { t } = useLanguage();
 
   const fetchUsers = useCallback(async () => {
     setLoading(true);
@@ -70,13 +73,13 @@ const UsersProvider = ({ children }) => {
     setLoading(false);
 
     if (lastError?.response?.status === 401) {
-      setError("Please log in again to access the users list.");
-      toast.error("Please log in again to access the users list.");
+      setError(t("users.reloginError") || "Please log in again to access the users list.");
+      toast.error(t("users.reloginError") || "Please log in again to access the users list.");
     } else {
-      setError("Unable to load users from the API right now.");
-      toast.error("Unable to load users from the API right now.");
+      setError(t("users.loadError") || "Unable to load users from the API right now.");
+      toast.error(t("users.loadError") || "Unable to load users from the API right now.");
     }
-  }, []);
+  }, [t]);
 
   const addUser = useCallback(async (userData) => {
     const requestBody = {
@@ -92,7 +95,7 @@ const UsersProvider = ({ children }) => {
         const newUser = normalizeCreateUserResponse(response.data);
         if (newUser && typeof newUser === "object") {
           setUsers((prev) => [...prev, newUser]);
-          toast.success("User created successfully");
+          toast.success(t("users.createSuccess") || "User created successfully");
           return { success: true, data: newUser };
         }
       } catch (err) {
@@ -106,11 +109,11 @@ const UsersProvider = ({ children }) => {
       lastError?.response?.data?.message ||
       lastError?.response?.data?.error ||
       lastError?.message ||
-      "Failed to create user";
+      (t("users.createFail") || "Failed to create user");
 
     toast.error(serverMessage);
     return { success: false, message: serverMessage };
-  }, []);
+  }, [t]);
 
   const deleteUser = useCallback(async (userId) => {
     setActionLoading((prev) => ({ ...prev, [userId]: "delete" }));
@@ -121,16 +124,16 @@ const UsersProvider = ({ children }) => {
         console.log("API delete failed, using local delete");
       }
       setUsers((prev) => prev.filter((u) => u._id !== userId));
-      toast.success("User deleted successfully");
+      toast.success(t("users.deleteSuccess") || "User deleted successfully");
       return { success: true };
     } catch (err) {
-      const message = "Failed to delete user";
+      const message = t("users.deleteFail") || "Failed to delete user";
       toast.error(message);
       return { success: false, message };
     } finally {
       setActionLoading((prev) => ({ ...prev, [userId]: null }));
     }
-  }, []);
+  }, [t]);
 
   const verifyUser = useCallback(async (userId) => {
     setActionLoading((prev) => ({ ...prev, [userId]: "verify" }));
@@ -143,16 +146,16 @@ const UsersProvider = ({ children }) => {
       setUsers((prev) =>
         prev.map((u) => (u._id === userId ? { ...u, isVerified: !u.isVerified } : u))
       );
-      toast.success("User status updated");
+      toast.success(t("users.statusUpdated") || "User status updated");
       return { success: true };
     } catch (err) {
-      const message = "Failed to update user";
+      const message = t("users.updateFail") || "Failed to update user";
       toast.error(message);
       return { success: false, message };
     } finally {
       setActionLoading((prev) => ({ ...prev, [userId]: null }));
     }
-  }, []);
+  }, [t]);
 
   const updateUserRole = useCallback(async (userId, role) => {
     setActionLoading((prev) => ({ ...prev, [userId]: "role" }));
@@ -163,16 +166,16 @@ const UsersProvider = ({ children }) => {
         console.log("API role update failed, using local update");
       }
       setUsers((prev) => prev.map((u) => (u._id === userId ? { ...u, role } : u)));
-      toast.success("Role updated");
+      toast.success(t("users.roleUpdated") || "Role updated");
       return { success: true };
     } catch (err) {
-      const message = "Failed to update user";
+      const message = t("users.updateFail") || "Failed to update user";
       toast.error(message);
       return { success: false, message };
     } finally {
       setActionLoading((prev) => ({ ...prev, [userId]: null }));
     }
-  }, []);
+  }, [t]);
 
   const updateUser = useCallback(async (userId, userData) => {
     try {
@@ -184,14 +187,14 @@ const UsersProvider = ({ children }) => {
       setUsers((prev) =>
         prev.map((u) => (u._id === userId ? { ...u, ...userData } : u))
       );
-      toast.success("User updated successfully");
+      toast.success(t("users.updateSuccess") || "User updated successfully");
       return { success: true };
     } catch (err) {
-      const message = err.response?.data?.message || "Failed to update user";
+      const message = err.response?.data?.message || (t("users.updateFail") || "Failed to update user");
       toast.error(message);
       return { success: false, message };
     }
-  }, []);
+  }, [t]);
 
   const stats = useMemo(
     () => ({
@@ -230,6 +233,7 @@ const useUsers = () => {
 
 /* ============ EDIT USER MODAL ============ */
 const EditUserModal = ({ user, onClose, onSave }) => {
+  const { t } = useLanguage();
   const [formData, setFormData] = useState({
     username: "",
     phone: "",
@@ -257,7 +261,7 @@ const EditUserModal = ({ user, onClose, onSave }) => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (!formData.username.trim()) {
-      setFormError("Username is required");
+      setFormError(t("users.usernameRequired") || "Username is required");
       return;
     }
     setSaving(true);
@@ -270,7 +274,7 @@ const EditUserModal = ({ user, onClose, onSave }) => {
     if (result.success) {
       onClose();
     } else {
-      setFormError(result.message || "Failed to update user");
+      setFormError(result.message || (t("users.updateFail") || "Failed to update user"));
     }
   };
 
@@ -281,7 +285,7 @@ const EditUserModal = ({ user, onClose, onSave }) => {
       <div className="bg-white rounded-3xl p-6 w-full max-w-md mx-4 shadow-2xl animate-in fade-in zoom-in duration-200 dark:bg-slate-950">
         {/* Header */}
         <div className="flex items-center justify-between mb-6 ">
-          <h3 className="text-xl font-bold text-gray-800 dark:text-white">Edit User</h3>
+          <h3 className="text-xl font-bold text-gray-800 dark:text-white">{t("users.editUser")}</h3>
           <button
             onClick={onClose}
             className="w-8 h-8 rounded-lg flex items-center justify-center text-gray-400 hover:text-gray-600 hover:bg-gray-100 transition"
@@ -300,7 +304,7 @@ const EditUserModal = ({ user, onClose, onSave }) => {
 
           <div className="mb-4">
             <label className="block text-xs font-medium text-gray-500 uppercase tracking-wider mb-2 dark:text-white">
-              USERNAME
+              {t("users.username")}
             </label>
             <input
               type="text"
@@ -313,7 +317,7 @@ const EditUserModal = ({ user, onClose, onSave }) => {
 
           <div className="mb-4">
             <label className="block text-xs font-medium text-gray-500 uppercase tracking-wider mb-2 dark:text-white">
-              PHONE
+              {t("users.phone")}
             </label>
             <input
               type="tel"
@@ -326,7 +330,7 @@ const EditUserModal = ({ user, onClose, onSave }) => {
 
           <div className="mb-6">
             <label className="block text-xs font-medium text-gray-500 uppercase tracking-wider mb-2 dark:text-white">
-              AVATAR URL
+              {t("users.avatarUrl")}
             </label>
             <input
               type="url"
@@ -345,10 +349,10 @@ const EditUserModal = ({ user, onClose, onSave }) => {
             {saving ? (
               <>
                 <Loader2 className="w-5 h-5 animate-spin" />
-                Saving...
+                {t("users.saving")}
               </>
             ) : (
-              "Save Changes"
+              t("users.saveChanges")
             )}
           </button>
         </form>
@@ -371,96 +375,101 @@ const StatCard = ({ title, value, icon: Icon, color }) => (
 );
 
 const RoleBadge = ({ role }) => {
+  const { t } = useLanguage();
   const styles = role === "admin" ? "bg-purple-100 text-purple-700" : "bg-cyan-100 text-cyan-700";
   return (
     <span className={`px-3 py-1 rounded-full text-xs font-medium capitalize ${styles}`}>
-      {role}
+      {t(`users.roles.${role}`) || role}
     </span>
   );
 };
 
 const VerifiedBadge = ({ isVerified }) => {
+  const { t } = useLanguage();
   if (isVerified) {
     return (
       <span className="flex items-center gap-1 text-green-600 text-sm font-medium">
         <BadgeCheck className="w-4 h-4" />
-        Verified
+        {t("users.verified")}
       </span>
     );
   }
   return (
     <span className="flex items-center gap-1 text-red-500 text-sm font-medium">
       <X className="w-4 h-4" />
-      No
+      {t("users.unverified")}
     </span>
   );
 };
 
-const MobileUserCard = ({ user, onEdit, onToggleRole, onDelete, actionLoading }) => (
-  <div className="rounded-3xl border border-gray-100 bg-white p-5 shadow-sm mb-4 ">
-    <div className="flex items-start gap-4">
-      <div className="w-12 h-12 rounded-2xl bg-gray-200 flex items-center justify-center overflow-hidden">
-        {user.avatar ? (
-          <img src={user.avatar} alt={user.name} className="w-full h-full object-cover" />
-        ) : (
-          <svg className="w-6 h-6 text-gray-400" fill="currentColor" viewBox="0 0 24 24">
-            <path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z" />
-          </svg>
-        )}
-      </div>
-      <div className="flex-1">
-        <div className="flex flex-col gap-1 sm:flex-row sm:items-center sm:justify-between">
-          <div>
-            <p className="font-semibold text-gray-800">{user.name}</p>
-            <p className="text-gray-500 text-sm">{user.email}</p>
+const MobileUserCard = ({ user, onEdit, onToggleRole, onDelete, actionLoading }) => {
+  const { t } = useLanguage();
+  return (
+    <div className="rounded-3xl border border-gray-100 bg-white p-5 shadow-sm mb-4 ">
+      <div className="flex items-start gap-4">
+        <div className="w-12 h-12 rounded-2xl bg-gray-200 flex items-center justify-center overflow-hidden">
+          {user.avatar ? (
+            <img src={user.avatar} alt={user.name} className="w-full h-full object-cover" />
+          ) : (
+            <svg className="w-6 h-6 text-gray-400" fill="currentColor" viewBox="0 0 24 24">
+              <path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z" />
+            </svg>
+          )}
+        </div>
+        <div className="flex-1">
+          <div className="flex flex-col gap-1 sm:flex-row sm:items-center sm:justify-between">
+            <div>
+              <p className="font-semibold text-gray-800">{user.name}</p>
+              <p className="text-gray-500 text-sm">{user.email}</p>
+            </div>
+            <div className="flex gap-2 text-right">
+              <RoleBadge role={user.role} />
+            </div>
           </div>
-          <div className="flex gap-2 text-right">
-            <RoleBadge role={user.role} />
+          <div className="mt-4 grid grid-cols-2 gap-3 text-sm text-gray-600">
+            <div className="rounded-2xl bg-gray-50 px-3 py-2">
+              <span className="block text-xs text-gray-400">{t("users.verifiedCol")}</span>
+              <VerifiedBadge isVerified={user.isVerified} />
+            </div>
+            <div className="rounded-2xl bg-gray-50 px-3 py-2">
+              <span className="block text-xs text-gray-400">{t("users.roleCol")}</span>
+              <span className="mt-1 inline-flex items-center rounded-full bg-slate-100 px-2.5 py-1 text-xs font-medium text-slate-700 capitalize">
+                {t(`users.roles.${user.role || "customer"}`) || (user.role || "customer")}
+              </span>
+            </div>
           </div>
         </div>
-        <div className="mt-4 grid grid-cols-2 gap-3 text-sm text-gray-600">
-          <div className="rounded-2xl bg-gray-50 px-3 py-2">
-            <span className="block text-xs text-gray-400">Verified</span>
-            <VerifiedBadge isVerified={user.isVerified} />
-          </div>
-          <div className="rounded-2xl bg-gray-50 px-3 py-2">
-            <span className="block text-xs text-gray-400">Role</span>
-            <span className="mt-1 inline-flex items-center rounded-full bg-slate-100 px-2.5 py-1 text-xs font-medium text-slate-700 capitalize">
-              {user.role || "customer"}
-            </span>
-          </div>
-        </div>
+      </div>
+      <div className="mt-4 flex flex-wrap gap-2">
+        <button
+          type="button"
+          onClick={() => onEdit(user)}
+          className="inline-flex items-center justify-center gap-2 rounded-2xl border border-gray-200 bg-white px-3 py-2 text-sm text-gray-700 hover:bg-gray-50 transition"
+        >
+          <Pencil className="w-4 h-4" /> {t("users.edit")}
+        </button>
+        <button
+          type="button"
+          onClick={() => onToggleRole(user)}
+          className="inline-flex items-center justify-center gap-2 rounded-2xl bg-emerald-500 px-3 py-2 text-sm text-white hover:bg-emerald-600 transition disabled:opacity-60"
+          disabled={actionLoading[user._id] === "role"}
+        >
+          {actionLoading[user._id] === "role" ? <Loader2 className="w-4 h-4 animate-spin" /> : <ShieldCheck className="w-4 h-4" />}
+          {user.role === "admin" ? t("users.demote") : t("users.promote")}
+        </button>
+        <button
+          type="button"
+          onClick={() => onDelete(user)}
+          className="inline-flex items-center justify-center gap-2 rounded-2xl bg-red-500 px-3 py-2 text-sm text-white hover:bg-red-600 transition disabled:opacity-60"
+          disabled={actionLoading[user._id] === "delete"}
+        >
+          {actionLoading[user._id] === "delete" ? <Loader2 className="w-4 h-4 animate-spin" /> : <Trash2 className="w-4 h-4" />}
+          {t("users.delete")}
+        </button>
       </div>
     </div>
-    <div className="mt-4 flex flex-wrap gap-2">
-      <button
-        type="button"
-        onClick={() => onEdit(user)}
-        className="inline-flex items-center justify-center gap-2 rounded-2xl border border-gray-200 bg-white px-3 py-2 text-sm text-gray-700 hover:bg-gray-50 transition"
-      >
-        <Pencil className="w-4 h-4" /> Edit
-      </button>
-      <button
-        type="button"
-        onClick={() => onToggleRole(user)}
-        className="inline-flex items-center justify-center gap-2 rounded-2xl bg-emerald-500 px-3 py-2 text-sm text-white hover:bg-emerald-600 transition disabled:opacity-60"
-        disabled={actionLoading[user._id] === "role"}
-      >
-        {actionLoading[user._id] === "role" ? <Loader2 className="w-4 h-4 animate-spin" /> : <ShieldCheck className="w-4 h-4" />}
-        {user.role === "admin" ? "Demote" : "Promote"}
-      </button>
-      <button
-        type="button"
-        onClick={() => onDelete(user)}
-        className="inline-flex items-center justify-center gap-2 rounded-2xl bg-red-500 px-3 py-2 text-sm text-white hover:bg-red-600 transition disabled:opacity-60"
-        disabled={actionLoading[user._id] === "delete"}
-      >
-        {actionLoading[user._id] === "delete" ? <Loader2 className="w-4 h-4 animate-spin" /> : <Trash2 className="w-4 h-4" />}
-        Delete
-      </button>
-    </div>
-  </div>
-);
+  );
+}
 
 const ActionButton = ({ icon: Icon, color, onClick, title }) => (
   <button
@@ -472,31 +481,35 @@ const ActionButton = ({ icon: Icon, color, onClick, title }) => (
   </button>
 );
 
-const DeleteModal = ({ user, onConfirm, onCancel, deleting }) => (
-  <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
-    <div className="bg-white rounded-2xl p-6 w-full max-w-md mx-4 shadow-2xl dark:bg-slate-950">
-      <h3 className="text-xl font-bold text-gray-800 mb-2 dark:text-white">Delete User</h3>
-      <p className="text-gray-600 mb-6 dark:text-white">
-        Are you sure you want to delete <strong>{user.name}</strong>? This action cannot be undone.
-      </p>
-      <div className="flex gap-3 justify-end">
-        <button onClick={onCancel} className="px-4 py-2 rounded-lg text-gray-600 hover:bg-gray-100 transition-colors">
-          Cancel
-        </button>
-        <button
-          onClick={onConfirm}
-          disabled={deleting}
-          className="px-4 py-2 rounded-lg bg-red-500 text-white hover:bg-red-600 transition-colors flex items-center gap-2 disabled:opacity-50"
-        >
-          {deleting && <Loader2 className="w-4 h-4 animate-spin" />}
-          Delete
-        </button>
+const DeleteModal = ({ user, onConfirm, onCancel, deleting }) => {
+  const { t } = useLanguage();
+  return (
+    <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
+      <div className="bg-white rounded-2xl p-6 w-full max-w-md mx-4 shadow-2xl dark:bg-slate-950">
+        <h3 className="text-xl font-bold text-gray-800 mb-2 dark:text-white">{t("users.deleteUserTitle")}</h3>
+        <p className="text-gray-600 mb-6 dark:text-white">
+          {t("users.deleteUserConfirm")} <strong>{user.name}</strong>?
+        </p>
+        <div className="flex gap-3 justify-end">
+          <button onClick={onCancel} className="px-4 py-2 rounded-lg text-gray-600 hover:bg-gray-100 transition-colors">
+            {t("users.cancel")}
+          </button>
+          <button
+            onClick={onConfirm}
+            disabled={deleting}
+            className="px-4 py-2 rounded-lg bg-red-500 text-white hover:bg-red-600 transition-colors flex items-center gap-2 disabled:opacity-50"
+          >
+            {deleting && <Loader2 className="w-4 h-4 animate-spin" />}
+            {t("users.delete")}
+          </button>
+        </div>
       </div>
     </div>
-  </div>
-);
+  );
+}
 
 const AddUserForm = ({ onClose, onSubmit }) => {
+  const { t } = useLanguage();
   const [formData, setFormData] = useState({
     username: "",
     email: "",
@@ -520,7 +533,7 @@ const AddUserForm = ({ onClose, onSubmit }) => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (!formData.username || !formData.email || !formData.password) {
-      setFormError("Username, email and password are required.");
+      setFormError(t("users.requiredFieldsError") || "Username, email and password are required.");
       return;
     }
     setSubmitting(true);
@@ -531,7 +544,7 @@ const AddUserForm = ({ onClose, onSubmit }) => {
       onClose();
       setFormData({ username: "", email: "", password: "", phone: "", role: "customer" });
     } else {
-      setFormError(result.message || "Unable to create user. Please try again.");
+      setFormError(result.message || (t("users.createFail") || "Unable to create user. Please try again."));
     }
   };
 
@@ -543,8 +556,8 @@ const AddUserForm = ({ onClose, onSubmit }) => {
             <UserPlus className="w-5 h-5 text-white" />
           </div>
           <div>
-            <h3 className="font-semibold text-gray-800 dark:text-white">Create New User</h3>
-            <p className="text-xs text-gray-500">Fill in the details below to add a new user</p>
+            <h3 className="font-semibold text-gray-800 dark:text-white">{t("users.createNewUser")}</h3>
+            <p className="text-xs text-gray-500">{t("users.createNewUserDesc")}</p>
           </div>
         </div>
         <button onClick={onClose} className="text-gray-400 hover:text-gray-600 transition-colors">
@@ -560,7 +573,7 @@ const AddUserForm = ({ onClose, onSubmit }) => {
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-4">
           <div>
             <label className="block text-xs font-medium text-gray-600 mb-1.5 dark:text-gray-300">
-              USERNAME <span className="text-red-500">*</span>
+              {t("users.username")} <span className="text-red-500">*</span>
             </label>
             <input
               ref={nameInputRef}
@@ -575,7 +588,7 @@ const AddUserForm = ({ onClose, onSubmit }) => {
           </div>
           <div>
             <label className="block text-xs font-medium text-gray-600 mb-1.5 dark:text-white">
-              EMAIL <span className="text-red-500">*</span>
+              {t("users.email")} <span className="text-red-500">*</span>
             </label>
             <input
               type="email"
@@ -589,12 +602,12 @@ const AddUserForm = ({ onClose, onSubmit }) => {
           </div>
           <div>
             <label className="block text-xs font-medium text-gray-600 mb-1.5 dark:text-white">
-              PASSWORD <span className="text-red-500">*</span>
+              {t("users.password")} <span className="text-red-500">*</span>
             </label>
             <input
               type="password"
               name="password"
-              placeholder="Min. 6 characters"
+              placeholder={t("users.minChars")}
               value={formData.password}
               onChange={handleChange}
               required
@@ -604,7 +617,7 @@ const AddUserForm = ({ onClose, onSubmit }) => {
           </div>
           <div>
             <label className="block text-xs font-medium text-gray-600 mb-1.5 dark:text-white">
-              PHONE
+              {t("users.phone")}
             </label>
             <input
               type="tel"
@@ -617,14 +630,14 @@ const AddUserForm = ({ onClose, onSubmit }) => {
           </div>
         </div>
         <div className="flex items-center justify-between">
-          <p className="text-xs text-gray-400"><span className="text-red-500">*</span> Required fields</p>
+          <p className="text-xs text-gray-400"><span className="text-red-500">*</span> {t("users.requiredFields")}</p>
           <div className="flex items-center gap-3">
             <button
               type="button"
               onClick={() => setFormData({ username: "", email: "", password: "", phone: "", role: "customer" })}
               className="px-5 py-2.5 text-sm font-medium text-gray-600 bg-gray-100 rounded-xl hover:bg-gray-200 transition-colors dark:bg-slate-800 dark:text-gray-400 dark:hover:bg-slate-700"
             >
-              Clear
+              {t("users.clear")}
             </button>
             <button
               type="submit"
@@ -633,7 +646,7 @@ const AddUserForm = ({ onClose, onSubmit }) => {
             >
               {submitting && <Loader2 className="w-4 h-4 animate-spin" />}
               <UserPlus className="w-4 h-4" />
-              Create User
+              {t("users.createUserBtn")}
             </button>
           </div>
         </div>
@@ -645,6 +658,7 @@ const AddUserForm = ({ onClose, onSubmit }) => {
 /*Main--> */
 const Users = () => {
   const { users, stats, loading, error, fetchUsers, deleteUser, verifyUser, updateUserRole, addUser, updateUser } = useUsers();
+  const { t } = useLanguage();
 
   const [searchQuery, setSearchQuery] = useState("");
   const [showAddForm, setShowAddForm] = useState(false);
@@ -681,7 +695,7 @@ const Users = () => {
       setDeleteModalOpen(false);
       setUserToDelete(null);
     } else {
-      alert(result.message);
+      toast.error(result.message);
     }
   };
 
@@ -689,7 +703,7 @@ const Users = () => {
     setActionLoading((prev) => ({ ...prev, [userId]: "verify" }));
     const result = await verifyUser(userId);
     setActionLoading((prev) => ({ ...prev, [userId]: null }));
-    if (!result.success) alert(result.message);
+    if (!result.success) toast.error(result.message);
   };
 
   const handleToggleRole = async (user) => {
@@ -697,7 +711,7 @@ const Users = () => {
     setActionLoading((prev) => ({ ...prev, [user._id]: "role" }));
     const result = await updateUserRole(user._id, newRole);
     setActionLoading((prev) => ({ ...prev, [user._id]: null }));
-    if (!result.success) alert(result.message);
+    if (!result.success) toast.error(result.message);
   };
 
   /* ===== EDIT HANDLER ===== */
@@ -717,18 +731,18 @@ const Users = () => {
         {/* Page Title & Search */}
         <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between mb-8">
           <div>
-            <p className="text-cyan-500 text-xs font-bold tracking-widest uppercase mb-1">User Management</p>
-            <h2 className="text-3xl font-bold text-gray-800 dark:text-white">Manage Users</h2>
+            <p className="text-cyan-500 text-xs font-bold tracking-widest uppercase mb-1">{t("users.management")}</p>
+            <h2 className="text-3xl font-bold text-gray-800 dark:text-white">{t("users.manageUsers")}</h2>
           </div>
           <div className="flex flex-col gap-3 sm:flex-row sm:items-center">
             <div className="relative w-full sm:w-80">
-              <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
+              <Search className="absolute inset-inline-start-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
               <input
                 type="text"
-                placeholder="Search users..."
+                placeholder={t("users.search")}
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                className="pl-10 pr-4 py-3 w-full bg-white border border-gray-400 border-3 rounded-2xl text-sm focus:outline-none focus:ring-2 focus:ring-cyan-500 focus:border-transparent dark:bg-slate-900 dark:text-gray-400"
+                className="px-10 py-3 w-full bg-white border border-gray-400 border-3 rounded-2xl text-sm focus:outline-none focus:ring-2 focus:ring-cyan-500 focus:border-transparent dark:bg-slate-900 dark:text-gray-400"
               />
             </div>
             <button
@@ -736,7 +750,7 @@ const Users = () => {
               className="inline-flex items-center justify-center gap-2 px-4 py-3 bg-cyan-500 text-white rounded-2xl text-sm font-medium hover:bg-cyan-600 transition-colors"
             >
               <Plus className="w-4 h-4" />
-              Add User
+              {t("users.addUser")}
               <ChevronDown className={`w-3 h-3 transition-transform ${showAddForm ? "rotate-180" : ""}`} />
             </button>
           </div>
@@ -749,17 +763,17 @@ const Users = () => {
 
         {/* Stats Cards */}
         <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-5 mb-8 dark:bg-slate-900">
-          <StatCard title="Total Users" value={stats.totalUsers} icon={UsersIcon} color="bg-cyan-500" className="dark:bg-slate-900" />
-          <StatCard title="Admins" value={stats.admins} icon={Shield} color="bg-purple-500" />
-          <StatCard title="Customers" value={stats.customers} icon={UsersIcon} color="bg-emerald-500" />
-          <StatCard title="Verified" value={stats.verified} icon={UserCheck} color="bg-sky-500" />
+          <StatCard title={t("users.totalUsers")} value={stats.totalUsers} icon={UsersIcon} color="bg-cyan-500" className="dark:bg-slate-900" />
+          <StatCard title={t("users.admins")} value={stats.admins} icon={Shield} color="bg-purple-500" />
+          <StatCard title={t("users.customers")} value={stats.customers} icon={UsersIcon} color="bg-emerald-500" />
+          <StatCard title={t("users.verifiedStats")} value={stats.verified} icon={UserCheck} color="bg-sky-500" />
         </div>
 
       {/* Loading State */}
       {loading && (
         <div className="flex items-center justify-center py-20">
           <Loader2 className="w-8 h-8 text-cyan-500 animate-spin" />
-          <span className="ml-3 text-gray-500">Loading users...</span>
+          <span className="mx-3 text-gray-500">{t("users.loading")}</span>
         </div>
       )}
 
@@ -768,7 +782,7 @@ const Users = () => {
         <div className="bg-red-50 border border-red-200 rounded-xl p-6 text-center">
           <p className="text-red-600 mb-3">{error}</p>
           <button onClick={fetchUsers} className="px-4 py-2 bg-red-500 text-white rounded-lg text-sm hover:bg-red-600 transition-colors">
-            Try Again
+            {t("users.tryAgain")}
           </button>
         </div>
       )}
@@ -781,17 +795,17 @@ const Users = () => {
               <table className="w-full  dark:bg-slate-900">
                 <thead>
                   <tr className="border-b dark:border-gray-100">
-                    <th className="text-left text-sm font-medium text-gray-500 px-6 py-4">User</th>
-                    <th className="text-left text-sm font-medium text-gray-500 px-6 py-4">Role</th>
-                    <th className="text-left text-sm font-medium text-gray-500 px-6 py-4">Verified</th>
-                    <th className="text-left text-sm font-medium text-gray-500 px-6 py-4">Actions</th>
+                    <th className="text-start text-sm font-medium text-gray-500 px-6 py-4">{t("users.userCol")}</th>
+                    <th className="text-start text-sm font-medium text-gray-500 px-6 py-4">{t("users.roleCol")}</th>
+                    <th className="text-start text-sm font-medium text-gray-500 px-6 py-4">{t("users.verifiedCol")}</th>
+                    <th className="text-start text-sm font-medium text-gray-500 px-6 py-4">{t("users.actionsCol")}</th>
                   </tr>
                 </thead>
                 <tbody>
                   {filteredUsers.length === 0 ? (
                     <tr>
                       <td colSpan={4} className="text-center py-12 text-gray-400 ">
-                        {searchQuery ? "No users match your search." : "No users found."}
+                        {searchQuery ? t("users.noMatch") : t("users.noUsers")}
                       </td>
                     </tr>
                   ) : (
@@ -818,18 +832,18 @@ const Users = () => {
                         <td className="px-6 py-4"><VerifiedBadge isVerified={user.isVerified} /></td>
                         <td className="px-6 py-4">
                           <div className="flex items-center gap-2">
-                            <ActionButton icon={Pencil} color="bg-blue-500 hover:bg-blue-600" onClick={() => handleEdit(user)} title="Edit" />
+                            <ActionButton icon={Pencil} color="bg-blue-500 hover:bg-blue-600" onClick={() => handleEdit(user)} title={t("users.edit")} />
                             <ActionButton
                               icon={actionLoading[user._id] === "role" ? Loader2 : ShieldCheck}
                               color={`${user.role === "admin" ? "bg-purple-500 hover:bg-purple-600" : "bg-emerald-500 hover:bg-emerald-600"} ${actionLoading[user._id] === "role" ? "animate-spin" : ""}`}
                               onClick={() => handleToggleRole(user)}
-                              title={user.role === "admin" ? "Demote to Customer" : "Promote to Admin"}
+                              title={user.role === "admin" ? t("users.demote") : t("users.promote")}
                             />
                             <ActionButton
                               icon={actionLoading[user._id] === "delete" ? Loader2 : Trash2}
                               color="bg-red-500 hover:bg-red-600"
                               onClick={() => handleDeleteClick(user)}
-                              title="Delete"
+                              title={t("users.delete")}
                             />
                           </div>
                         </td>
@@ -844,7 +858,7 @@ const Users = () => {
           <div className="lg:hidden">
             {filteredUsers.length === 0 ? (
               <div className="rounded-3xl border border-gray-100 bg-white p-8 text-center text-gray-400">
-                {searchQuery ? "No users match your search." : "No users found."}
+                {searchQuery ? t("users.noMatch") : t("users.noUsers")}
               </div>
             ) : (
               filteredUsers.map((user) => (

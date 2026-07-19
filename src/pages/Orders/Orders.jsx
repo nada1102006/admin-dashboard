@@ -16,8 +16,10 @@ import { MdOutlineClear } from "react-icons/md";
 import { FaHashtag } from "react-icons/fa6";
 import { GoDotFill } from "react-icons/go";
 import "./Orders.css";
+import { useLanguage } from "../../Context/LanguageContext";
 
 function Orders() {
+  const { t } = useLanguage();
   //  data
   const [orders, setOrders] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -255,19 +257,19 @@ function Orders() {
       }
 
       const statusMap = {
-        pending: "Pending",
-        confirmed: "Confirmed",
-        processing: "Processing",
-        shipped: "Shipped",
-        delivered: "Delivered",
-        cancelled: "Cancelled",
-        returned: "Returned",
+        pending: t("common.pending"),
+        confirmed: t("common.confirmed"),
+        processing: t("common.processing"),
+        shipped: t("common.shipped"),
+        delivered: t("common.delivered"),
+        cancelled: t("common.cancelled"),
+        returned: t("common.returned"),
       };
 
       const paymentStatusMap = {
-        pending: "Pending",
-        paid: "Paid",
-        failed: "Failed",
+        pending: t("common.pending"),
+        paid: t("common.paid"),
+        failed: t("common.failed"),
       };
 
       const statusColorMap = {
@@ -296,12 +298,12 @@ function Orders() {
         status: statusMap[order.status] || order.status,
         statusColor: statusColorMap[order.status] || "amber",
         payment: paymentStatusMap[order.paymentStatus] || order.paymentStatus,
-        method: order.paymentMethod || "cash",
+        method: t(`common.${order.paymentMethod}`) || order.paymentMethod || t("common.cash"),
         total: `${formatPrice(order.totalPrice)} EGP`,
         raw: order,
       };
     });
-  }, [orders]);
+  }, [orders, t]);
 
   //  filters
   const filteredOrders = useMemo(() => {
@@ -315,15 +317,15 @@ function Orders() {
 
       const matchesStatus =
         statusFilter === "" ||
-        order.status.toLowerCase() === statusFilter.toLowerCase();
+        order.raw.status.toLowerCase() === statusFilter.toLowerCase();
 
       const matchesPayment =
         paymentFilter === "" ||
-        order.payment.toLowerCase() === paymentFilter.toLowerCase();
+        order.raw.paymentStatus.toLowerCase() === paymentFilter.toLowerCase();
 
       const matchesMethod =
         methodFilter === "" ||
-        order.method.toLowerCase() === methodFilter.toLowerCase();
+        (order.raw.paymentMethod || "cash").toLowerCase() === methodFilter.toLowerCase();
 
       return matchesSearch && matchesStatus && matchesPayment && matchesMethod;
     });
@@ -406,14 +408,14 @@ function Orders() {
         <div className="text-center text-red-600">
           <p className="text-xl font-bold flex gap-2 items-center justify-center text-sm md:text-lg">
             <BiSolidError />
-            Error
+            {t("orders.error")}
           </p>
           <p className="text-sm md:text-lg">{error}</p>
           <button
             onClick={fetchOrders}
             className="mt-4 px-4 py-2 cursor-pointer bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition text-xs sm:text-sm md:text-md "
           >
-            Try Again
+            {t("orders.tryAgain")}
           </button>
         </div>
       </div>
@@ -439,10 +441,10 @@ function Orders() {
           <div className="flex flex-wrap justify-between items-center gap-5 pb-5">
             <div>
               <p className="text-slate-500 text-[8.5px] min-[870px]:text-[10px] font-bold uppercase tracking-[2px]">
-                Admin · Management
+                {t("orders.adminManagement")}
               </p>
               <h1 className="mt-2  text-md min-[870px]:text-2xl capitalize font-bold tracking-[1px] text-slate-900 dark:text-white">
-                Orders
+                {t("orders.title")}
               </h1>
             </div>
             <div className="flex items-center justify-center gap-1.5 rounded-md min-[870px]:rounded-xl border border-slate-100 bg-white px-2 py-1 min-[870px]:px-3 min-[870px]:py-2 dark:border-slate-800 dark:bg-slate-900">
@@ -457,7 +459,7 @@ function Orders() {
                 )}
               </span>
               <span className="text-[10px] min-[870px]:text-sm text-slate-400 capitalize">
-                total orders
+                {t("orders.totalOrders")}
               </span>
             </div>
           </div>
@@ -469,7 +471,7 @@ function Orders() {
               <IoSearch className="cursor-pointer-none absolute top-[50%] translate-y-[-50%] left-3 text-slate-400 text-sm min-[870px]:text-md" />
               <input
                 type="search"
-                placeholder="Search ID, Customer…"
+                placeholder={t("orders.searchPlaceholder")}
                 value={searchTerm}
                 onChange={(e) =>
                   handleFilterChange(setSearchTerm, e.target.value)
@@ -485,14 +487,14 @@ function Orders() {
               }
               className="h-8 min-[870px]:h-10 rounded-md min-[870px]:rounded-lg border border-slate-200 bg-white px-3 text-[10px] min-[870px]:text-sm text-slate-700 outline-none transition focus:border-slate-400 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-200"
             >
-              <option value="">All statuses</option>
-              <option value="pending">Pending</option>
-              <option value="confirmed">Confirmed</option>
-              <option value="processing">Processing</option>
-              <option value="shipped">Shipped</option>
-              <option value="delivered">Delivered</option>
-              <option value="cancelled">Cancelled</option>
-              <option value="returned">Returned</option>
+              <option value="">{t("orders.allStatuses")}</option>
+              <option value="pending">{t("common.pending")}</option>
+              <option value="confirmed">{t("common.confirmed")}</option>
+              <option value="processing">{t("common.processing")}</option>
+              <option value="shipped">{t("common.shipped")}</option>
+              <option value="delivered">{t("common.delivered")}</option>
+              <option value="cancelled">{t("common.cancelled")}</option>
+              <option value="returned">{t("common.returned")}</option>
             </select>
 
             <select
@@ -502,10 +504,10 @@ function Orders() {
               }
               className="h-8 min-[870px]:h-10 rounded-md min-[870px]:rounded-lg border border-slate-200 bg-white px-3 text-[10px] min-[870px]:text-sm text-slate-700 outline-none transition focus:border-slate-400 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-200"
             >
-              <option value="">All payments</option>
-              <option value="pending">Pending</option>
-              <option value="paid">Paid</option>
-              <option value="failed">Failed</option>
+              <option value="">{t("orders.allPayments")}</option>
+              <option value="pending">{t("common.pending")}</option>
+              <option value="paid">{t("common.paid")}</option>
+              <option value="failed">{t("common.failed")}</option>
             </select>
 
             <select
@@ -515,9 +517,9 @@ function Orders() {
               }
               className="h-8 min-[870px]:h-10 rounded-md min-[870px]:rounded-lg border border-slate-200 bg-white px-3 text-[10px] min-[870px]:text-sm text-slate-700 outline-none transition focus:border-slate-400 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-200"
             >
-              <option value="">All methods</option>
-              <option value="cash">Cash</option>
-              <option value="stripe">Stripe</option>
+              <option value="">{t("orders.allMethods")}</option>
+              <option value="cash">{t("common.cash")}</option>
+              <option value="stripe">{t("common.stripe")}</option>
             </select>
 
             {(searchTerm || statusFilter || paymentFilter || methodFilter) && (
@@ -531,7 +533,7 @@ function Orders() {
                 }}
                 className="flex justify-center items-center gap-1  h-10 rounded-lg border border-slate-200 bg-white px-3 text-sm text-slate-700 outline-none transition focus:border-slate-400 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-200"
               >
-                <MdOutlineClear className=" text-md md:text-lg" /> Clear filters
+                <MdOutlineClear className=" text-md md:text-lg" /> {t("orders.clearFilters")}
               </button>
             )}
           </div>
@@ -550,22 +552,22 @@ function Orders() {
                   <thead>
                     <tr className="border-b border-slate-100 bg-slate-50/90 dark:border-slate-800 dark:bg-slate-800/55">
                       <th className="px-4 py-3  min-[870px]:p-5 text-left text-[9px] min-[870px]:text-[11px] font-bold uppercase tracking-widest text-slate-400 ">
-                        Order
+                        {t("orders.order")}
                       </th>
                       <th className="px-4 py-3  min-[870px]:p-5 text-left text-[9px] min-[870px]:text-[11px] font-bold uppercase tracking-widest text-slate-400 ">
-                        Customer
+                        {t("orders.customer")}
                       </th>
                       <th className="px-4 py-3  min-[870px]:p-5 text-left text-[9px] min-[870px]:text-[11px] font-bold uppercase tracking-widest text-slate-400 ">
-                        Date
+                        {t("orders.date")}
                       </th>
                       <th className="px-4 py-3  min-[870px]:p-5 text-left text-[9px] min-[870px]:text-[11px] font-bold uppercase tracking-widest text-slate-400 ">
-                        Status
+                        {t("orders.status")}
                       </th>
                       <th className="px-4 py-3  min-[870px]:p-5 text-left text-[9px] min-[870px]:text-[11px] font-bold uppercase tracking-widest text-slate-400 ">
-                        Payment
+                        {t("orders.payment")}
                       </th>
                       <th className="px-4 py-3  min-[870px]:p-5 text-left text-[9px] min-[870px]:text-[11px] font-bold uppercase tracking-widest text-slate-400 ">
-                        Total
+                        {t("orders.total")}
                       </th>
                     </tr>
                   </thead>
@@ -634,7 +636,7 @@ function Orders() {
                           colSpan="6"
                           className="px-4 py-8 text-center text-sm text-slate-500"
                         >
-                          No orders found matching your filters
+                          {t("orders.noOrders")}
                         </td>
                       </tr>
                     )}

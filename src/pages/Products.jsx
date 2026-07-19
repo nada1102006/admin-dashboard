@@ -9,11 +9,13 @@ import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import api from "../api/api";
 import QuickEdit from "./quickEdit";
+import { useLanguage } from "../Context/LanguageContext";
 
 const categories = ["Electronics", "Phones", "Fashion", "Home", "Beauty", "Sports"];
 
 export default function Products() {
   const navigate = useNavigate();
+  const { t } = useLanguage();
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
@@ -80,7 +82,7 @@ export default function Products() {
   };
 
   const deleteProduct = async (id) => {
-    if (!window.confirm("Are you sure you want to delete this product?")) return;
+    if (!window.confirm(t("products.deleteConfirm"))) return;
     
     const previousProducts = [...products];
     setProducts(products.filter(p => p._id !== id));
@@ -88,11 +90,11 @@ export default function Products() {
     try {
       setDeletingId(id);
       await api.delete(`/products/${id}`);
-      toast.success("Product deleted successfully");
+      toast.success(t("products.deleteSuccess"));
       setRefreshKey(k => k + 1);
     } catch (err) {
       setProducts(previousProducts);
-      toast.error(err?.response?.data?.message || "Failed to delete product. Please check your permissions.");
+      toast.error(err?.response?.data?.message || t("products.deleteFail"));
     } finally {
       setDeletingId("");
     }
@@ -110,10 +112,10 @@ export default function Products() {
             </div>
             <div className="flex flex-col justify-center pt-1">
               <span className="text-[11px] font-bold tracking-[0.25em] text-[#20a1b6] uppercase mb-1">
-                Product Dashboard
+                {t("products.dashboard")}
               </span>
               <h1 className="text-[32px] leading-none font-black text-[#121926] tracking-tight dark:text-white">
-                Products
+                {t("products.title")}
               </h1>
             </div>
           </div>
@@ -122,30 +124,30 @@ export default function Products() {
             className="flex items-center justify-center gap-2 px-6 py-3.5 bg-[#00bad5] hover:bg-[#00a3bb] active:scale-95 text-white text-[15px] font-semibold rounded-2xl transition-all shadow-[0_4px_14px_0_rgba(0,186,213,0.3)]"
           >
             <FiPlus className="w-5 h-5 stroke-[2.5]" />
-            Add Product
+            {t("products.addProduct")}
           </button>
         </div>
 
         {/* Stats Section */}
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4 lg:gap-6">
-          <StatCard icon={<FiBox />} value={stats.total} label="Total" tone="cyan" />
-          <StatCard icon={<FiStar />} value={stats.featured} label="Featured" tone="amber" />
-          <StatCard icon={<FiTrendingUp />} value={stats.inStock} label="In Stock" tone="emerald" />
-          <StatCard icon={<FiPackage />} value={stats.outOfStock} label="Out of Stock" tone="rose" />
+          <StatCard icon={<FiBox />} value={stats.total} label={t("products.total")} tone="cyan" />
+          <StatCard icon={<FiStar />} value={stats.featured} label={t("products.featured")} tone="amber" />
+          <StatCard icon={<FiTrendingUp />} value={stats.inStock} label={t("products.inStock")} tone="emerald" />
+          <StatCard icon={<FiPackage />} value={stats.outOfStock} label={t("products.outOfStock")} tone="rose" />
         </div>
 
         {/* Search & Filters */}
         <div className="rounded-[28px] bg-white p-5 lg:p-6 shadow-[0_2px_20px_rgba(0,0,0,0.02)] border border-slate-100 dark:bg-slate-900 dark:border-slate-800 dark:text-white">
           <div className="flex flex-col gap-4 sm:flex-row sm:items-center dark:bg-slate-900 dark:text-white">
             <div className="relative flex-1 group">
-              <FiSearch className="absolute left-5 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-[#00bad5] w-5 h-5 transition-colors" />
+              <FiSearch className="absolute inset-inline-start-5 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-[#00bad5] w-5 h-5 transition-colors" />
               <input
                 type="text"
-                placeholder="Search products..."
+                placeholder={t("products.searchPlaceholder")}
                 value={filters.search}
                 onChange={(e) => updateFilter("search", e.target.value)}
                 onKeyDown={(e) => e.key === "Enter" && applyFilters()}
-                className="h-13 w-full rounded-2xl border border-slate-200 bg-[#fafdfd] pl-12 pr-4 text-[15px] text-[#121926] outline-none transition-all focus:border-[#00bad5] focus:ring-1 focus:ring-[#00bad5] placeholder:text-slate-400 dark:border-slate-700 dark:bg-slate-800 dark:text-white"
+                className="h-13 w-full rounded-2xl border border-slate-200 bg-[#fafdfd] ps-12 pe-4 text-[15px] text-[#121926] outline-none transition-all focus:border-[#00bad5] focus:ring-1 focus:ring-[#00bad5] placeholder:text-slate-400 dark:border-slate-700 dark:bg-slate-800 dark:text-white"
               />
             </div>
             <div className="flex gap-3">
@@ -158,13 +160,13 @@ export default function Products() {
                 }`}
               >
                 <FiSliders className="w-4 h-4" />
-                Filters
+                {t("products.filters")}
               </button>
               <button 
                 onClick={applyFilters}
                 className="flex h-13 items-center justify-center gap-2 rounded-2xl bg-[#00bad5] hover:bg-[#00a3bb] px-8 text-[15px] font-semibold text-white transition-all shadow-[0_4px_14px_0_rgba(0,186,213,0.2)]"
               >
-                Search
+                {t("products.search")}
               </button>
             </div>
           </div>
@@ -172,21 +174,21 @@ export default function Products() {
           <div className={`grid transition-all duration-300 ease-in-out ${filtersOpen ? "grid-rows-[1fr] opacity-100 mt-5" : "grid-rows-[0fr] opacity-0"}`}>
             <div className="overflow-hidden">
               <div className="grid grid-cols-1 gap-5 border-t border-slate-100 pt-6 sm:grid-cols-2">
-                <FilterField label="CATEGORY" icon={<FiLayers />}>
+                <FilterField label={t("products.category")} icon={<FiLayers />}>
                   <select 
                     value={filters.category}
                     onChange={(e) => updateFilter("category", e.target.value)}
                     className="h-[52px] w-full rounded-[16px] border border-slate-200 bg-white px-4 text-[15px] text-slate-700 outline-none transition-colors hover:border-slate-300 focus:border-[#00bad5] focus:ring-1 focus:ring-[#00bad5] dark:border-slate-700 dark:bg-slate-800 dark:text-white"
                   >
-                    <option value="">All Categories</option>
+                    <option value="">{t("products.allCategories")}</option>
                     {categories.map(c => <option key={c} value={c}>{c}</option>)}
                   </select>
                 </FilterField>
                 
-                <FilterField label="SUBCATEGORY" icon={<FiTag />}>
+                <FilterField label={t("products.subcategory")} icon={<FiTag />}>
                   <input 
                     type="text" 
-                    placeholder="e.g. smartphones" 
+                    placeholder={t("products.subcategoryPlaceholder")} 
                     value={filters.subcategory}
                     onChange={(e) => updateFilter("subcategory", e.target.value)}
                     className="h-13 w-full rounded-2xl border border-slate-200 bg-white px-4 text-[15px] text-slate-700 outline-none transition-colors hover:border-slate-300 focus:border-[#00bad5] focus:ring-1 focus:ring-[#00bad5] placeholder:text-slate-400 dark:border-slate-700 dark:bg-slate-800 dark:text-white" 
@@ -223,6 +225,7 @@ export default function Products() {
                     setSelectedProduct(product); 
                     setIsQuickEditOpen(true); 
                   }}
+                  t={t}
                 />
               ))}
             </div>
@@ -237,7 +240,7 @@ export default function Products() {
                 >
                   <FiChevronLeft />
                 </button>
-                <span className="text-sm font-semibold text-slate-600 px-4 dark:text-slate-400">Page {page} of {totalPages}</span>
+                <span className="text-sm font-semibold text-slate-600 px-4 dark:text-slate-400">{t("products.page")} {page} {t("products.of")} {totalPages}</span>
                 <button 
                   disabled={page === totalPages} 
                   onClick={() => setPage(p => p + 1)} 
@@ -253,8 +256,8 @@ export default function Products() {
             <div className="w-20 h-20 flex items-center justify-center rounded-full bg-slate-50 text-slate-400 mb-4 dark:bg-slate-800">
               <FiPackage size={32} />
             </div>
-            <h3 className="text-xl font-bold text-slate-900 mb-2 dark:text-white">No products found</h3>
-            <p className="text-slate-500 dark:text-slate-400">Try adjusting your search or filters.</p>
+            <h3 className="text-xl font-bold text-slate-900 mb-2 dark:text-white">{t("products.noProducts")}</h3>
+            <p className="text-slate-500 dark:text-slate-400">{t("products.tryAdjusting")}</p>
           </div>
         )}
       </div>
@@ -310,7 +313,7 @@ function FilterField({ label, icon, children }) {
   );
 }
 
-function ProductCard({ product, isDeleting, onDelete, onQuickEdit }) {
+function ProductCard({ product, isDeleting, onDelete, onQuickEdit, t }) {
   const stock = Number(product.stock) || 0;
   
   return (
@@ -321,14 +324,14 @@ function ProductCard({ product, isDeleting, onDelete, onQuickEdit }) {
         
         {/* Featured Badge */}
         {product.featured && (
-          <div className="absolute left-4 top-4 inline-flex items-center gap-1.5 rounded-full bg-amber-400 px-3 py-1.5 text-[11px] font-bold uppercase tracking-wider text-amber-950 shadow-sm z-10">
-            <FiStar size={12} className="fill-amber-950" /> Featured
+          <div className="absolute inset-inline-start-4 top-4 inline-flex items-center gap-1.5 rounded-full bg-amber-400 px-3 py-1.5 text-[11px] font-bold uppercase tracking-wider text-amber-950 shadow-sm z-10">
+            <FiStar size={12} className="fill-amber-950" /> {t("products.featured")}
           </div>
         )}
         
         {/* Stock Badge */}
-        <div className={`absolute bottom-4 right-4 rounded-full px-3 py-1.5 text-[12px] font-bold shadow-sm z-10 ${stock > 0 ? "bg-[#dcfce7] text-[#16a34a] dark:bg-emerald-900/30 dark:text-emerald-400" : "bg-rose-100 text-rose-700 dark:bg-rose-900/30 dark:text-rose-400"}`}>
-          {stock > 0 ? `${stock} in stock` : "Out of stock"}
+        <div className={`absolute bottom-4 inset-inline-end-4 rounded-full px-3 py-1.5 text-[12px] font-bold shadow-sm z-10 ${stock > 0 ? "bg-[#dcfce7] text-[#16a34a] dark:bg-emerald-900/30 dark:text-emerald-400" : "bg-rose-100 text-rose-700 dark:bg-rose-900/30 dark:text-rose-400"}`}>
+          {stock > 0 ? `${stock} ${t("products.inStockCount")}` : t("products.outOfStock")}
         </div>
       </div>
 
@@ -343,7 +346,7 @@ function ProductCard({ product, isDeleting, onDelete, onQuickEdit }) {
         </p>
         
         <p className="mt-3 line-clamp-1 text-[14px] text-slate-500 dark:text-slate-400">
-          {product.shortDescription || product.description || "No description available."}
+          {product.shortDescription || product.description || t("products.noDescription")}
         </p>
 
         {/* Price & Tags */}
@@ -371,15 +374,15 @@ function ProductCard({ product, isDeleting, onDelete, onQuickEdit }) {
         {/* Action Buttons */}
         <div className="mt-6 flex flex-wrap items-center justify-between gap-3 border-t border-slate-100 pt-5 dark:border-slate-800">
           <div className="flex flex-wrap gap-2">
-            <ActionBtn icon={<FiEye />} label="View" to={`/products/${product._id}`} />
-            <ActionBtn icon={<FiEdit2 />} label="Edit" to={`/products/${product._id}/edit`} />
+            <ActionBtn icon={<FiEye />} label={t("products.view")} to={`/products/${product._id}`} />
+            <ActionBtn icon={<FiEdit2 />} label={t("products.edit")} to={`/products/${product._id}/edit`} />
             
             <button 
               type="button"
               onClick={onQuickEdit}
               className="flex items-center gap-1.5 rounded-[14px] border border-slate-100 bg-white px-3.5 py-2 text-[12px] font-semibold text-slate-600 transition-colors hover:border-slate-200 hover:bg-slate-50 shadow-sm dark:border-slate-700 dark:bg-slate-800 dark:text-slate-300 dark:hover:border-slate-600 dark:hover:bg-slate-700"
             >
-              <FiSliders size={14} /> Quick Edit
+              <FiSliders size={14} /> {t("products.quickEdit")}
             </button>
           </div>
 
@@ -390,7 +393,7 @@ function ProductCard({ product, isDeleting, onDelete, onQuickEdit }) {
             className="flex items-center gap-1.5 rounded-[14px] border border-rose-100 bg-rose-50 px-3.5 py-2 text-[12px] font-semibold text-rose-600 transition-colors disabled:opacity-50 dark:border-rose-900/50 dark:bg-rose-900/20 dark:text-rose-400 dark:hover:bg-rose-900/40"
           >
             <FiTrash2 size={14} />
-            <span>{isDeleting ? "..." : "Delete"}</span>
+            <span>{isDeleting ? "..." : t("products.delete")}</span>
           </button>
         </div>
       </div>

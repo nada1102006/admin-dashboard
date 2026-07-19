@@ -4,7 +4,7 @@ import { IoCloseSharp } from "react-icons/io5";
 import { GoDotFill } from "react-icons/go";
 import { FiMinus } from "react-icons/fi";
 import { TbReorder } from "react-icons/tb";
-import { useEffect, useState } from "react";
+import { useLanguage } from "../../Context/LanguageContext";
 
 function OrderSidebar({
   isSidebarOpen,
@@ -21,6 +21,7 @@ function OrderSidebar({
   getStatusDot,
   formatPrice,
 }) {
+  const { t } = useLanguage();
   return (
     <>
       {/* background */}
@@ -79,7 +80,7 @@ function OrderSidebar({
               {/* status & payment */}
               <div className="flex flex-wrap items-center gap-3 pb-2">
                 <span
-                  className={`flex items-center justify-center gap-0.5 rounded-full ring-1 font-medium px-3 py-1 text-[10px] min-[850px]:text-xs ${getStatusColors(selectedOrder.status, selectedOrder.statusColor)}`}
+                  className={`flex items-center justify-center gap-0.5 rounded-full ring-1 font-medium px-3 py-1 text-[10px] min-[850px]:text-xs ${getStatusColors(selectedOrder.raw.status, selectedOrder.statusColor)}`}
                 >
                   <GoDotFill
                     className={`text-xs min-[850px]:text-sm ${getStatusDot(selectedOrder.statusColor)}`}
@@ -238,13 +239,13 @@ function OrderSidebar({
                     disabled={isUpdating}
                     className="w-full rounded-md min-[850px]:rounded-lg border border-slate-200 bg-slate-50 px-3 py-2 text-xs min-[850px]:text-sm text-slate-800 outline-none transition focus:border-slate-400 dark:border-slate-700 dark:bg-slate-800 dark:text-slate-100 disabled:opacity-50 "
                   >
-                    <option value="pending">Pending</option>
-                    <option value="confirmed">Confirmed</option>
-                    <option value="processing">Processing</option>
-                    <option value="shipped">Shipped</option>
-                    <option value="delivered">Delivered</option>
-                    <option value="cancelled">Cancelled</option>
-                    <option value="returned">Returned</option>
+                    <option value="pending">{t("common.pending")}</option>
+                    <option value="confirmed">{t("common.confirmed")}</option>
+                    <option value="processing">{t("common.processing")}</option>
+                    <option value="shipped">{t("common.shipped")}</option>
+                    <option value="delivered">{t("common.delivered")}</option>
+                    <option value="cancelled">{t("common.cancelled")}</option>
+                    <option value="returned">{t("common.returned")}</option>
                   </select>
 
                   <textarea

@@ -21,27 +21,27 @@ body {
 }
 
 .pending {
-  border-left: 5px solid gold;
+  border-inline-start: 5px solid gold;
 }
 
 .processing {
-  border-left: 5px solid dodgerblue;
+  border-inline-start: 5px solid dodgerblue;
 }
 
 .confirmed {
-  border-left: 5px solid deepskyblue;
+  border-inline-start: 5px solid deepskyblue;
 }
 
 .shipped {
-  border-left: 5px solid purple;
+  border-inline-start: 5px solid purple;
 }
 
 .delivered {
-  border-left: 5px solid green;
+  border-inline-start: 5px solid green;
 }
 
 .cancelled {
-  border-left: 5px solid red;
+  border-inline-start: 5px solid red;
 }
 
 
@@ -103,7 +103,7 @@ body {
 .cards-grid .card-icon {
   position: absolute;
   top: 24px;
-  right: 24px;
+  inset-inline-end: 24px;
   width: 58px;
   height: 58px;
   border-radius: 18px;

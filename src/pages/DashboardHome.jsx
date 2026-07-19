@@ -10,6 +10,7 @@ import {
   FaUsers,
   FaBoxOpen,
 } from "react-icons/fa";
+import { useLanguage } from "../Context/LanguageContext";
 
 const formatCurrency = (amount) => {
   return new Intl.NumberFormat("en-US", {
@@ -28,7 +29,7 @@ const formatDate = (dateString) => {
 
 const actualStatusConfig = {
   pending: {
-    label: "PENDING",
+    labelKey: "status.pending",
     color: "text-amber-500 dark:text-amber-400",
     bg: "bg-amber-50 dark:bg-amber-950/40",
     border: "border-amber-200 dark:border-amber-900/50",
@@ -36,7 +37,7 @@ const actualStatusConfig = {
     badgeText: "text-amber-700 dark:text-amber-400",
   },
   processing: {
-    label: "PROCESSING",
+    labelKey: "status.processing",
     color: "text-sky-500 dark:text-sky-400",
     bg: "bg-sky-50 dark:bg-sky-950/40",
     border: "border-sky-200 dark:border-sky-900/50",
@@ -44,7 +45,7 @@ const actualStatusConfig = {
     badgeText: "text-sky-700 dark:text-sky-400",
   },
   confirmed: {
-    label: "CONFIRMED",
+    labelKey: "status.confirmed",
     color: "text-cyan-500 dark:text-cyan-400",
     bg: "bg-cyan-50 dark:bg-cyan-950/40",
     border: "border-cyan-200 dark:border-cyan-900/50",
@@ -52,7 +53,7 @@ const actualStatusConfig = {
     badgeText: "text-cyan-700 dark:text-cyan-400",
   },
   shipped: {
-    label: "SHIPPED",
+    labelKey: "status.shipped",
     color: "text-violet-500 dark:text-violet-400",
     bg: "bg-violet-50 dark:bg-violet-950/40",
     border: "border-violet-200 dark:border-violet-900/50",
@@ -60,7 +61,7 @@ const actualStatusConfig = {
     badgeText: "text-violet-700 dark:text-violet-400",
   },
   delivered: {
-    label: "DELIVERED",
+    labelKey: "status.delivered",
     color: "text-emerald-500 dark:text-emerald-400",
     bg: "bg-emerald-50 dark:bg-emerald-950/40",
     border: "border-emerald-200 dark:border-emerald-900/50",
@@ -68,7 +69,7 @@ const actualStatusConfig = {
     badgeText: "text-emerald-700 dark:text-emerald-400",
   },
   cancelled: {
-    label: "CANCELLED",
+    labelKey: "status.cancelled",
     color: "text-rose-500 dark:text-rose-400",
     bg: "bg-rose-50 dark:bg-rose-950/40",
     border: "border-rose-200 dark:border-rose-900/50",
@@ -81,6 +82,7 @@ export default function DashboardHome() {
   const [data, setData] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const { t } = useLanguage();
 
   useEffect(() => {
     const getDashboard = async () => {
@@ -166,7 +168,7 @@ export default function DashboardHome() {
    return (
     <div className="flex flex-col items-center justify-center min-h-[500px] w-full">
       <LuLoaderCircle className="w-12 h-12 animate-spin text-cyan-400 mb-4" />
-      <p className="text-slate-400 animate-pulse">Loading dashboard data...</p>
+      <p className="text-slate-400 animate-pulse">{t("dashboard.loadingDashboard")}</p>
     </div>
   );
   }
@@ -174,7 +176,7 @@ export default function DashboardHome() {
   if (error) {
     return (
       <div className="p-8 text-center text-red-500 bg-red-50 rounded-xl m-6">
-        Error: {error}
+        {t("common.error")}: {error}
       </div>
     );
   }
@@ -183,63 +185,63 @@ export default function DashboardHome() {
 
   const cards = [
     {
-      title: "Total Orders",
+      title: t("dashboard.totalOrders"),
       value: data?.orders?.total || 0,
       icon: <FaShoppingBag />,
       color: "#e546b5",
       bg: "#EEF2FF",
-      caption: "All orders received",
+      caption: t("dashboard.allOrdersReceived"),
     },
     {
-      title: "Pending Orders",
+      title: t("dashboard.pendingOrders"),
       value: data?.orders?.pending || 0,
       icon: <FaClock />,
       color: "#F59E0B",
       bg: "#FEF3C7",
-      caption: "Awaiting action",
+      caption: t("dashboard.awaitingAction"),
     },
     {
-      title: "Revenue",
+      title: t("dashboard.revenue"),
       value: formatCurrency(data?.revenue?.total || 0),
       icon: <FaDollarSign />,
       color: "#10B981",
       bg: "#D1FAE5",
-      caption: "Total gross revenue",
+      caption: t("dashboard.totalGrossRevenue"),
     },
     {
-      title: "This Month",
+      title: t("dashboard.thisMonth"),
       value: formatCurrency(data?.revenue?.lastMonth || 0),
       icon: <FaChartLine />,
       color: "#EC4899",
       bg: "#FCE7F3",
-      caption: "Monthly sales target",
+      caption: t("dashboard.monthlySalesTarget"),
     },
     {
-      title: "Users",
+      title: t("dashboard.users"),
       value: data?.totalCustomers || 0,
       icon: <FaUsers />,
       color: "#3B82F6",
       bg: "#DBEAFE",
-      caption: "Customers who ordered",
+      caption: t("dashboard.customersWhoOrdered"),
     },
     {
-      title: "Top Product",
+      title: t("dashboard.topProduct"),
       value: data?.topProducts?.[0]?.totalSold || 0,
       icon: <FaBoxOpen />,
       color: "#8B5CF6",
       bg: "#EDE9FE",
       caption: data?.topProducts?.[0]?.name 
         ? (data.topProducts[0].name.length > 20 ? data.topProducts[0].name.slice(0, 20) + "..." : data.topProducts[0].name)
-        : "Most popular item",
+        : t("dashboard.mostPopularItem"),
     },
   ];
 
   return (
     <section className="dashboard">
       <div className="dashboard-header bg-white dark:bg-slate-950">
-        <p className="text-sm uppercase tracking-[0.35em] text-cyan-400 ">Admin Overview</p>
-        <h2 className="mt-2 text-2xl font-semibold text-slate-900 dark:text-white text-black">Real-time commerce health</h2>
-        <p className="mt-2 text-slate-500 dark:text-slate-300">Monitor your storefront with AI-style clarity and live API metrics.</p>
+        <p className="text-sm uppercase tracking-[0.35em] text-cyan-400 ">{t("dashboard.adminOverview")}</p>
+        <h2 className="mt-2 text-2xl font-semibold text-slate-900 dark:text-white text-black">{t("dashboard.realtimeHealth")}</h2>
+        <p className="mt-2 text-slate-500 dark:text-slate-300">{t("dashboard.healthDescription")}</p>
       </div>
 
       <div className="cards-grid">
@@ -266,16 +268,16 @@ export default function DashboardHome() {
           <div className="flex justify-between items-center mb-6">
             <div>
               <span className="text-[#00bad5] tracking-[0.2em] text-[11px] uppercase font-bold">
-                Order Status
+                {t("dashboard.orderStatus")}
               </span>
 
               <h2 className="mt-2 text-xl font-semibold text-slate-900 dark:text-white">
-                Live fulfillment breakdown
+                {t("dashboard.liveFulfillment")}
               </h2>
             </div>
 
             <span className="rounded-full bg-emerald-100 dark:bg-emerald-500/10 px-3 py-1 text-[11px] font-bold text-emerald-600 dark:text-emerald-400">
-              Updated from API
+              {t("dashboard.updatedFromApi")}
             </span>
           </div>
 
@@ -298,7 +300,7 @@ export default function DashboardHome() {
                   <div
                     className={`${conf.color} tracking-[0.2em] text-[11px] font-bold uppercase mb-3`}
                   >
-                    {conf.label}
+                    {t(conf.labelKey)}
                   </div>
 
                   <div
@@ -313,7 +315,7 @@ export default function DashboardHome() {
         </div>
         {/* BEST SELLER */}
         <div className="best-seller bg-white/90 rounded-3xl border border-slate-200 p-6 shadow-xl dark:border-slate-800 dark:bg-slate-900/90">
-          <h3>Best Seller</h3>
+          <h3>{t("dashboard.bestSeller")}</h3>
 
           {data?.topProducts?.map((product, index) => (
             <div className="product-item bg-white/90 rounded-2xl border border-slate-200 p-4 shadow-sm transition-all duration-300 hover:shadow-md dark:border-slate-800 dark:bg-slate-900/90" key={index}>
@@ -321,7 +323,7 @@ export default function DashboardHome() {
 
               <div className="text-black dark:text-white">
                 <h4>{product.name}</h4>
-                <p>{product.totalSold} Sold</p>
+                <p>{product.totalSold} {t("dashboard.sold")}</p>
               </div>
             </div>
           ))}
@@ -333,14 +335,14 @@ export default function DashboardHome() {
         <div className="flex justify-between items-center mb-4">
           <div>
             <span className="text-[#00bad5] tracking-[0.2em] text-[11px] uppercase font-bold">
-              Recent Orders
+              {t("dashboard.recentOrders")}
             </span>
             <h2 className="mt-2 text-xl font-semibold text-slate-900 dark:text-white">
-              Latest customer activity
+              {t("dashboard.latestActivity")}
             </h2>
           </div>
           <span className="rounded-full bg-[#00bad5]/10 px-3 py-1 text-xs font-bold text-[#00bad5]">
-            {data.recentOrders?.length || 0} orders
+            {data.recentOrders?.length || 0} {t("dashboard.orders")}
           </span>
         </div>
 
@@ -355,7 +357,7 @@ export default function DashboardHome() {
                 <h4 className="text-lg font-bold text-slate-900 dark:text-white">
                   {order.user?.username ||
                     order.shippingAddress?.fullName ||
-                    "Customer"}
+                    t("dashboard.customer")}
                 </h4>
 
                 <p className="mt-1 text-[13px] font-medium text-slate-500 dark:text-slate-400">
@@ -374,7 +376,7 @@ export default function DashboardHome() {
                     } ${actualStatusConfig[order.status]?.badgeText || "text-slate-600 dark:text-slate-300"
                     }`}
                 >
-                  {order.status}
+                  {t(actualStatusConfig[order.status]?.labelKey || order.status)}
                 </span>
 
                 <span className="min-w-[110px] text-right text-lg font-bold text-slate-900 dark:text-white">

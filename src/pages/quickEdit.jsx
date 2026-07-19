@@ -2,8 +2,10 @@ import React, { useState, useRef } from 'react';
 import { FiX, FiImage, FiLoader, FiPlus } from 'react-icons/fi';
 import { toast } from 'react-toastify';
 import api from '../api/api';
+import { useLanguage } from '../Context/LanguageContext';
 
 export default function QuickEdit({ product: initialProduct, onClose, onSuccess }) {
+  const { t } = useLanguage();
   const [product, setProduct] = useState({
     _id: initialProduct._id,
     name: initialProduct.name || initialProduct.title || "",
@@ -159,7 +161,7 @@ export default function QuickEdit({ product: initialProduct, onClose, onSuccess 
       <div className="bg-white dark:bg-slate-900 text-slate-900 dark:text-white rounded-[28px] shadow-2xl w-full max-w-4xl overflow-hidden flex flex-col max-h-[92vh] border border-slate-200 dark:border-slate-800">
         
         <div className="flex items-center justify-between px-6 py-4 border-b border-slate-100 dark:border-slate-800 shrink-0 bg-slate-50/50 dark:bg-slate-900/50">
-          <h2 className="font-extrabold text-xl tracking-tight text-[#121926] dark:text-white">Quick Edit</h2>
+          <h2 className="font-extrabold text-xl tracking-tight text-[#121926] dark:text-white">{t("quickEdit.title")}</h2>
           <button onClick={onClose} className="flex h-8 w-8 items-center justify-center rounded-full bg-slate-200/50 text-slate-500 hover:bg-slate-200 hover:text-slate-700 transition-colors dark:bg-slate-800 dark:text-slate-400 dark:hover:bg-slate-700 dark:hover:text-white"><FiX size={18} /></button>
         </div>
 
@@ -169,12 +171,12 @@ export default function QuickEdit({ product: initialProduct, onClose, onSuccess 
             {/* Left Column: Media & Status */}
             <div className="lg:col-span-4 flex flex-col gap-6">
               <div className="bg-slate-50 dark:bg-slate-950/50 p-5 rounded-2xl border border-slate-100 dark:border-slate-800">
-                <label className="text-[11px] font-bold text-slate-500 uppercase tracking-widest mb-3 block">Media ({imagePreviews.length}/5)</label>
+                <label className="text-[11px] font-bold text-slate-500 uppercase tracking-widest mb-3 block">{t("quickEdit.media")} ({imagePreviews.length}/5)</label>
                 <div className="grid grid-cols-2 gap-3 mb-4">
                   {imagePreviews.map((img, num) => (
                     <div key={num} className="group relative rounded-xl overflow-hidden aspect-square bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700">
                       <img src={img} alt="Product" className="w-full h-full object-cover" />
-                      <button type="button" onClick={() => removeImage(num)} className="absolute top-1 right-1 flex h-6 w-6 items-center justify-center rounded-full bg-red-500 text-white opacity-0 transition-opacity group-hover:opacity-100 shadow-md hover:bg-red-600">
+                      <button type="button" onClick={() => removeImage(num)} className="absolute top-1 inset-inline-end-1 flex h-6 w-6 items-center justify-center rounded-full bg-red-500 text-white opacity-0 transition-opacity group-hover:opacity-100 shadow-md hover:bg-red-600">
                         <FiX size={12} />
                       </button>
                     </div>
@@ -182,7 +184,7 @@ export default function QuickEdit({ product: initialProduct, onClose, onSuccess 
                   {imagePreviews.length < 5 && (
                     <div onClick={triggerFileUpload} className="rounded-xl border-2 border-dashed border-[#00bad5]/30 bg-[#f2fbfe] dark:bg-sky-950/20 dark:border-sky-500/30 flex flex-col items-center justify-center cursor-pointer hover:bg-[#e0f7fc] dark:hover:bg-sky-900/40 transition-colors aspect-square">
                       <FiImage className="text-[#00bad5] mb-1" size={20} />
-                      <span className="text-[10px] font-bold text-[#00bad5]">Upload</span>
+                      <span className="text-[10px] font-bold text-[#00bad5]">{t("quickEdit.upload")}</span>
                     </div>
                   )}
                 </div>
@@ -190,15 +192,15 @@ export default function QuickEdit({ product: initialProduct, onClose, onSuccess 
               </div>
 
               <div className="bg-slate-50 dark:bg-slate-950/50 p-5 rounded-2xl border border-slate-100 dark:border-slate-800">
-                 <label className="text-[11px] font-bold text-slate-500 uppercase tracking-widest mb-4 block">Status</label>
+                 <label className="text-[11px] font-bold text-slate-500 uppercase tracking-widest mb-4 block">{t("quickEdit.status")}</label>
                  <div className="flex flex-col gap-3">
                    <label className="flex items-center gap-3 cursor-pointer group">
                      <input type="checkbox" name="featured" checked={product.featured} onChange={handleChange} className="w-5 h-5 accent-[#00bad5] rounded border-slate-300" /> 
-                     <span className="text-sm font-semibold text-slate-700 dark:text-slate-300 group-hover:text-[#00bad5] transition-colors">Featured Product</span>
+                     <span className="text-sm font-semibold text-slate-700 dark:text-slate-300 group-hover:text-[#00bad5] transition-colors">{t("quickEdit.featuredProduct")}</span>
                    </label>
                    <label className="flex items-center gap-3 cursor-pointer group">
                      <input type="checkbox" name="isActive" checked={product.isActive} onChange={handleChange} className="w-5 h-5 accent-[#00bad5] rounded border-slate-300" /> 
-                     <span className="text-sm font-semibold text-slate-700 dark:text-slate-300 group-hover:text-[#00bad5] transition-colors">Active Listing</span>
+                     <span className="text-sm font-semibold text-slate-700 dark:text-slate-300 group-hover:text-[#00bad5] transition-colors">{t("quickEdit.activeListing")}</span>
                    </label>
                  </div>
               </div>
@@ -209,39 +211,39 @@ export default function QuickEdit({ product: initialProduct, onClose, onSuccess 
               
               <div className="grid gap-5 sm:grid-cols-2">
                 <div className="flex flex-col gap-1.5 sm:col-span-2">
-                  <label className="text-[11px] uppercase text-slate-500 font-bold tracking-wider">Product Name *</label>
+                  <label className="text-[11px] uppercase text-slate-500 font-bold tracking-wider">{t("addProduct.productName")}</label>
                   <input name="name" value={product.name} onChange={handleChange} className="w-full h-12 bg-[#fafdfd] dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-xl px-4 text-sm focus:outline-none focus:border-[#00bad5] focus:ring-1 focus:ring-[#00bad5] transition-all" required />
                 </div>
                 
                 <div className="flex flex-col gap-1.5 sm:col-span-2">
-                  <label className="text-[11px] uppercase text-slate-500 font-bold tracking-wider">Short Description *</label>
+                  <label className="text-[11px] uppercase text-slate-500 font-bold tracking-wider">{t("addProduct.shortDesc")}</label>
                   <input name="shortDescription" value={product.shortDescription} onChange={handleChange} className="w-full h-12 bg-[#fafdfd] dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-xl px-4 text-sm focus:outline-none focus:border-[#00bad5] focus:ring-1 focus:ring-[#00bad5] transition-all" required />
                 </div>
 
                 <div className="flex flex-col gap-1.5">
-                  <label className="text-[11px] uppercase text-slate-500 font-bold tracking-wider">Price (EGP) *</label>
+                  <label className="text-[11px] uppercase text-slate-500 font-bold tracking-wider">{t("addProduct.price")}</label>
                   <input name="price" type="number" value={product.price} onChange={handleChange} className="w-full h-12 bg-[#fafdfd] dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-xl px-4 text-sm focus:outline-none focus:border-[#00bad5] focus:ring-1 focus:ring-[#00bad5] transition-all" min="0" step="1" required />
                 </div>
                 
                 <div className="flex flex-col gap-1.5">
-                  <label className="text-[11px] uppercase text-slate-500 font-bold tracking-wider">Discount Price (EGP)</label>
+                  <label className="text-[11px] uppercase text-slate-500 font-bold tracking-wider">{t("addProduct.discountPrice")}</label>
                   <input name="discountPrice" type="number" value={product.discountPrice} onChange={handleChange} className="w-full h-12 bg-[#fafdfd] dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-xl px-4 text-sm focus:outline-none focus:border-[#00bad5] focus:ring-1 focus:ring-[#00bad5] transition-all" min="0" step="1" />
                 </div>
 
                 <div className="flex flex-col gap-1.5">
-                  <label className="text-[11px] uppercase text-slate-500 font-bold tracking-wider">Stock *</label>
+                  <label className="text-[11px] uppercase text-slate-500 font-bold tracking-wider">{t("addProduct.stock")}</label>
                   <input name="stock" type="number" value={product.stock} onChange={handleChange} className="w-full h-12 bg-[#fafdfd] dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-xl px-4 text-sm focus:outline-none focus:border-[#00bad5] focus:ring-1 focus:ring-[#00bad5] transition-all" min="0" required />
                 </div>
                 
                 <div className="flex flex-col gap-1.5">
-                  <label className="text-[11px] uppercase text-slate-500 font-bold tracking-wider">SKU</label>
+                  <label className="text-[11px] uppercase text-slate-500 font-bold tracking-wider">{t("addProduct.sku")}</label>
                   <input name="sku" value={product.sku} onChange={handleChange} className="w-full h-12 bg-[#fafdfd] dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-xl px-4 text-sm focus:outline-none focus:border-[#00bad5] focus:ring-1 focus:ring-[#00bad5] transition-all" />
                 </div>
 
                 <div className="flex flex-col gap-1.5">
-                  <label className="text-[11px] uppercase text-slate-500 font-bold tracking-wider">Category *</label>
+                  <label className="text-[11px] uppercase text-slate-500 font-bold tracking-wider">{t("addProduct.categoryLabel")}</label>
                   <select name="category" value={formatCategory(product.category)} onChange={handleChange} className="w-full h-12 bg-[#fafdfd] dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-xl px-4 text-sm focus:outline-none focus:border-[#00bad5] focus:ring-1 focus:ring-[#00bad5] transition-all" required>
-                    <option value="">Select Category</option>
+                    <option value="">{t("addProduct.selectCategory")}</option>
                     {categories.map(c => <option key={c} value={c}>{c}</option>)}
                     {product.category && !categories.includes(formatCategory(product.category)) && (
                       <option value={product.category}>{product.category}</option>
@@ -250,14 +252,14 @@ export default function QuickEdit({ product: initialProduct, onClose, onSuccess 
                 </div>
                 
                 <div className="flex flex-col gap-1.5">
-                  <label className="text-[11px] uppercase text-slate-500 font-bold tracking-wider">Brand</label>
+                  <label className="text-[11px] uppercase text-slate-500 font-bold tracking-wider">{t("addProduct.brand")}</label>
                   <input name="brand" value={product.brand} onChange={handleChange} className="w-full h-12 bg-[#fafdfd] dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-xl px-4 text-sm focus:outline-none focus:border-[#00bad5] focus:ring-1 focus:ring-[#00bad5] transition-all" />
                 </div>
                 
                 <div className="flex flex-col gap-1.5 sm:col-span-2">
-                  <label className="text-[11px] uppercase text-slate-500 font-bold tracking-wider">Tags</label>
+                  <label className="text-[11px] uppercase text-slate-500 font-bold tracking-wider">{t("addProduct.tags")}</label>
                   <div className="flex gap-2">
-                    <input value={tagInput} onChange={(e) => setTagInput(e.target.value)} onKeyDown={handleTagKeyDown} className="flex-1 h-12 bg-[#fafdfd] dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-xl px-4 text-sm focus:outline-none focus:border-[#00bad5] focus:ring-1 focus:ring-[#00bad5] transition-all" placeholder="Type a tag and press +" />
+                    <input value={tagInput} onChange={(e) => setTagInput(e.target.value)} onKeyDown={handleTagKeyDown} className="flex-1 h-12 bg-[#fafdfd] dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-xl px-4 text-sm focus:outline-none focus:border-[#00bad5] focus:ring-1 focus:ring-[#00bad5] transition-all" placeholder={t("addProduct.tagPlaceholder")} />
                     <button type="button" onClick={handleAddTag} className="flex h-12 w-12 items-center justify-center rounded-xl bg-slate-100 text-slate-600 hover:bg-slate-200 dark:bg-slate-800 dark:text-slate-300 dark:hover:bg-slate-700 transition-colors">
                       <FiPlus size={20} />
                     </button>
@@ -280,9 +282,9 @@ export default function QuickEdit({ product: initialProduct, onClose, onSuccess 
         </div>
 
         <div className="flex justify-end gap-3 px-6 py-4 border-t border-slate-100 dark:border-slate-800 shrink-0 bg-slate-50/50 dark:bg-slate-900/50">
-          <button type="button" onClick={onClose} className="px-6 py-2.5 text-sm font-bold text-slate-600 hover:bg-slate-100 dark:text-slate-300 dark:hover:bg-slate-800 rounded-xl transition-colors">Cancel</button>
+          <button type="button" onClick={onClose} className="px-6 py-2.5 text-sm font-bold text-slate-600 hover:bg-slate-100 dark:text-slate-300 dark:hover:bg-slate-800 rounded-xl transition-colors">{t("quickEdit.cancel")}</button>
           <button type="button" onClick={handleSave} disabled={loading} className="flex items-center gap-2 px-8 py-2.5 bg-[#00bad5] hover:bg-[#00a3bb] active:scale-95 disabled:opacity-50 disabled:active:scale-100 rounded-xl text-sm font-bold text-white shadow-[0_4px_14px_0_rgba(0,186,213,0.3)] transition-all">
-            {loading ? (<><FiLoader className="animate-spin" size={16} /> Saving...</>) : "Save Changes"}
+            {loading ? (<><FiLoader className="animate-spin" size={16} /> {t("quickEdit.saving")}</>) : t("quickEdit.saveChanges")}
           </button>
         </div>
       </div>

@@ -2,9 +2,11 @@ import React, { useState, useEffect } from "react";
 import { Outlet, Navigate } from "react-router-dom";
 import Navbar from "../Navbar"; 
 import Sidebar from "../Sidebar";
+import { useLanguage } from "../../Context/LanguageContext";
 
 export default function DashboardLayout() {
   const token = localStorage.getItem("userToken");
+  const { isRTL } = useLanguage();
   
   // 1. حماية المسارات (لو مفيش توكين يرجع للـ login)
   if (!token) return <Navigate to="/login" replace />;
@@ -22,9 +24,7 @@ export default function DashboardLayout() {
   const toggleDarkMode = () => setDarkMode((prev) => !prev);
 
   return (
-
-   
-    <div className="flex h-screen bg-slate-50 dark:bg-slate-950 transition-colors overflow-hidden">
+    <div dir={isRTL ? "rtl" : "ltr"} className="flex h-screen bg-slate-50 dark:bg-slate-950 transition-colors overflow-hidden">
       {/* 2. السايدبار والنافبار ثابتين هنا */}
       <Sidebar open={sidebarOpen} onClose={() => setSidebarOpen(false)} />
 
@@ -41,6 +41,5 @@ export default function DashboardLayout() {
         </main>
       </div>
     </div>
-    
   );
 }

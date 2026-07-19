@@ -12,9 +12,14 @@ import { useNavigate } from "react-router-dom";
 import { ToastContainer, toast } from "react-toastify";
 import { LuLoaderCircle } from "react-icons/lu";
 
-function Login() {
+// A basic translation mapping just for Login since it might not be wrapped in LanguageProvider if it's outside
+// But we'll try to use LanguageContext if available, otherwise fallback.
+import { useLanguage } from "../../Context/LanguageContext";
+
+function LoginContent() {
   const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
+  const { t } = useLanguage();
   const [credentials, setCredentials] = useState({
     email: "admin@gmail.com",
     password: "admin1212",
@@ -205,4 +210,6 @@ function Login() {
   );
 }
 
-export default Login;
+export default function Login() {
+  return <LoginContent />;
+}
