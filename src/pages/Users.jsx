@@ -27,6 +27,7 @@ import {
 import { UsersSkeleton } from "../components/Skeleton/UsersSkeleton/UsersSkeleton";
 import useTheme from "../components/customHook/useTheme";
 import { LuLoaderCircle } from "react-icons/lu";
+import Pagination from "../components/Pagination/Pagination"; 
 
 const UsersContext = createContext();
 
@@ -107,7 +108,7 @@ const UsersProvider = ({ children }) => {
         const response = await api.post(endpoint, requestBody);
         const newUser = normalizeCreateUserResponse(response.data);
         if (newUser && typeof newUser === "object") {
-          setUsers((prev) => [...prev, newUser]);
+          setUsers((prev) => [newUser, ...prev]);
           toast.success("User created successfully");
           return { success: true, data: newUser };
         }
@@ -300,10 +301,10 @@ const EditUserModal = ({ user, onClose, onSave }) => {
 
   return (
     <div
-      className="fixed inset-0 bg-slate-50/80 dark:bg-slate-900/80 flex items-center justify-center z-50 backdrop-blur-sm"
+      className="fixed inset-0 bg-slate-50/80 dark:bg-slate-900/80 flex items-center justify-center z-50 backdrop-blur-sm p-4 overflow-y-auto"
       onClick={(e) => e.target === e.currentTarget && onClose()}
     >
-      <div className="bg-gradient-to-br from-white via-sky-50/80 to-blue-100/40 dark:from-slate-800 dark:via-slate-800/90 dark:to-sky-900/30 rounded-3xl p-6 w-full max-w-md mx-4 shadow-2xl border border-slate-200/50 dark:border-slate-700/50">
+      <div className="bg-gradient-to-br from-white via-sky-50/80 to-blue-100/40 dark:from-slate-800 dark:via-slate-800/90 dark:to-sky-900/30 rounded-3xl p-6 w-full max-w-md mx-auto my-auto shadow-2xl border border-slate-200/50 dark:border-slate-700/50">
         <div className="flex items-center justify-between mb-6">
           <h3 className="text-xl font-bold text-slate-800 dark:text-white">
             Edit User
@@ -365,7 +366,7 @@ const EditUserModal = ({ user, onClose, onSave }) => {
           <button
             type="submit"
             disabled={saving}
-            className="w-full py-3.5  cursor-pointer bg-gradient-to-r from-cyan-500 to-sky-500 hover:from-cyan-600 hover:to-sky-600 text-white font-semibold rounded-xl transition flex items-center justify-center gap-2  disabled:cursor-not-allowed disabled:opacity-50 select-none shadow-lg shadow-cyan-500/20"
+            className="w-full py-3.5 cursor-pointer bg-gradient-to-r from-cyan-500 to-sky-500 hover:from-cyan-600 hover:to-sky-600 text-white font-semibold rounded-xl transition flex items-center justify-center gap-2 disabled:cursor-not-allowed disabled:opacity-50 select-none shadow-lg shadow-cyan-500/20"
           >
             {saving ? (
               <>
@@ -538,13 +539,16 @@ const ActionButton = ({ icon: Icon, color, onClick, title }) => (
 );
 
 const DeleteModal = ({ user, onConfirm, onCancel, deleting }) => (
-  <div className="fixed inset-0 bg-slate-50/30 dark:bg-slate-900/30 flex items-center justify-center z-50 backdrop-blur-sm">
-    <div className="bg-gradient-to-br from-white to-sky-200  dark:from-slate-800 dark:via-slate-800/90 dark:to-sky-900/30 rounded-2xl p-6 w-full max-w-md mx-4 shadow-2xl border border-slate-200/50 dark:border-slate-700/50">
+  <div 
+    className="fixed inset-0 bg-slate-50/30 dark:bg-slate-900/30 flex items-center justify-center z-50 backdrop-blur-sm p-4 overflow-y-auto"
+    onClick={(e) => e.target === e.currentTarget && onCancel()}
+  >
+    <div className="bg-gradient-to-br from-white to-sky-200 dark:from-slate-800 dark:via-slate-800/90 dark:to-sky-900/30 rounded-2xl p-6 w-full max-w-md mx-auto my-auto shadow-2xl border border-slate-200/50 dark:border-slate-700/50">
       <h3 className="text-xl font-bold text-slate-800 dark:text-white mb-2">
         Delete User
       </h3>
       <p className="text-slate-600 dark:text-slate-300 mb-6">
-        Are you sure you want to delete <strong>{user.name}</strong>? This
+        Are you sure you want to delete <strong>{user?.name}</strong>? This
         action cannot be undone.
       </p>
       <div className="flex gap-3 justify-end">
@@ -757,19 +761,63 @@ const Users = () => {
   const [userToDelete, setUserToDelete] = useState(null);
   const [deleting, setDeleting] = useState(false);
   const [actionLoading, setActionLoading] = useState({});
-
   const [editModalOpen, setEditModalOpen] = useState(false);
   const [userToEdit, setUserToEdit] = useState(null);
+
+  // ====== Pagination States ======
+  const [currentPage, setCurrentPage] = useState(1);
+  const usersPerPage = 10; // عدد المستخدمين في كل صفحة
 
   useEffect(() => {
     fetchUsers();
   }, [fetchUsers]);
 
+  // ====== Filter Users ======
   const filteredUsers = users.filter(
     (user) =>
       user.name?.toLowerCase().includes(searchQuery.toLowerCase()) ||
       user.email?.toLowerCase().includes(searchQuery.toLowerCase()),
   );
+
+  // ====== Pagination Logic ======
+  const totalPages = Math.ceil(filteredUsers.length / usersPerPage);
+  
+  // التأكد أن الصفحة الحالية صحيحة
+  useEffect(() => {
+    if (currentPage > totalPages && totalPages > 0) {
+      setCurrentPage(totalPages);
+    } else if (totalPages === 0) {
+      setCurrentPage(1);
+    }
+  }, [totalPages, currentPage]);
+
+  const indexOfLastUser = currentPage * usersPerPage;
+  const indexOfFirstUser = indexOfLastUser - usersPerPage;
+  const currentUsers = filteredUsers.slice(indexOfFirstUser, indexOfLastUser);
+
+  // ====== Pagination Functions ======
+  const goToPage = (page) => {
+    if (page >= 1 && page <= totalPages) {
+      setCurrentPage(page);
+    }
+  };
+
+  const nextPage = () => {
+    if (currentPage < totalPages) {
+      setCurrentPage(currentPage + 1);
+    }
+  };
+
+  const prevPage = () => {
+    if (currentPage > 1) {
+      setCurrentPage(currentPage - 1);
+    }
+  };
+
+  // ====== Reset to page 1 when search changes ======
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [searchQuery]);
 
   const handleDeleteClick = (user) => {
     setUserToDelete(user);
@@ -787,13 +835,6 @@ const Users = () => {
     } else {
       alert(result.message);
     }
-  };
-
-  const handleVerify = async (userId) => {
-    setActionLoading((prev) => ({ ...prev, [userId]: "verify" }));
-    const result = await verifyUser(userId);
-    setActionLoading((prev) => ({ ...prev, [userId]: null }));
-    if (!result.success) alert(result.message);
   };
 
   const handleToggleRole = async (user) => {
@@ -827,8 +868,9 @@ const Users = () => {
   }
 
   return (
-    <div className="min-h-screen bg-slate-50 dark:bg-slate-900 ">
+    <div className="min-h-screen bg-slate-50 dark:bg-slate-900">
       <div className="mx-auto max-w-7xl slide-up py-8 px-4 sm:px-6 lg:px-8">
+        {/* Header */}
         <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between mb-8">
           <div>
             <p className="text-cyan-500 dark:text-cyan-400 text-xs font-bold tracking-widest uppercase mb-1">
@@ -862,6 +904,7 @@ const Users = () => {
           </div>
         </div>
 
+        {/* Add User Form */}
         {showAddForm && (
           <AddUserForm
             onClose={() => setShowAddForm(false)}
@@ -869,6 +912,7 @@ const Users = () => {
           />
         )}
 
+        {/* Stats Cards */}
         <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-5 mb-8">
           <StatCard
             title="Total Users"
@@ -896,6 +940,7 @@ const Users = () => {
           />
         </div>
 
+        {/* Error State */}
         {error && !loading && (
           <div className="bg-red-50 dark:bg-red-950/30 border border-red-200 dark:border-red-800/50 rounded-xl p-6 text-center">
             <p className="text-red-600 dark:text-red-400 mb-3">{error}</p>
@@ -910,12 +955,13 @@ const Users = () => {
                   <span>Try...</span>
                 </div>
               ) : (
-                <span> Try Again</span>
+                <span>Try Again</span>
               )}
             </button>
           </div>
         )}
 
+        {/* Users Table */}
         {!error && (
           <div className="space-y-4">
             <div className="hidden lg:block bg-gradient-to-br from-white via-sky-50/80 to-blue-100/40 dark:from-slate-800 dark:via-slate-800/90 dark:to-sky-900/30 rounded-2xl shadow-lg border border-slate-200/50 dark:border-slate-700/50 overflow-hidden transition-all duration-300 hover:shadow-xl">
@@ -938,7 +984,7 @@ const Users = () => {
                     </tr>
                   </thead>
                   <tbody>
-                    {filteredUsers.length === 0 ? (
+                    {currentUsers.length === 0 ? (
                       <tr>
                         <td
                           colSpan={4}
@@ -950,7 +996,7 @@ const Users = () => {
                         </td>
                       </tr>
                     ) : (
-                      filteredUsers.map((user) => (
+                      currentUsers.map((user) => (
                         <tr
                           key={user._id}
                           className="border-b border-slate-100/50 dark:border-slate-700/30 transition-all duration-300 hover:bg-gradient-to-r hover:from-sky-50/80 hover:via-blue-50/60 hover:to-transparent dark:hover:from-sky-950/40 dark:hover:via-blue-950/30 dark:hover:to-transparent hover:shadow-md cursor-default"
@@ -1030,17 +1076,28 @@ const Users = () => {
                   </tbody>
                 </table>
               </div>
+              {/* ====== Pagination ====== */}
+              {filteredUsers.length > usersPerPage && (
+                <Pagination
+                  currentPage={currentPage}
+                  totalPages={totalPages}
+                  goToPage={goToPage}
+                  nextPage={nextPage}
+                  prevPage={prevPage}
+                />
+              )}
             </div>
 
+            {/* Mobile View */}
             <div className="lg:hidden">
-              {filteredUsers.length === 0 ? (
+              {currentUsers.length === 0 ? (
                 <div className="rounded-3xl border border-slate-200/50 dark:border-slate-700/50 bg-gradient-to-br from-white via-sky-50/80 to-blue-100/40 dark:from-slate-800 dark:via-slate-800/90 dark:to-sky-900/30 p-8 text-center text-slate-400 dark:text-slate-500">
                   {searchQuery
                     ? "No users match your search."
                     : "No users found."}
                 </div>
               ) : (
-                filteredUsers.map((user) => (
+                currentUsers.map((user) => (
                   <MobileUserCard
                     key={user._id}
                     user={user}
@@ -1051,10 +1108,21 @@ const Users = () => {
                   />
                 ))
               )}
+              {/* ====== Pagination for Mobile ====== */}
+              {filteredUsers.length > usersPerPage && (
+                <Pagination
+                  currentPage={currentPage}
+                  totalPages={totalPages}
+                  goToPage={goToPage}
+                  nextPage={nextPage}
+                  prevPage={prevPage}
+                />
+              )}
             </div>
           </div>
         )}
 
+        {/* Modals */}
         {deleteModalOpen && userToDelete && (
           <DeleteModal
             user={userToDelete}
