@@ -1277,7 +1277,7 @@ const UsersProvider = ({ children }) => {
         const newUser = normalizeCreateUserResponse(response.data);
         if (newUser && typeof newUser === "object") {
           setUsers((prev) => [newUser, ...prev]);
-          toast.info("User created successfully");
+          toast.success("Registration successful");
           return { success: true, data: newUser };
         }
       } catch (err) {
@@ -1373,7 +1373,7 @@ const UsersProvider = ({ children }) => {
       setUsers((prev) =>
         prev.map((u) => (u._id === userId ? { ...u, ...userData } : u)),
       );
-      toast.info("User updated successfully"); 
+      toast.success("Edited successfully"); 
       return { success: true };
     } catch (err) {
       const message = err.response?.data?.message || "Failed to update user";
