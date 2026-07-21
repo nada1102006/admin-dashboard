@@ -16,8 +16,8 @@ function Login() {
   const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
   const [credentials, setCredentials] = useState({
-    email: "admin@gmail.com",
-    password: "admin1212",
+    email: "",
+    password: "",
   });
 
   const handleChange = (e) => {
