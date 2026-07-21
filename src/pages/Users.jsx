@@ -1306,7 +1306,7 @@ const UsersProvider = ({ children }) => {
         console.log("API delete failed, using local delete");
       }
       setUsers((prev) => prev.filter((u) => u._id !== userId));
-      toast.info("User deleted successfully"); // Changed to toast.info
+      toast.info("User deleted successfully"); 
       return { success: true };
     } catch (err) {
       const message = "Failed to delete user";
@@ -1330,7 +1330,7 @@ const UsersProvider = ({ children }) => {
           u._id === userId ? { ...u, isVerified: !u.isVerified } : u,
         ),
       );
-      toast.info("User status updated"); // Changed to toast.info
+      toast.info("User status updated");
       return { success: true };
     } catch (err) {
       const message = "Failed to update user";
@@ -1352,7 +1352,7 @@ const UsersProvider = ({ children }) => {
       setUsers((prev) =>
         prev.map((u) => (u._id === userId ? { ...u, role } : u)),
       );
-      toast.info("User role changed successfully"); // Changed to toast.info
+      toast.info("User role changed successfully"); 
       return { success: true };
     } catch (err) {
       const message = "Failed to update user";
@@ -1373,7 +1373,7 @@ const UsersProvider = ({ children }) => {
       setUsers((prev) =>
         prev.map((u) => (u._id === userId ? { ...u, ...userData } : u)),
       );
-      toast.info("User updated successfully"); // Changed to toast.info
+      toast.info("User updated successfully"); 
       return { success: true };
     } catch (err) {
       const message = err.response?.data?.message || "Failed to update user";
@@ -1460,7 +1460,7 @@ const EditUserModal = ({ user, onClose, onSave }) => {
     setSaving(false);
     
     if (result.success) {
-      onClose(); // Close immediately, toast.info handles the success message
+      onClose(); 
     } else {
       setFormError(result.message || "Failed to update user");
     }
