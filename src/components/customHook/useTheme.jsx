@@ -1,5 +1,4 @@
-//custo hook light mood and dark mood :
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 
 const useTheme = () => {
   const [isDarkMode, setIsDarkMode] = useState(() => {
@@ -19,9 +18,14 @@ const useTheme = () => {
     }
   }, [isDarkMode]);
 
+  const toggleTheme = useCallback(() => {
+    setIsDarkMode((prev) => !prev);
+  }, []);
+
   return {
     isDarkMode,
     setIsDarkMode,
+    toggleTheme,
   };
 };
 

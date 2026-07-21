@@ -1,0 +1,31 @@
+.skeleton-loading {
+  animation: pulse 1.5s ease-in-out infinite;
+}
+
+@keyframes pulse {
+
+  0%,
+  100% {
+    opacity: 1;
+  }
+
+  50% {
+    opacity: 0.5;
+  }
+}
+
+@media (max-width: 768px) {
+  .skeleton-mobile-card {
+    margin-bottom: 1rem;
+  }
+}
+
+
+.skeleton-table-row {
+  transition: all 0.2s ease;
+}
+
+
+.skeleton-stats-card {
+  min-height: 80px;
+}

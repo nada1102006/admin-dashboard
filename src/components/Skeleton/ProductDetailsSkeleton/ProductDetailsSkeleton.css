@@ -1,0 +1,144 @@
+/* Components/Skeleton/ProductDetailsSkeleton/ProductDetailsSkeleton.css */
+.skeleton-product-details {
+  min-height: 100vh;
+}
+
+/* Header Skeleton */
+.skeleton-header-wrapper {
+  min-height: 120px;
+}
+
+.skeleton-icon {
+  width: 48px !important;
+  height: 48px !important;
+  border-radius: 16px !important;
+}
+
+.skeleton-back-link {
+  width: 120px !important;
+  height: 20px !important;
+}
+
+.skeleton-title {
+  width: 250px !important;
+  height: 32px !important;
+}
+
+.skeleton-tag {
+  width: 160px !important;
+  height: 40px !important;
+  border-radius: 12px !important;
+}
+
+/* Gallery Skeleton */
+.skeleton-gallery-wrapper {
+  min-height: 400px;
+}
+
+.skeleton-gallery-image {
+  width: 100% !important;
+  height: 100% !important;
+  min-height: 400px !important;
+}
+
+/* Overview Skeleton */
+.skeleton-overview-wrapper {
+  min-height: 400px;
+}
+
+.skeleton-product-name {
+  width: 80% !important;
+  height: 36px !important;
+}
+
+.skeleton-product-price {
+  width: 40% !important;
+  height: 32px !important;
+}
+
+.skeleton-rating {
+  width: 60% !important;
+  height: 24px !important;
+}
+
+.skeleton-desc-line {
+  height: 16px !important;
+  border-radius: 4px !important;
+}
+
+.skeleton-badge {
+  height: 32px !important;
+  border-radius: 12px !important;
+}
+
+.skeleton-divider {
+  height: 1px !important;
+}
+
+.skeleton-btn-primary {
+  height: 48px !important;
+  border-radius: 12px !important;
+  background: linear-gradient(135deg, #00bad5, #0ea5e9) !important;
+}
+
+.skeleton-btn-secondary {
+  height: 48px !important;
+  border-radius: 12px !important;
+  background: #e2e8f0 !important;
+}
+
+.dark .skeleton-btn-secondary {
+  background: #1e293b !important;
+}
+
+.skeleton-info-item {
+  height: 40px !important;
+  border-radius: 8px !important;
+}
+
+/* Responsive */
+@media (max-width: 640px) {
+  .skeleton-title {
+    width: 180px !important;
+  }
+  
+  .skeleton-tag {
+    width: 120px !important;
+    height: 36px !important;
+  }
+  
+  .skeleton-gallery-wrapper {
+    min-height: 300px;
+  }
+  
+  .skeleton-gallery-image {
+    min-height: 300px !important;
+  }
+  
+  .skeleton-product-name {
+    width: 90% !important;
+  }
+  
+  .skeleton-product-price {
+    width: 60% !important;
+  }
+  
+  .skeleton-rating {
+    width: 80% !important;
+  }
+}
+
+@media (max-width: 480px) {
+  .skeleton-gallery-wrapper {
+    min-height: 250px;
+  }
+  
+  .skeleton-gallery-image {
+    min-height: 250px !important;
+  }
+  
+  .skeleton-btn-primary,
+  .skeleton-btn-secondary {
+    width: 100% !important;
+  }
+}

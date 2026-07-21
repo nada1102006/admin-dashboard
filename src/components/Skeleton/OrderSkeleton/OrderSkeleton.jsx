@@ -2,7 +2,6 @@ import Skeleton, { SkeletonTheme } from "react-loading-skeleton";
 import "react-loading-skeleton/dist/skeleton.css";
 import "./OrderSkeleton.css";
 
-//  skeleton loading for table
 const TableSkeleton = ({ baseColor, highlightColor }) => {
   const skeletonRows = 8;
 
@@ -38,7 +37,7 @@ const TableSkeleton = ({ baseColor, highlightColor }) => {
                 key={index}
                 className="group opacity-100 transform-none cursor-pointer border-b border-slate-100 transition-colors  hover:bg-slate-50 dark:border-slate-800 dark:hover:bg-slate-800/40"
               >
-                {/* order id */}
+              
                 <td className="px-3 py-1  min-[870px]:p-5">
                   <Skeleton
                     width={60}
@@ -47,7 +46,7 @@ const TableSkeleton = ({ baseColor, highlightColor }) => {
                   />
                 </td>
 
-                {/* customer */}
+          
                 <td className="px-3 py-1  min-[870px]:p-5">
                   <div className="flex items-center gap-1.5 min-[870px]:gap-2.5">
                     <Skeleton
@@ -71,12 +70,12 @@ const TableSkeleton = ({ baseColor, highlightColor }) => {
                   </div>
                 </td>
 
-                {/* date */}
+            
                 <td className="px-3 py-1  min-[870px]:p-5">
                   <Skeleton width={80} height={16} className="skeleton-date" />
                 </td>
 
-                {/* status */}
+            
                 <td className="px-3 py-1  min-[870px]:p-5">
                   <Skeleton
                     width={80}
@@ -86,7 +85,7 @@ const TableSkeleton = ({ baseColor, highlightColor }) => {
                   />
                 </td>
 
-                {/* payment */}
+          
                 <td className="px-3 py-1  min-[870px]:p-5">
                   <div className="space-y-1 min-[870px]:space-y-1.5">
                     <Skeleton
@@ -102,7 +101,7 @@ const TableSkeleton = ({ baseColor, highlightColor }) => {
                   </div>
                 </td>
 
-                {/* total */}
+            
                 <td className="px-3 py-1  min-[870px]:p-5">
                   <Skeleton width={80} height={16} className="skeleton-total" />
                 </td>
@@ -114,7 +113,7 @@ const TableSkeleton = ({ baseColor, highlightColor }) => {
     </div>
   );
 
-  // SkeletonTheme color
+
   if (baseColor && highlightColor) {
     return (
       <SkeletonTheme baseColor={baseColor} highlightColor={highlightColor}>
@@ -126,13 +125,12 @@ const TableSkeleton = ({ baseColor, highlightColor }) => {
   return content;
 };
 
-// skeleton for counter orders
+
 const CounterSkeleton = ({ baseColor, highlightColor }) => {
   const content = (
     <Skeleton width={30} height={28} inline className="skeleton-counter" />
   );
 
-  // SkeletonTheme color
   if (baseColor && highlightColor) {
     return (
       <SkeletonTheme baseColor={baseColor} highlightColor={highlightColor}>

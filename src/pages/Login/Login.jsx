@@ -48,7 +48,7 @@ function Login() {
   };
 
   return (
-    <section className="login relative min-h-[100vh]">
+    <section className="login relative min-h-[100vh]  bg-slate-50 dark:bg-slate-900">
       {/* زر تبديل الوضع المظلم */}
       <ThemeToggle />
       <div className="mx-auto py-20 min-[500px]:py-24  min-[1024px]:py-30 px-0 min-[500px]:px-8 min-[800px]:px-20">
@@ -156,7 +156,8 @@ function Login() {
                   {/* زر تسجيل الدخول */}
                   <button
                     disabled={loading}
-                    className="cursor-pointer relative inline-flex items-center justify-center gap-2 overflow-hidden rounded-xl px-2 min-[500px]:px-5 py-1.5 min-[500px]:py-3 text-xs min-[500px]:text-sm font-semibold tracking-wide transition-all duration-200 active:scale-[0.97] disabled:cursor-not-allowed disabled:opacity-50 select-none bg-cyan-500 text-white shadow-[0_0_20px_rgba(6,182,212,0.2)] hover:bg-cyan-400 hover:shadow-[0_0_28px_rgba(6,182,212,0.35)] dark:shadow-[0_0_20px_rgba(6,182,212,0.15)] w-full rounded-2xl text-base font-semibold"
+                    className="cursor-pointer relative inline-flex items-center justify-center gap-2 overflow-hidden rounded-xl px-2 min-[500px]:px-5 py-1.5 min-[500px]:py-3 text-xs min-[500px]:text-sm font-semibold tracking-wide transition-all duration-200 active:scale-[0.97] 
+                    disabled:cursor-not-allowed disabled:opacity-50 select-none bg-cyan-500 text-white shadow-[0_0_20px_rgba(6,182,212,0.2)] hover:bg-cyan-400 hover:shadow-[0_0_28px_rgba(6,182,212,0.35)] dark:shadow-[0_0_20px_rgba(6,182,212,0.15)] w-full rounded-2xl text-base font-semibold"
                     type="submit"
                   >
                     {loading ? (

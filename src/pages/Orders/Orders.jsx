@@ -9,8 +9,9 @@ import "react-loading-skeleton/dist/skeleton.css";
 import {
   CounterSkeleton,
   TableSkeleton,
-} from "../../components/OrderSkeleton/OrderSkeleton";
-import useTheme from "../../Components/customHook/useTheme";
+} from "../../components/Skeleton/OrderSkeleton/OrderSkeleton.jsx";
+
+import useTheme from "../../components/customHook/useTheme";
 import { BiSolidError } from "react-icons/bi";
 import { MdOutlineClear } from "react-icons/md";
 import { FaHashtag } from "react-icons/fa6";
@@ -421,7 +422,7 @@ function Orders() {
   }
 
   return (
-    <section className=" orders bg-slate-100 dark:bg-slate-950">
+    <section className=" orders bg-slate-50 dark:bg-slate-900">
       <div className=" px-5 py-8 min-[350px]:py-16 min-[500px]:px-10">
         <ToastContainer
           position="top-center"

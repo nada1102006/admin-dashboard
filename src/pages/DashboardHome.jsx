@@ -1,7 +1,6 @@
 import { useEffect, useState } from "react";
 import api from "../api/api";
 import "../styles/Dashboard.css";
-import { LuLoaderCircle } from "react-icons/lu";
 import {
   FaShoppingBag,
   FaClock,
@@ -10,6 +9,8 @@ import {
   FaUsers,
   FaBoxOpen,
 } from "react-icons/fa";
+import { DashboardSkeleton } from "../components/Skeleton/DashboardSkeleton/DashboardSkeleton";
+import useTheme from "../components/customHook/useTheme";
 
 const formatCurrency = (amount) => {
   return new Intl.NumberFormat("en-US", {
@@ -81,6 +82,7 @@ export default function DashboardHome() {
   const [data, setData] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const { isDarkMode } = useTheme();
 
   useEffect(() => {
     const getDashboard = async () => {
@@ -88,44 +90,57 @@ export default function DashboardHome() {
         const res = await api.get("/orders/admin");
         if (res.data.success && res.data.orders) {
           const allOrders = res.data.orders;
-          
+
           const totalOrdersCount = allOrders.length;
-          const totalRevenue = allOrders.reduce((sum, o) => sum + (Number(o.totalPrice) || 0), 0);
-          
-          const statusCounts = { pending: 0, processing: 0, confirmed: 0, shipped: 0, delivered: 0, cancelled: 0 };
-          allOrders.forEach(o => {
+          const totalRevenue = allOrders.reduce(
+            (sum, o) => sum + (Number(o.totalPrice) || 0),
+            0,
+          );
+
+          const statusCounts = {
+            pending: 0,
+            processing: 0,
+            confirmed: 0,
+            shipped: 0,
+            delivered: 0,
+            cancelled: 0,
+          };
+          allOrders.forEach((o) => {
             if (statusCounts[o.status] !== undefined) {
               statusCounts[o.status]++;
             }
           });
-          
+
           const thirtyDaysAgo = new Date();
           thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
           const lastMonthRevenue = allOrders
-            .filter(o => new Date(o.createdAt) >= thirtyDaysAgo)
+            .filter((o) => new Date(o.createdAt) >= thirtyDaysAgo)
             .reduce((sum, o) => sum + (Number(o.totalPrice) || 0), 0);
-            
+
           const productSales = {};
           let totalCustomers = new Set();
-          
-          allOrders.forEach(order => {
+
+          allOrders.forEach((order) => {
             if (order.user?._id) totalCustomers.add(order.user._id);
             else if (order.user) totalCustomers.add(order.user);
-            else if (order.shippingAddress?.email) totalCustomers.add(order.shippingAddress.email);
-            
+            else if (order.shippingAddress?.email)
+              totalCustomers.add(order.shippingAddress.email);
+
             if (order.items && Array.isArray(order.items)) {
-              order.items.forEach(item => {
-                const productId = item.product || item.name; 
+              order.items.forEach((item) => {
+                const productId = item.product || item.name;
                 if (!productId) return;
-                
+
                 if (!productSales[productId]) {
                   productSales[productId] = {
                     name: item.name || "Unknown Product",
-                    image: item.image || "https://placehold.co/100x100/f8fafc/94a3b8?text=No+Image",
-                    totalSold: 0
+                    image:
+                      item.image ||
+                      "https://placehold.co/100x100/f8fafc/94a3b8?text=No+Image",
+                    totalSold: 0,
                   };
                 }
-                productSales[productId].totalSold += (Number(item.quantity) || 1);
+                productSales[productId].totalSold += Number(item.quantity) || 1;
               });
             }
           });
@@ -134,7 +149,9 @@ export default function DashboardHome() {
             .sort((a, b) => b.totalSold - a.totalSold)
             .slice(0, 4);
 
-          const sortedOrders = [...allOrders].sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+          const sortedOrders = [...allOrders].sort(
+            (a, b) => new Date(b.createdAt) - new Date(a.createdAt),
+          );
           const recentOrders = sortedOrders.slice(0, 5);
 
           setData({
@@ -142,7 +159,7 @@ export default function DashboardHome() {
             revenue: { total: totalRevenue, lastMonth: lastMonthRevenue },
             recentOrders: recentOrders,
             topProducts: topProducts,
-            totalCustomers: totalCustomers.size
+            totalCustomers: totalCustomers.size,
           });
         } else {
           throw new Error("API returned unsuccessful response");
@@ -151,8 +168,8 @@ export default function DashboardHome() {
         console.log("Dashboard Error:", err);
         setError(
           err.response?.data?.message ||
-          err.message ||
-          "Failed to fetch dashboard data"
+            err.message ||
+            "Failed to fetch dashboard data",
         );
       } finally {
         setLoading(false);
@@ -163,17 +180,20 @@ export default function DashboardHome() {
   }, []);
 
   if (loading) {
-   return (
-    <div className="flex flex-col items-center justify-center min-h-[500px] w-full">
-      <LuLoaderCircle className="w-12 h-12 animate-spin text-cyan-400 mb-4" />
-      <p className="text-slate-400 animate-pulse">Loading dashboard data...</p>
-    </div>
-  );
+    const skeletonBaseColor = isDarkMode ? "#1e293b" : "#e2e8f0";
+    const skeletonHighlightColor = isDarkMode ? "#334155" : "#f1f5f9";
+
+    return (
+      <DashboardSkeleton
+        baseColor={skeletonBaseColor}
+        highlightColor={skeletonHighlightColor}
+      />
+    );
   }
 
   if (error) {
     return (
-      <div className="p-8 text-center text-red-500 bg-red-50 rounded-xl m-6">
+      <div className="p-8 text-center text-red-500 bg-red-50 dark:bg-red-950/30 rounded-xl m-6">
         Error: {error}
       </div>
     );
@@ -187,7 +207,6 @@ export default function DashboardHome() {
       value: data?.orders?.total || 0,
       icon: <FaShoppingBag />,
       color: "#e546b5",
-      bg: "#EEF2FF",
       caption: "All orders received",
     },
     {
@@ -195,7 +214,6 @@ export default function DashboardHome() {
       value: data?.orders?.pending || 0,
       icon: <FaClock />,
       color: "#F59E0B",
-      bg: "#FEF3C7",
       caption: "Awaiting action",
     },
     {
@@ -203,7 +221,6 @@ export default function DashboardHome() {
       value: formatCurrency(data?.revenue?.total || 0),
       icon: <FaDollarSign />,
       color: "#10B981",
-      bg: "#D1FAE5",
       caption: "Total gross revenue",
     },
     {
@@ -211,7 +228,6 @@ export default function DashboardHome() {
       value: formatCurrency(data?.revenue?.lastMonth || 0),
       icon: <FaChartLine />,
       color: "#EC4899",
-      bg: "#FCE7F3",
       caption: "Monthly sales target",
     },
     {
@@ -219,7 +235,6 @@ export default function DashboardHome() {
       value: data?.totalCustomers || 0,
       icon: <FaUsers />,
       color: "#3B82F6",
-      bg: "#DBEAFE",
       caption: "Customers who ordered",
     },
     {
@@ -227,166 +242,215 @@ export default function DashboardHome() {
       value: data?.topProducts?.[0]?.totalSold || 0,
       icon: <FaBoxOpen />,
       color: "#8B5CF6",
-      bg: "#EDE9FE",
-      caption: data?.topProducts?.[0]?.name 
-        ? (data.topProducts[0].name.length > 20 ? data.topProducts[0].name.slice(0, 20) + "..." : data.topProducts[0].name)
+      caption: data?.topProducts?.[0]?.name
+        ? data.topProducts[0].name.length > 20
+          ? data.topProducts[0].name.slice(0, 20) + "..."
+          : data.topProducts[0].name
         : "Most popular item",
     },
   ];
 
   return (
-    <section className="dashboard">
-      <div className="dashboard-header bg-white dark:bg-slate-950">
-        <p className="text-sm uppercase tracking-[0.35em] text-cyan-400 ">Admin Overview</p>
-        <h2 className="mt-2 text-2xl font-semibold text-slate-900 dark:text-white text-black">Real-time commerce health</h2>
-        <p className="mt-2 text-slate-500 dark:text-slate-300">Monitor your storefront with AI-style clarity and live API metrics.</p>
-      </div>
-
-      <div className="cards-grid">
-        {cards.map((card, index) => (
-          <div className="card bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 p-6 rounded-2xl shadow-sm transition-all duration-300 hover:shadow-xl" key={index} style={{ "--card-accent": card.color }}>
-            <div className="card-icon" style={{ background: `linear-gradient(135deg, ${card.color}, ${card.color}dd)` }}>
-              {card.icon}
-            </div>
-
-            <h4>{card.title}</h4>
-
-            <h2 className="text-black dark:text-white">{card.value}</h2>
-
-            <p className="dash-card-caption">
-              {card.caption}
+    <section className="dashboard min-h-screen bg-slate-50 dark:bg-slate-900 p-4 md:p-6 lg:p-8">
+      <div className="slide-up max-w-7xl mx-auto space-y-6">
+        
+        <div className="dashboard-header relative overflow-hidden rounded-2xl p-6 md:p-8 bg-gradient-to-br from-slate-100 via-sky-50 to-blue-100/60 dark:from-slate-800 dark:via-slate-800/90 dark:to-sky-900/40 border border-slate-200/50 dark:border-slate-700/50 shadow-lg shadow-sky-100/20 dark:shadow-sky-900/20 transition-all duration-300 hover:shadow-xl hover:shadow-sky-200/30 dark:hover:shadow-sky-900/20 hover:border-sky-300/50 hover:from-sky-100 hover:via-sky-200/50 hover:to-blue-200/60 dark:border-slate-700/50 dark:hover:border-slate-700/50 dark:bg-gradient-to-br dark:from-slate-800 dark:via-slate-800/90 dark:to-sky-900/40 dark:hover:from-slate-800 dark:hover:via-slate-800/90 dark:hover:to-sky-900/40">
+          <div className="absolute -top-20 -right-20 w-64 h-64 bg-sky-400/10 rounded-full blur-3xl dark:bg-sky-500/5" />
+          <div className="absolute -bottom-20 -left-20 w-64 h-64 bg-blue-400/10 rounded-full blur-3xl dark:bg-blue-500/5" />
+          
+          <div className="relative z-10">
+            <p className="text-sm uppercase tracking-[0.35em] text-sky-500 dark:text-sky-400 font-semibold">
+              Admin Overview
+            </p>
+            <h2 className="mt-2 text-2xl md:text-3xl font-bold text-slate-900 dark:text-white">
+              Real-time commerce health
+            </h2>
+            <p className="mt-2 text-slate-600 dark:text-slate-300">
+              Monitor your storefront with AI-style clarity and live API metrics.
             </p>
           </div>
-        ))}
-      </div>
+        </div>
 
-      <div className="bottom-section grid gap-8 xl:grid-cols-[2fr_1fr] items-start">
-        {/* ORDER STATUS CARD */}
-        <div className="rounded-3xl border border-slate-200 bg-white/90 p-6 shadow-xl min-h-[520px] dark:border-slate-800 dark:bg-slate-900/90">
-          <div className="flex justify-between items-center mb-6">
-            <div>
-              <span className="text-[#00bad5] tracking-[0.2em] text-[11px] uppercase font-bold">
-                Order Status
+        <div className="cards-grid grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6">
+          {cards.map((card, index) => (
+            <div
+              className="card p-6 rounded-2xl transition-all duration-300  hover:shadow-xl hover:-translate-y-1 border border-slate-200/50 dark:border-slate-700/50 bg-gradient-to-br from-white via-sky-50/80 to-blue-100/40 dark:from-slate-800 dark:via-slate-800/90 dark:to-sky-900/30 hover:from-sky-100 hover:via-sky-200/50 hover:to-blue-200/60 dark:hover:from-slate-800 dark:hover:via-slate-800/90 dark:hover:to-sky-900/30 dark:hover:border-slate-700/50"
+              key={index}
+            >
+              <div
+                className="card-icon w-12 h-12 rounded-xl flex items-center justify-center text-white text-xl mb-4 transition-all duration-300 group-hover:scale-110"
+                style={{
+                  background: `linear-gradient(135deg, ${card.color}, ${card.color}dd)`,
+                }}
+              >
+                {card.icon}
+              </div>
+
+              <h4 className="text-sm font-medium text-slate-500 dark:text-slate-400 uppercase tracking-wide">
+                {card.title}
+              </h4>
+
+              <h2 className="text-2xl font-bold text-slate-900 dark:text-white mt-1">
+                {card.value}
+              </h2>
+
+              <p className="text-sm text-slate-500 dark:text-slate-400 mt-1">
+                {card.caption}
+              </p>
+            </div>
+          ))}
+        </div>
+
+        <div className="bottom-section grid gap-6 lg:grid-cols-[2fr_1fr] items-start">
+          
+          <div className="rounded-2xl p-6 shadow-lg border border-slate-200/50 dark:border-slate-700/50 bg-gradient-to-br from-white via-sky-50/80 to-blue-100/40 dark:from-slate-800 dark:via-slate-800/90 dark:to-sky-900/30 transition-all duration-300 hover:shadow-xl hover:-translate-y-1 hover:from-sky-100 hover:via-sky-200/50 hover:to-blue-200/60 dark:hover:from-slate-800 dark:hover:via-slate-800/90 dark:hover:to-sky-900/30 dark:hover:border-slate-700/50">
+            <div className="flex justify-between items-center mb-6">
+              <div>
+                <span className="text-sky-500 dark:text-sky-400 tracking-[0.2em] text-[11px] uppercase font-bold">
+                  Order Status
+                </span>
+                <h2 className="mt-2 text-xl font-semibold text-slate-900 dark:text-white">
+                  Live fulfillment breakdown
+                </h2>
+              </div>
+
+              <span className="rounded-full bg-emerald-100 dark:bg-emerald-500/10 px-3 py-1 text-[11px] font-bold text-emerald-600 dark:text-emerald-400">
+                Updated from API
               </span>
+            </div>
 
+            <div className="grid gap-4 grid-cols-2 xl:grid-cols-3">
+              {[
+                "pending",
+                "processing",
+                "confirmed",
+                "shipped",
+                "delivered",
+                "cancelled",
+              ].map((statusKey) => {
+                const conf = actualStatusConfig[statusKey];
+                const count = data.orders?.[statusKey] || 0;
+
+                return (
+                  <div
+                    key={statusKey}
+                    className={`${conf.bg} ${conf.border} border rounded-[22px] p-4 transition-all duration-300 hover:-translate-y-1 hover:shadow-lg`}
+                  >
+                    <div
+                      className={`${conf.color} tracking-[0.2em] text-[10px] font-bold uppercase mb-2`}
+                    >
+                      {conf.label}
+                    </div>
+
+                    <div className={`${conf.color} text-3xl font-bold`}>
+                      {count}
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+          </div>
+
+          <div className="best-seller rounded-2xl p-6 shadow-lg border border-slate-200/50 dark:border-slate-700/50 bg-gradient-to-br from-white via-sky-50/80 to-blue-100/40 dark:from-slate-800 dark:via-slate-800/90 dark:to-sky-900/30 transition-all duration-300 hover:shadow-xl hover:-translate-y-1 hover:from-sky-100 hover:via-sky-200/50 hover:to-blue-200/60 dark:hover:from-slate-800 dark:hover:via-slate-800/90 dark:hover:to-sky-900/30 dark:hover:border-slate-700/50">
+            <h3 className="text-lg font-semibold text-slate-900 dark:text-white mb-4">
+              Best Sellers
+            </h3>
+
+            <div className="space-y-3">
+              {data?.topProducts?.map((product, index) => (
+                <div
+                  className="product-item bg-white/70 dark:bg-slate-800/50 rounded-xl border border-slate-200/50 dark:border-slate-700/50 p-4 flex items-center gap-4 transition-all duration-300 hover:shadow-md backdrop-blur-sm hover:bg-white/90 dark:hover:bg-slate-800/50 dark:hover:border-slate-700/50"
+                  key={index}
+                >
+                  <img 
+                    src={product.image} 
+                    alt={product.name} 
+                    className="w-12 h-12 rounded-lg object-cover bg-slate-100 dark:bg-slate-700"
+                  />
+
+                  <div className="flex-1 min-w-0">
+                    <h4 className="text-sm font-semibold text-slate-900 dark:text-white truncate">
+                      {product.name}
+                    </h4>
+                    <p className="text-sm text-slate-500 dark:text-slate-400">
+                      {product.totalSold} Sold
+                    </p>
+                  </div>
+
+                  <span className="text-sm font-bold text-slate-900 dark:text-white">
+                    #{index + 1}
+                  </span>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+
+        <div className="rounded-2xl p-6 shadow-lg border border-slate-200/50 dark:border-slate-700/50 bg-gradient-to-br from-white via-sky-50/80 to-blue-100/40 dark:from-slate-800 dark:via-slate-800/90 dark:to-sky-900/30 transition-all duration-300 hover:shadow-xl hover:-translate-y-1 hover:from-sky-100 hover:via-sky-200/50 hover:to-blue-200/60 dark:hover:from-slate-800 dark:hover:via-slate-800/90 dark:hover:to-sky-900/30 dark:hover:border-slate-700/50">
+          <div className="flex flex-wrap justify-between items-center mb-6 gap-3">
+            <div>
+              <span className="text-sky-500 dark:text-sky-400 tracking-[0.2em] text-[11px] uppercase font-bold">
+                Recent Orders
+              </span>
               <h2 className="mt-2 text-xl font-semibold text-slate-900 dark:text-white">
-                Live fulfillment breakdown
+                Latest customer activity
               </h2>
             </div>
-
-            <span className="rounded-full bg-emerald-100 dark:bg-emerald-500/10 px-3 py-1 text-[11px] font-bold text-emerald-600 dark:text-emerald-400">
-              Updated from API
+            <span className="rounded-full bg-sky-100 dark:bg-sky-500/10 px-3 py-1 text-xs font-bold text-sky-600 dark:text-sky-400">
+              {data.recentOrders?.length || 0} orders
             </span>
           </div>
 
-          <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
-            {[
-              "pending",
-              "processing",
-              "confirmed",
-              "shipped",
-              "delivered",
-              "cancelled",
-            ].map((statusKey) => {
-              const conf = actualStatusConfig[statusKey];
-              const count = data.orders?.[statusKey] || 0;
+          <div className="space-y-3">
+            {data.recentOrders?.map((order) => (
+              <div
+                key={order._id}
+                className="flex flex-wrap items-center justify-between gap-4 rounded-xl border border-slate-200/50 dark:border-slate-700/50 bg-white/70 dark:bg-slate-800/30 px-4 py-4 transition-all duration-300 hover:border-slate-300 hover:bg-white/90 dark:hover:border-slate-700/50 dark:hover:bg-slate-800/30 backdrop-blur-sm"
+              >
+                <div className="min-w-0 flex-1">
+                  <h4 className="text-base font-bold text-slate-900 dark:text-white truncate">
+                    {order.user?.username ||
+                      order.shippingAddress?.fullName ||
+                      "Customer"}
+                  </h4>
 
-              return (
-                <div
-                  key={statusKey}
-                  className={`${conf.bg} ${conf.border} border rounded-[22px] p-6 transition-all duration-300 hover:-translate-y-1 hover:shadow-xl`}                >
-                  <div
-                    className={`${conf.color} tracking-[0.2em] text-[11px] font-bold uppercase mb-3`}
-                  >
-                    {conf.label}
-                  </div>
-
-                  <div
-                    className={`${conf.color} text-[32px] font-normal`}
-                  >
-                    {count}
-                  </div>
+                  <p className="mt-1 text-sm text-slate-500 dark:text-slate-400">
+                    {order.items?.length > 0 ? (
+                      <>
+                        {order.items[0].name || "Product"}{" "}
+                        {order.items.length > 1 &&
+                          `+ ${order.items.length - 1} more`}
+                      </>
+                    ) : (
+                      "Order items"
+                    )}{" "}
+                    • {formatDate(order.createdAt)}
+                  </p>
                 </div>
-              );
-            })}
-          </div>
-        </div>
-        {/* BEST SELLER */}
-        <div className="best-seller bg-white/90 rounded-3xl border border-slate-200 p-6 shadow-xl dark:border-slate-800 dark:bg-slate-900/90">
-          <h3>Best Seller</h3>
 
-          {data?.topProducts?.map((product, index) => (
-            <div className="product-item bg-white/90 rounded-2xl border border-slate-200 p-4 shadow-sm transition-all duration-300 hover:shadow-md dark:border-slate-800 dark:bg-slate-900/90" key={index}>
-              <img src={product.image} alt={product.name} />
-
-              <div className="text-black dark:text-white">
-                <h4>{product.name}</h4>
-                <p>{product.totalSold} Sold</p>
-              </div>
-            </div>
-          ))}
-        </div>
-      </div>
-
-      {/* RECENT ORDERS CARD */}
-      <div className="rounded-3xl border border-slate-200 bg-white/90 p-6 shadow-xl dark:border-slate-800 dark:bg-slate-900/90">
-        <div className="flex justify-between items-center mb-4">
-          <div>
-            <span className="text-[#00bad5] tracking-[0.2em] text-[11px] uppercase font-bold">
-              Recent Orders
-            </span>
-            <h2 className="mt-2 text-xl font-semibold text-slate-900 dark:text-white">
-              Latest customer activity
-            </h2>
-          </div>
-          <span className="rounded-full bg-[#00bad5]/10 px-3 py-1 text-xs font-bold text-[#00bad5]">
-            {data.recentOrders?.length || 0} orders
-          </span>
-        </div>
-
-        <div className="space-y-4">
-          {data.recentOrders?.map((order) => (
-            <div
-              key={order._id}
-              className="flex items-center justify-between rounded-3xl border border-slate-100 bg-slate-50 dark:border-slate-800 dark:bg-slate-950 px-6 py-5 transition-all duration-300 hover:border-slate-200 hover:bg-slate-100 dark:hover:border-slate-700 dark:hover:bg-slate-900"
-            >
-              {/* Left */}
-              <div>
-                <h4 className="text-lg font-bold text-slate-900 dark:text-white">
-                  {order.user?.username ||
-                    order.shippingAddress?.fullName ||
-                    "Customer"}
-                </h4>
-
-                <p className="mt-1 text-[13px] font-medium text-slate-500 dark:text-slate-400">
-                  {order.items?.length > 0 ? (
-                    <>{order.items[0].name || "Product"} {order.items.length > 1 && `+ ${order.items.length - 1} more`}</>
-                  ) : (
-                    "Order items"
-                  )} • {formatDate(order.createdAt)}
-                </p>
-              </div>
-
-              {/* Right */}
-              <div className="flex items-center gap-6">
-                <span
-                  className={`rounded-full px-4 py-1.5 text-xs font-bold uppercase tracking-wider ${actualStatusConfig[order.status]?.badgeBg || "bg-slate-200 dark:bg-slate-800"
-                    } ${actualStatusConfig[order.status]?.badgeText || "text-slate-600 dark:text-slate-300"
+                <div className="flex flex-wrap items-center gap-3">
+                  <span
+                    className={`rounded-full px-3 py-1 text-[10px] font-bold uppercase tracking-wider ${
+                      actualStatusConfig[order.status]?.badgeBg ||
+                      "bg-slate-200 dark:bg-slate-800"
+                    } ${
+                      actualStatusConfig[order.status]?.badgeText ||
+                      "text-slate-600 dark:text-slate-300"
                     }`}
-                >
-                  {order.status}
-                </span>
+                  >
+                    {order.status}
+                  </span>
 
-                <span className="min-w-[110px] text-right text-lg font-bold text-slate-900 dark:text-white">
-                  {formatCurrency(order.totalPrice)}
-                </span>
+                  <span className="text-base font-bold text-slate-900 dark:text-white min-w-[90px] text-right">
+                    {formatCurrency(order.totalPrice)}
+                  </span>
+                </div>
               </div>
-            </div>
-          ))}
+            ))}
+          </div>
         </div>
+
       </div>
     </section>
   );
 }
-
-////////////////////////////////////////////////////////////////////
