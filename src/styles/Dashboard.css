@@ -44,199 +44,21 @@ body {
   border-left: 5px solid red;
 }
 
+/*
+  NOTE (removed): .dashboard, .dashboard-header, .cards-grid, .card,
+  .card-icon, .dash-card-caption, .bottom-section, .best-seller,
+  .product-item used to be defined here with their own padding, grid
+  columns, and a position:absolute icon box.
 
-.dashboard {
-  padding: 32px;
-  min-height: 100vh;
-  /* background: #0b1220; */
-}
-
-/* header */
-
-.dashboard-header {
-  /* background: #141a2e; */
-  border: 1px solid rgba(255, 255, 255, 0.06);
-  border-radius: 24px;
-  padding: 32px;
-  margin-bottom: 32px;
-}
-
-
-
-/* stat cards */
-
-.cards-grid {
-  display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: 24px;
-  margin-bottom: 32px;
-}
-
-@media (max-width: 900px) {
-  .cards-grid {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-  }
-}
-
-@media (max-width: 560px) {
-  .cards-grid {
-    grid-template-columns: 1fr;
-  }
-}
-
-.cards-grid .card {
-  position: relative;
-  /* background: #141a2e; */
-  border: 1px solid rgba(255, 255, 255, 0.06);
-  border-radius: 20px;
-  padding: 28px;
-  overflow: hidden;
-  transition: transform 0.2s ease, box-shadow 0.2s ease;
-}
-
-.cards-grid .card:hover {
-
-  box-shadow: 0 12px 24px -12px rgba(0, 0, 0, 0.5);
-  transform: scale(1.05);
-}
-
-.cards-grid .card-icon {
-  position: absolute;
-  top: 24px;
-  right: 24px;
-  width: 58px;
-  height: 58px;
-  border-radius: 18px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  color: white;
-  font-size: 26px;
-}
-
-.cards-grid .card h4 {
-  color: #94a3b8;
-  font-size: 16px;
-  font-weight: 500;
-  color: #94a3b8;
- 
-}
-
-.cards-grid .card h2 {
-  /* color: #fff; */
-  font-size: 36px;
-  font-weight: 700;
-}
-@media (min-width: 320px) {
-  .cards-grid .card h2 {
-    font-size: 25px;
-
-  }
-}
-
-/* .cards-grid .card {
-  position: relative;
-  background: #141a2e;
-  border: 1px solid rgba(255, 255, 255, .06);
-  border-radius: 22px;
-  padding: 28px;
-  overflow: hidden;
-  transition: .3s;
-} */
-
-.cards-grid .card::before {
-  content: "";
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  height: 4px;
-  background: var(--card-accent);
-}
-
-.dash-card-caption {
-  color: #64748b;
-  font-size: 13px;
-  margin-top: 10px;
-  padding-top: 18px;
-  border-top: 1px solid rgba(255, 255, 255, .06);
-}
-
-/* bottom section */
-
-.bottom-section {
-  display: grid;
-  grid-template-columns: minmax(0, 1fr);
-  gap: 32px;
-  align-items: stretch;
-  margin-bottom: 32px;
-}
-
-@media (min-width: 1024px) {
-  .bottom-section {
-    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
-  }
-}
-
-/* best seller */
-
-.best-seller {
-  /* background: #141a2e; */
-  border: 1px solid rgba(255, 255, 255, 0.06);
-  border-radius: 24px;
-  padding: 32px;
-  height: 100%;
-}
-
-.best-seller h3 {
-  color: #22d3ee;
-  font-size: 11px;
-  font-weight: 700;
-  letter-spacing: 0.2em;
-  text-transform: uppercase;
-  margin: 0 0 20px;
-}
-
-.product-item {
-  /* background: #080d17; */
-  display: flex;
-  align-items: center;
-  gap: 16px;
-  padding: 14px;
-  border-radius: 16px;
-  border: 1px solid rgba(255, 255, 255, 0.06);
-  margin-bottom: 12px;
-}
-
-.product-item:hover {
-  opacity: 0.8;
-}
-
-.product-item:last-child {
-  margin-bottom: 0;
-}
-
-.product-item img {
-  width: 48px;
-  height: 48px;
-  border-radius: 12px;
-  object-fit: cover;
-  background: rgba(255, 255, 255, 0.06);
-  flex-shrink: 0;
-}
-
-.product-item h4 {
-  font-size: 14px;
-  font-weight: 600;
-  /* color: #f8fafc; */
-  margin: 0 0 4px;
-}
-
-.product-item p {
-  font-size: 12px;
-  color: #64748b;
-  margin: 0;
-}
+  DashboardHome.jsx now controls all of that directly with Tailwind
+  utility classes (including responsive breakpoints), so keeping both
+  meant this file and the JSX were fighting over the same elements —
+  that's what caused the icon overlapping text and the layout jumping
+  at odd screen widths. If any of those class names are reused by
+  another page, recreate them there with a different name instead of
+  re-adding them here, so this file doesn't collide with
+  DashboardHome.jsx again.
+*/
 
 /* loading */
 
