@@ -9,18 +9,21 @@ import {
   Settings,
   X,
 } from "lucide-react";
-
-const NAV_ITEMS = [
-  { label: "Dashboard", icon: Home, to: "/" },
-  { label: "Users", icon: Users, to: "/users" },
-  { label: "Products", icon: Package, to: "/products" },
-  { label: "Add Product", icon: Plus, to: "/add-product" },
-  { label: "Orders", icon: ClipboardList, to: "/orders" },
-  { label: "Carts", icon: ShoppingCart, to: "/carts" },
-  { label: "Settings", icon: Settings, to: "/settings" },
-];
+import { useLanguage } from "../Context/LanguageContext";
 
 export default function Sidebar({ open, onClose }) {
+  const { t } = useLanguage();
+
+  const NAV_ITEMS = [
+    { label: t("sidebar.dashboard"), icon: Home, to: "/" },
+    { label: t("sidebar.users"), icon: Users, to: "/users" },
+    { label: t("sidebar.products"), icon: Package, to: "/products" },
+    { label: t("sidebar.addProduct"), icon: Plus, to: "/add-product" },
+    { label: t("sidebar.orders"), icon: ClipboardList, to: "/orders" },
+    { label: t("sidebar.carts"), icon: ShoppingCart, to: "/carts" },
+    { label: t("sidebar.settings"), icon: Settings, to: "/settings" },
+  ];
+
   return (
     <>
       {open && (
@@ -36,14 +39,13 @@ export default function Sidebar({ open, onClose }) {
         lg:sticky lg:translate-x-0 lg:top-0 lg:self-start
         ${open ? "translate-x-0" : "-translate-x-full lg:translate-x-0"}`}
       >
-        {/* ... باقي المحتوى كما هو */}
         <div className="px-6 pt-6 pb-5 flex items-start justify-between">
           <div>
             <p className="text-xs font-bold tracking-[0.2em] text-sky-500">
-              COMMERCE
+              {t("sidebar.commerce")}
             </p>
             <p className="text-xl font-bold text-slate-900 dark:text-white mt-1">
-              Admin Panel
+              {t("sidebar.adminPanel")}
             </p>
           </div>
           <button
@@ -59,7 +61,7 @@ export default function Sidebar({ open, onClose }) {
             const Icon = item.icon;
             return (
               <NavLink
-                key={item.label}
+                key={item.to}
                 to={item.to}
                 end={item.to === "/"}
                 onClick={onClose}
@@ -81,10 +83,10 @@ export default function Sidebar({ open, onClose }) {
         <div className="p-4 pb-6 ">
           <div className="rounded-2xl p-4 bg-gradient-to-br from-sky-400 to-blue-600 text-white shadow-lg shadow-blue-500/20">
             <p className="text-[10px] font-bold tracking-[0.25em] opacity-90">
-              LIVE
+              {t("sidebar.liveStatus")}
             </p>
             <p className="font-bold mt-1 leading-snug">
-              Connected to the E-commerce API
+              {t("sidebar.liveMessage")}
             </p>
           </div>
         </div>

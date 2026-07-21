@@ -9,10 +9,12 @@ import { FiPackage, FiArrowLeft } from "react-icons/fi";
 import { Link } from "react-router-dom";
 import { ProductDetailsSkeleton } from "../components/Skeleton/ProductDetailsSkeleton/ProductDetailsSkeleton";
 import useTheme from "../components/customHook/useTheme";
+import { useLanguage } from "../Context/LanguageContext";
 
 export default function ProductDetails() {
   const { id } = useParams();
   const { isDarkMode } = useTheme();
+  const { t } = useLanguage();
 
   const { product, loading, error, fetchProductById } = useProduct();
 
@@ -44,14 +46,14 @@ export default function ProductDetails() {
               <FiPackage size={32} />
             </div>
           </div>
-          <h3 className="text-xl font-bold text-rose-700 dark:text-rose-400 mb-2">Product Not Found</h3>
+          <h3 className="text-xl font-bold text-rose-700 dark:text-rose-400 mb-2">{t("productDetails.notFound")}</h3>
           <p className="text-sm text-rose-600 dark:text-rose-400/80">{error}</p>
           <Link
             to="/products"
             className="inline-flex items-center gap-2 mt-6 px-6 py-2.5 rounded-xl bg-gradient-to-r from-cyan-500 to-sky-500 text-white font-semibold hover:from-cyan-600 hover:to-sky-600 transition-all shadow-lg shadow-cyan-500/30"
           >
             <FiArrowLeft size={16} />
-            Back to Products
+            {t("productDetails.backToProducts")}
           </Link>
         </div>
       </div>
@@ -88,15 +90,15 @@ export default function ProductDetails() {
                     className="inline-flex items-center gap-2 text-sm font-medium text-slate-500 hover:text-cyan-500 transition-colors dark:text-slate-400 dark:hover:text-cyan-400"
                   >
                     <FiArrowLeft size={16} />
-                    Back to Products
+                    {t("productDetails.backToProducts")}
                   </Link>
                   <h1 className="mt-1 text-2xl font-bold text-slate-900 dark:text-white">
-                    {product?.name || "Product Details"}
+                    {product?.name || t("productDetails.detailsOverview")}
                   </h1>
                 </div>
               </div>
               <span className="rounded-xl border border-slate-200/50 dark:border-slate-700/50 bg-white/70 dark:bg-slate-800/50 px-4 py-2 text-sm font-medium text-slate-600 dark:text-slate-300 backdrop-blur-sm">
-                Product details overview
+                {t("productDetails.detailsOverview")}
               </span>
             </div>
           </div>

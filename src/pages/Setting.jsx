@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { SettingsSkeleton } from "../components/Skeleton/SettingsSkeleton/SettingsSkeleton";
 import useTheme from "../components/customHook/useTheme";
+import { useLanguage } from "../Context/LanguageContext";
 import {
   FiSettings,
   FiMoon,
@@ -17,7 +18,8 @@ import {
 } from "react-icons/fi";
 
 export default function Settings() {
-  const { isDarkMode, toggleTheme } = useTheme(); // ← استخدم toggleTheme من الـ hook
+  const { isDarkMode, toggleTheme } = useTheme();
+  const { lang, setLang, t } = useLanguage();
   const [showSkeleton, setShowSkeleton] = useState(true);
 
   useEffect(() => {
@@ -54,10 +56,10 @@ export default function Settings() {
               </div>
               <div>
                 <p className="text-[11px] font-bold tracking-[0.25em] text-sky-500 dark:text-sky-400 uppercase">
-                  SETTINGS
+                  {t("settings.title")}
                 </p>
                 <h2 className="mt-1 text-2xl font-bold text-slate-900 dark:text-white">
-                  Preferences and integrations
+                  {t("settings.heading")}
                 </h2>
               </div>
             </div>
@@ -66,29 +68,28 @@ export default function Settings() {
             </span>
           </div>
           <p className="relative z-10 mt-2 text-sm text-slate-500 dark:text-slate-400">
-            Theme mode, API credentials, and dashboard preferences are managed
-            here.
+            {t("settings.description")}
           </p>
         </div>
 
         <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
           <SettingCard
             icon={<FiMoon />}
-            title="Appearance"
-            description="Customize your dashboard theme"
+            title={t("settings.appearance")}
+            description={t("settings.appearanceDesc")}
             tone="cyan"
           >
             <div className="flex items-center gap-3 mt-3">
               <button
-                onClick={toggleTheme} // ← استخدم toggleTheme مباشرة
-                className={`flex  cursor-pointer items-center gap-2 rounded-xl px-4 py-2 text-sm font-semibold transition-all ${
+                onClick={toggleTheme}
+                className={`flex cursor-pointer items-center gap-2 rounded-xl px-4 py-2 text-sm font-semibold transition-all ${
                   !isDarkMode
                     ? "bg-gradient-to-r from-cyan-500 to-sky-500 text-white shadow-lg shadow-cyan-500/30"
                     : "bg-white/70 dark:bg-slate-800/50 text-slate-600 dark:text-slate-300 border border-slate-200/50 dark:border-slate-700/50 hover:bg-slate-50 dark:hover:bg-slate-700/50"
                 }`}
               >
                 <FiSun size={16} />
-                Light
+                {t("settings.light")}
               </button>
               <button
                 onClick={toggleTheme}
@@ -99,20 +100,20 @@ export default function Settings() {
                 }`}
               >
                 <FiMoon size={16} />
-                Dark
+                {t("settings.dark")}
               </button>
             </div>
           </SettingCard>
 
           <SettingCard
             icon={<FiBell />}
-            title="Notifications"
-            description="Manage your alerts and updates"
+            title={t("settings.notifications")}
+            description={t("settings.notificationsDesc")}
             tone="amber"
           >
             <div className="flex items-center justify-between mt-3">
               <span className="text-sm text-slate-600 dark:text-slate-300">
-                Email notifications
+                {t("settings.emailNotifications")}
               </span>
               <label className="relative inline-flex items-center cursor-pointer">
                 <input
@@ -125,7 +126,7 @@ export default function Settings() {
             </div>
             <div className="flex items-center justify-between mt-2">
               <span className="text-sm text-slate-600 dark:text-slate-300">
-                Push notifications
+                {t("settings.pushNotifications")}
               </span>
               <label className="relative inline-flex items-center cursor-pointer">
                 <input type="checkbox" className="sr-only peer" />
@@ -136,57 +137,59 @@ export default function Settings() {
 
           <SettingCard
             icon={<FiShield />}
-            title="Security"
-            description="Protect your account"
+            title={t("settings.security")}
+            description={t("settings.securityDesc")}
             tone="emerald"
           >
             <button className="w-full cursor-pointer rounded-xl border border-slate-200/50 dark:border-slate-700/50 bg-white/70 dark:bg-slate-800/50 px-4 py-2 text-sm font-semibold text-slate-600 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-700/50 transition-all backdrop-blur-sm">
-              Change Password
+              {t("settings.changePassword")}
             </button>
             <button className="w-full cursor-pointer rounded-xl border border-slate-200/50 dark:border-slate-700/50 bg-white/70 dark:bg-slate-800/50 px-4 py-2 text-sm font-semibold text-slate-600 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-700/50 transition-all backdrop-blur-sm mt-2">
-              Two-Factor Authentication
+              {t("settings.twoFactor")}
             </button>
           </SettingCard>
 
           <SettingCard
             icon={<FiGlobe />}
-            title="Language"
-            description="Choose your preferred language"
+            title={t("settings.language")}
+            description={t("settings.languageDesc")}
             tone="purple"
           >
-            <select className="w-full rounded-xl border border-slate-200/50 dark:border-slate-700/50 bg-white/70 dark:bg-slate-800/50 px-4 py-2 text-sm text-slate-600 dark:text-slate-300 outline-none focus:border-cyan-500 focus:ring-1 focus:ring-cyan-500 backdrop-blur-sm">
+            <select
+              value={lang}
+              onChange={(e) => setLang(e.target.value)}
+              className="w-full cursor-pointer rounded-xl border border-slate-200/50 dark:border-slate-700/50 bg-white/70 dark:bg-slate-800/50 px-4 py-2 text-sm text-slate-600 dark:text-slate-300 outline-none focus:border-cyan-500 focus:ring-1 focus:ring-cyan-500 backdrop-blur-sm"
+            >
               <option value="en">English</option>
               <option value="ar">العربية</option>
-              <option value="fr">Français</option>
-              <option value="es">Español</option>
             </select>
           </SettingCard>
 
           <SettingCard
             icon={<FiCloud />}
-            title="API Integration"
-            description="Manage API connections"
+            title={t("settings.apiIntegration")}
+            description={t("settings.apiIntegrationDesc")}
             tone="blue"
           >
             <div className="flex items-center gap-2 text-sm text-slate-600 dark:text-slate-300">
               <FiCheckCircle className="text-emerald-500" />
-              <span>API Status: Connected</span>
+              <span>{t("settings.apiStatus")}</span>
             </div>
             <button className="w-full rounded-xl cursor-pointer border border-slate-200/50 dark:border-slate-700/50 bg-white/70 dark:bg-slate-800/50 px-4 py-2 text-sm font-semibold text-slate-600 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-700/50 transition-all backdrop-blur-sm mt-2">
               <FiRefreshCw className="inline mr-2" />
-              Refresh Connection
+              {t("settings.refreshConnection")}
             </button>
           </SettingCard>
 
           <SettingCard
             icon={<FiDatabase />}
-            title="Database"
-            description="Data management settings"
+            title={t("settings.database")}
+            description={t("settings.databaseDesc")}
             tone="rose"
           >
             <div className="flex items-center justify-between mt-1">
               <span className="text-sm text-slate-600 dark:text-slate-300">
-                Auto-backup
+                {t("settings.autoBackup")}
               </span>
               <label className="relative inline-flex items-center cursor-pointer">
                 <input
@@ -198,7 +201,7 @@ export default function Settings() {
               </label>
             </div>
             <button className="w-full cursor-pointer rounded-xl border border-slate-200/50 dark:border-slate-700/50 bg-white/70 dark:bg-slate-800/50 px-4 py-2 text-sm font-semibold text-slate-600 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-700/50 transition-all backdrop-blur-sm mt-2">
-              Export Data
+              {t("settings.exportData")}
             </button>
           </SettingCard>
         </div>

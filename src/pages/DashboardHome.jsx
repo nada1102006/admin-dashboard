@@ -11,6 +11,7 @@ import {
 } from "react-icons/fa";
 import { DashboardSkeleton } from "../components/Skeleton/DashboardSkeleton/DashboardSkeleton";
 import useTheme from "../components/customHook/useTheme";
+import { useLanguage } from "../Context/LanguageContext";
 
 const formatCurrency = (amount) => {
   return new Intl.NumberFormat("en-US", {
@@ -42,7 +43,7 @@ const actualStatusConfig = {
     bg: "bg-sky-50 dark:bg-sky-950/40",
     border: "border-sky-200 dark:border-sky-900/50",
     badgeBg: "bg-sky-100 dark:bg-sky-900/30",
-    badgeText: "text-sky-700 dark:text-sky-400",
+    badgeText: "text-sky-700 dark:sky-400",
   },
   confirmed: {
     label: "CONFIRMED",
@@ -83,6 +84,7 @@ export default function DashboardHome() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const { isDarkMode } = useTheme();
+  const { t } = useLanguage();
 
   useEffect(() => {
     const getDashboard = async () => {
@@ -203,42 +205,42 @@ export default function DashboardHome() {
 
   const cards = [
     {
-      title: "Total Orders",
+      title: t("dashboard.totalOrders"),
       value: data?.orders?.total || 0,
       icon: <FaShoppingBag />,
       color: "#e546b5",
-      caption: "All orders received",
+      caption: t("dashboard.allOrdersReceived"),
     },
     {
-      title: "Pending Orders",
+      title: t("dashboard.pendingOrders"),
       value: data?.orders?.pending || 0,
       icon: <FaClock />,
       color: "#F59E0B",
-      caption: "Awaiting action",
+      caption: t("dashboard.awaitingAction"),
     },
     {
-      title: "Revenue",
+      title: t("dashboard.revenue"),
       value: formatCurrency(data?.revenue?.total || 0),
       icon: <FaDollarSign />,
       color: "#10B981",
-      caption: "Total gross revenue",
+      caption: t("dashboard.totalGrossRevenue"),
     },
     {
-      title: "This Month",
+      title: t("dashboard.thisMonth"),
       value: formatCurrency(data?.revenue?.lastMonth || 0),
       icon: <FaChartLine />,
       color: "#EC4899",
-      caption: "Monthly sales target",
+      caption: t("dashboard.monthlySalesTarget"),
     },
     {
-      title: "Users",
+      title: t("dashboard.users"),
       value: data?.totalCustomers || 0,
       icon: <FaUsers />,
       color: "#3B82F6",
-      caption: "Customers who ordered",
+      caption: t("dashboard.customersWhoOrdered"),
     },
     {
-      title: "Top Product",
+      title: t("dashboard.topProduct"),
       value: data?.topProducts?.[0]?.totalSold || 0,
       icon: <FaBoxOpen />,
       color: "#8B5CF6",
@@ -246,32 +248,28 @@ export default function DashboardHome() {
         ? data.topProducts[0].name.length > 20
           ? data.topProducts[0].name.slice(0, 20) + "..."
           : data.topProducts[0].name
-        : "Most popular item",
+        : t("dashboard.mostPopularItem"),
     },
   ];
 
   return (
-    // Mobile-first padding: tighter on phones (p-3), grows with screen size.
     <section className="dashboard min-h-screen bg-slate-50 dark:bg-slate-900 p-3 sm:p-4 md:p-6 lg:p-8">
       <div className="slide-up max-w-7xl mx-auto space-y-4 sm:space-y-6">
 
         {/* ---------- Header banner ---------- */}
         <div className="dashboard-header relative overflow-hidden rounded-2xl p-5 sm:p-6 md:p-8 bg-gradient-to-br from-slate-100 via-sky-50 to-blue-100/60 dark:from-slate-800 dark:via-slate-800/90 dark:to-sky-900/40 border border-slate-200/50 dark:border-slate-700/50 shadow-lg shadow-sky-100/20 dark:shadow-sky-900/20 transition-all duration-300 hover:shadow-xl hover:shadow-sky-200/30 dark:hover:shadow-sky-900/20 hover:border-sky-300/50 hover:from-sky-100 hover:via-sky-200/50 hover:to-blue-200/60 dark:border-slate-700/50 dark:hover:border-slate-700/50 dark:bg-gradient-to-br dark:from-slate-800 dark:via-slate-800/90 dark:to-sky-900/40 dark:hover:from-slate-800 dark:hover:via-slate-800/90 dark:hover:to-sky-900/40">
-          {/* Decorative glow blobs — smaller on phones so they don't dominate
-              the small viewport (overflow-hidden on the parent still clips
-              them either way, this is purely about visual balance). */}
           <div className="absolute -top-16 -right-16 w-40 h-40 sm:-top-20 sm:-right-20 sm:w-64 sm:h-64 bg-sky-400/10 rounded-full blur-3xl dark:bg-sky-500/5" />
           <div className="absolute -bottom-16 -left-16 w-40 h-40 sm:-bottom-20 sm:-left-20 sm:w-64 sm:h-64 bg-blue-400/10 rounded-full blur-3xl dark:bg-blue-500/5" />
 
           <div className="relative z-10">
             <p className="text-xs sm:text-sm uppercase tracking-[0.25em] sm:tracking-[0.35em] text-sky-500 dark:text-sky-400 font-semibold">
-              Admin Overview
+              {t("dashboard.adminOverview")}
             </p>
             <h2 className="mt-2 text-xl sm:text-2xl md:text-3xl font-bold text-slate-900 dark:text-white">
-              Real-time commerce health
+              {t("dashboard.realtimeHealth")}
             </h2>
             <p className="mt-2 text-sm sm:text-base text-slate-600 dark:text-slate-300">
-              Monitor your storefront with AI-style clarity and live API metrics.
+              {t("dashboard.healthDescription")}
             </p>
           </div>
         </div>
@@ -279,7 +277,6 @@ export default function DashboardHome() {
         {/* ---------- Metric cards ---------- */}
         <div className="cards-grid grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4 md:gap-6">
           {cards.map((card, index) => (
-            // added "group" here — group-hover:scale-110 on the icon below
             // was never triggering before because this class was missing.
             <div
               className="card group p-4 sm:p-5 md:p-6 rounded-2xl transition-all duration-300 hover:shadow-xl hover:-translate-y-1 border border-slate-200/50 dark:border-slate-700/50 bg-gradient-to-br from-white via-sky-50/80 to-blue-100/40 dark:from-slate-800 dark:via-slate-800/90 dark:to-sky-900/30 hover:from-sky-100 hover:via-sky-200/50 hover:to-blue-200/60 dark:hover:from-slate-800 dark:hover:via-slate-800/90 dark:hover:to-sky-900/30 dark:hover:border-slate-700/50"
@@ -313,21 +310,18 @@ export default function DashboardHome() {
         <div className="bottom-section grid gap-4 md:gap-6 lg:grid-cols-[2fr_1fr] items-start">
 
           <div className="rounded-2xl p-4 sm:p-6 shadow-lg border border-slate-200/50 dark:border-slate-700/50 bg-gradient-to-br from-white via-sky-50/80 to-blue-100/40 dark:from-slate-800 dark:via-slate-800/90 dark:to-sky-900/30 transition-all duration-300 hover:shadow-xl hover:-translate-y-1 hover:from-sky-100 hover:via-sky-200/50 hover:to-blue-200/60 dark:hover:from-slate-800 dark:hover:via-slate-800/90 dark:hover:to-sky-900/30 dark:hover:border-slate-700/50">
-            {/* Stacks on phones instead of squeezing title + badge onto one
-                line — was a plain justify-between before, which crowded
-                "Live fulfillment breakdown" against the badge on narrow screens. */}
             <div className="flex flex-col gap-3 sm:flex-row sm:justify-between sm:items-center mb-5 sm:mb-6">
               <div>
                 <span className="text-sky-500 dark:text-sky-400 tracking-[0.2em] text-[11px] uppercase font-bold">
-                  Order Status
+                  {t("dashboard.orderStatus")}
                 </span>
                 <h2 className="mt-2 text-lg sm:text-xl font-semibold text-slate-900 dark:text-white">
-                  Live fulfillment breakdown
+                  {t("dashboard.liveFulfillment")}
                 </h2>
               </div>
 
               <span className="self-start sm:self-auto rounded-full bg-emerald-100 dark:bg-emerald-500/10 px-3 py-1 text-[11px] font-bold text-emerald-600 dark:text-emerald-400">
-                Updated from API
+                {t("dashboard.updatedFromApi")}
               </span>
             </div>
 
@@ -351,7 +345,7 @@ export default function DashboardHome() {
                     <div
                       className={`${conf.color} tracking-[0.15em] sm:tracking-[0.2em] text-[9px] sm:text-[10px] font-bold uppercase mb-1.5 sm:mb-2`}
                     >
-                      {conf.label}
+                      {t(`status.${statusKey}`) || conf.label}
                     </div>
 
                     <div className={`${conf.color} text-2xl sm:text-3xl font-bold`}>
@@ -365,7 +359,7 @@ export default function DashboardHome() {
 
           <div className="best-seller rounded-2xl p-4 sm:p-6 shadow-lg border border-slate-200/50 dark:border-slate-700/50 bg-gradient-to-br from-white via-sky-50/80 to-blue-100/40 dark:from-slate-800 dark:via-slate-800/90 dark:to-sky-900/30 transition-all duration-300 hover:shadow-xl hover:-translate-y-1 hover:from-sky-100 hover:via-sky-200/50 hover:to-blue-200/60 dark:hover:from-slate-800 dark:hover:via-slate-800/90 dark:hover:to-sky-900/30 dark:hover:border-slate-700/50">
             <h3 className="text-base sm:text-lg font-semibold text-slate-900 dark:text-white mb-3 sm:mb-4">
-              Best Sellers
+              {t("dashboard.bestSeller")}
             </h3>
 
             <div className="space-y-2.5 sm:space-y-3">
@@ -385,7 +379,7 @@ export default function DashboardHome() {
                       {product.name}
                     </h4>
                     <p className="text-xs sm:text-sm text-slate-500 dark:text-slate-400">
-                      {product.totalSold} Sold
+                      {product.totalSold} {t("dashboard.sold")}
                     </p>
                   </div>
 
@@ -403,24 +397,19 @@ export default function DashboardHome() {
           <div className="flex flex-col gap-3 sm:flex-row sm:flex-wrap sm:justify-between sm:items-center mb-5 sm:mb-6">
             <div>
               <span className="text-sky-500 dark:text-sky-400 tracking-[0.2em] text-[11px] uppercase font-bold">
-                Recent Orders
+                {t("dashboard.recentOrders")}
               </span>
               <h2 className="mt-2 text-lg sm:text-xl font-semibold text-slate-900 dark:text-white">
-                Latest customer activity
+                {t("dashboard.latestActivity")}
               </h2>
             </div>
             <span className="self-start sm:self-auto rounded-full bg-sky-100 dark:bg-sky-500/10 px-3 py-1 text-xs font-bold text-sky-600 dark:text-sky-400">
-              {data.recentOrders?.length || 0} orders
+              {data.recentOrders?.length || 0} {t("dashboard.orders")}
             </span>
           </div>
 
           <div className="space-y-3">
             {data.recentOrders?.map((order) => (
-              // Switched from a single flex-wrap row to an explicit
-              // flex-col on phones / flex-row from sm up. The old version
-              // relied on flex-wrap to "figure it out", which left the
-              // status badge + price randomly wherever they happened to
-              // wrap to on narrow screens.
               <div
                 key={order._id}
                 className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between rounded-xl border border-slate-200/50 dark:border-slate-700/50 bg-white/70 dark:bg-slate-800/30 px-4 py-4 transition-all duration-300 hover:border-slate-300 hover:bg-white/90 dark:hover:border-slate-700/50 dark:hover:bg-slate-800/30 backdrop-blur-sm"
@@ -429,7 +418,7 @@ export default function DashboardHome() {
                   <h4 className="text-base font-bold text-slate-900 dark:text-white truncate">
                     {order.user?.username ||
                       order.shippingAddress?.fullName ||
-                      "Customer"}
+                      t("dashboard.customer")}
                   </h4>
 
                   <p className="mt-1 text-sm text-slate-500 dark:text-slate-400 truncate">
@@ -437,7 +426,7 @@ export default function DashboardHome() {
                       <>
                         {order.items[0].name || "Product"}{" "}
                         {order.items.length > 1 &&
-                          `+ ${order.items.length - 1} more`}
+                          `+ ${order.items.length - 1}`}
                       </>
                     ) : (
                       "Order items"
@@ -446,9 +435,6 @@ export default function DashboardHome() {
                   </p>
                 </div>
 
-                {/* On phones this becomes a full-width row with the badge
-                    on the left and the price on the right — deliberate,
-                    not an accidental wrap. */}
                 <div className="flex items-center justify-between sm:justify-end gap-3">
                   <span
                     className={`rounded-full px-3 py-1 text-[10px] font-bold uppercase tracking-wider ${
@@ -459,7 +445,7 @@ export default function DashboardHome() {
                       "text-slate-600 dark:text-slate-300"
                     }`}
                   >
-                    {order.status}
+                    {t(`status.${order.status}`) || order.status}
                   </span>
 
                   <span className="text-base font-bold text-slate-900 dark:text-white sm:min-w-[90px] sm:text-right">

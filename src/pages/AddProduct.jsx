@@ -13,10 +13,12 @@ import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { AddProductSkeleton } from "../components/Skeleton/AddProductSkeleton/AddProductSkeleton";
 import useTheme from "../components/customHook/useTheme";
+import { useLanguage } from "../Context/LanguageContext";
 
 export default function AddProduct() {
   const navigate = useNavigate();
   const { isDarkMode } = useTheme();
+  const { t } = useLanguage();
 
   const [showSkeleton, setShowSkeleton] = useState(true);
   const [loading, setLoading] = useState(false);
@@ -199,7 +201,7 @@ export default function AddProduct() {
                 className="inline-flex items-center gap-2 rounded-xl border border-slate-200/50 dark:border-slate-700/50 bg-white/70 dark:bg-slate-800/50 px-4 py-2 text-sm text-slate-600 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-700/50 backdrop-blur-sm transition-all"
               >
                 <FiArrowLeft size={16} />
-                Back to products
+                {t("addProduct.backToProducts")}
               </Link>
   
               <div className="mt-5 flex items-center gap-4">
@@ -208,25 +210,24 @@ export default function AddProduct() {
                 </div>
                 <div className="flex flex-col justify-center">
                   <span className="text-[11px] font-bold tracking-[0.25em] text-sky-500 dark:text-sky-400 uppercase mb-1">
-                    Create Product
+                    {t("addProduct.createProduct")}
                   </span>
                   <h1 className="text-[32px] sm:text-4xl leading-none font-black text-slate-900 dark:text-white tracking-tight">
-                    Launch a polished product entry
+                    {t("addProduct.launchTitle")}
                   </h1>
                 </div>
               </div>
               <p className="mt-4 max-w-2xl text-[15px] text-slate-500 dark:text-slate-400 font-medium">
-                Add products with validation, image previews, multi-upload
-                support, and smooth UX.
+                {t("addProduct.launchDesc")}
               </p>
             </div>
   
             <div className="rounded-2xl border border-slate-200/50 dark:border-slate-700/50 bg-white/70 dark:bg-slate-800/50 p-5 shadow-lg backdrop-blur-sm">
               <p className="text-[11px] font-bold uppercase tracking-[0.25em] text-sky-500 dark:text-sky-400">
-                Ready
+                {t("addProduct.ready")}
               </p>
               <p className="mt-1.5 text-[14px] font-medium text-slate-600 dark:text-slate-300">
-                Create, validate, and save with one click.
+                {t("addProduct.readyDesc")}
               </p>
             </div>
           </div>
@@ -243,10 +244,10 @@ export default function AddProduct() {
               </div>
               <div>
                 <h3 className="text-xl font-black tracking-tight text-slate-900 dark:text-white">
-                  Gallery *
+                  {t("addProduct.gallery")}
                 </h3>
                 <p className="text-sm font-medium text-slate-500 dark:text-slate-400 mt-0.5">
-                  Upload up to 5 images and preview instantly.
+                  {t("addProduct.galleryDesc")}
                 </p>
               </div>
             </div>
@@ -266,7 +267,7 @@ export default function AddProduct() {
                       />
                     </div>
                     <div className="absolute top-3 left-3 bg-white/90 dark:bg-slate-900/90 backdrop-blur px-3 py-1.5 rounded-xl text-[10px] font-bold uppercase tracking-[0.2em] text-slate-600 dark:text-slate-300 shadow-sm">
-                      Image {idx + 1}
+                      {t("addProduct.image")} {idx + 1}
                     </div>
                     <button
                       type="button"
@@ -286,11 +287,11 @@ export default function AddProduct() {
                   <FiImage size={24} className="text-cyan-500" />
                 </div>
                 <p className="text-[17px] font-bold text-slate-900 dark:text-white">
-                  Upload images
+                  {t("addProduct.uploadImages")}
                 </p>
                 <p className="mt-1.5 text-sm font-medium text-slate-500 dark:text-slate-400">
-                  PNG, JPG, WEBP • multiple files supported ({5 - images.length}{" "}
-                  left)
+                  {t("addProduct.uploadFormats")} ({5 - images.length}{" "}
+                  {t("addProduct.left")})
                 </p>
                 <input
                   hidden
@@ -305,12 +306,10 @@ export default function AddProduct() {
             <div className="mt-6 rounded-2xl border border-emerald-200/50 dark:border-emerald-800/50 bg-emerald-50/50 dark:bg-emerald-950/20 p-5">
               <div className="flex items-center gap-2 text-[13px] font-bold uppercase tracking-wider text-emerald-600 dark:text-emerald-400">
                 <FiStar size={16} className="fill-emerald-600/20 dark:fill-emerald-400/20" />
-                Upload Tips
+                {t("addProduct.uploadTips")}
               </div>
               <p className="mt-2 text-[14px] font-medium text-emerald-600/90 dark:text-emerald-400/80 leading-relaxed">
-                Use high-quality images (preferably 1:1 ratio) for the best
-                display on the store. The first image will be used as the
-                thumbnail.
+                {t("addProduct.uploadTipsDesc")}
               </p>
             </div>
           </section>
@@ -319,7 +318,7 @@ export default function AddProduct() {
             <div className="grid gap-6">
               <label className="block">
                 <span className="mb-2 block text-[13px] font-bold text-slate-700 dark:text-slate-300 uppercase tracking-wide">
-                  Product Name *
+                  {t("addProduct.productName")}
                 </span>
                 <input
                   required
@@ -333,7 +332,7 @@ export default function AddProduct() {
   
               <label className="block">
                 <span className="mb-2 block text-[13px] font-bold text-slate-700 dark:text-slate-300 uppercase tracking-wide">
-                  Short Description *
+                  {t("addProduct.shortDesc")}
                 </span>
                 <input
                   required
@@ -347,7 +346,7 @@ export default function AddProduct() {
   
               <label className="block">
                 <span className="mb-2 block text-[13px] font-bold text-slate-700 dark:text-slate-300 uppercase tracking-wide">
-                  Description *
+                  {t("addProduct.description")}
                 </span>
                 <textarea
                   required
@@ -363,7 +362,7 @@ export default function AddProduct() {
               <div className="grid gap-6 md:grid-cols-2">
                 <label className="block">
                   <span className="mb-2 block text-[13px] font-bold text-slate-700 dark:text-slate-300 uppercase tracking-wide">
-                    Price (EGP) *
+                    {t("addProduct.price")}
                   </span>
                   <input
                     required
@@ -378,7 +377,7 @@ export default function AddProduct() {
                 </label>
                 <label className="block">
                   <span className="mb-2 block text-[13px] font-bold text-slate-700 dark:text-slate-300 uppercase tracking-wide">
-                    Discount Price (EGP)
+                    {t("addProduct.discountPrice")}
                   </span>
                   <input
                     type="number"
@@ -395,7 +394,7 @@ export default function AddProduct() {
               <div className="grid gap-6 md:grid-cols-2">
                 <label className="block">
                   <span className="mb-2 block text-[13px] font-bold text-slate-700 dark:text-slate-300 uppercase tracking-wide">
-                    Stock *
+                    {t("addProduct.stock")}
                   </span>
                   <input
                     required
@@ -409,7 +408,7 @@ export default function AddProduct() {
                 </label>
                 <label className="block">
                   <span className="mb-2 block text-[13px] font-bold text-slate-700 dark:text-slate-300 uppercase tracking-wide">
-                    SKU
+                    {t("addProduct.sku")}
                   </span>
                   <input
                     name="sku"
@@ -424,7 +423,7 @@ export default function AddProduct() {
               <div className="grid gap-6 md:grid-cols-2">
                 <label className="block">
                   <span className="mb-2 block text-[13px] font-bold text-slate-700 dark:text-slate-300 uppercase tracking-wide">
-                    Category *
+                    {t("addProduct.categoryLabel")}
                   </span>
                   <select
                     required
@@ -433,7 +432,7 @@ export default function AddProduct() {
                     onChange={handleChange}
                     className="h-14 w-full rounded-2xl border border-slate-200 dark:border-slate-700 bg-white/70 dark:bg-slate-900/50 px-5 text-[15px] outline-none transition-all focus:border-cyan-500 focus:ring-1 focus:ring-cyan-500 text-slate-900 dark:text-white backdrop-blur-sm"
                   >
-                    <option value="">Select Category</option>
+                    <option value="">{t("addProduct.selectCategory")}</option>
                     <option value="Electronics">Electronics</option>
                     <option value="Phones">Phones</option>
                     <option value="Fashion">Fashion</option>
@@ -444,7 +443,7 @@ export default function AddProduct() {
                 </label>
                 <label className="block">
                   <span className="mb-2 block text-[13px] font-bold text-slate-700 dark:text-slate-300 uppercase tracking-wide">
-                    Subcategory
+                    {t("addProduct.subcategoryLabel")}
                   </span>
                   <input
                     name="subcategory"
@@ -458,7 +457,7 @@ export default function AddProduct() {
   
               <label className="block">
                 <span className="mb-2 block text-[13px] font-bold text-slate-700 dark:text-slate-300 uppercase tracking-wide">
-                  Brand
+                  {t("addProduct.brand")}
                 </span>
                 <input
                   name="brand"
@@ -472,14 +471,14 @@ export default function AddProduct() {
               <div className="rounded-2xl border border-slate-200/50 dark:border-slate-700/50 bg-white/70 dark:bg-slate-800/50 p-6 backdrop-blur-sm">
                 <label className="block">
                   <span className="mb-3 block text-[13px] font-bold text-slate-700 dark:text-slate-300 uppercase tracking-wide">
-                    Tags
+                    {t("addProduct.tags")}
                   </span>
                   <div className="flex gap-3">
                     <input
                       value={tagInput}
                       onChange={(e) => setTagInput(e.target.value)}
                       onKeyDown={handleTagKeyDown}
-                      placeholder="Type a tag and press +"
+                      placeholder={t("addProduct.tagPlaceholder")}
                       className="h-14 flex-1 rounded-2xl border border-slate-200 dark:border-slate-700 bg-white/70 dark:bg-slate-900/50 px-5 text-[15px] outline-none transition-all focus:border-cyan-500 focus:ring-1 focus:ring-cyan-500 placeholder:text-slate-400 text-slate-900 dark:text-white backdrop-blur-sm"
                     />
                     <button
@@ -494,7 +493,7 @@ export default function AddProduct() {
                 <div className="mt-4 flex flex-wrap gap-2">
                   {tags.length === 0 && (
                     <p className="text-sm font-medium text-slate-500 dark:text-slate-400">
-                      Add one or more tags to organize the product.
+                      {t("addProduct.tagHint")}
                     </p>
                   )}
                   {tags.map((tag, idx) => (
@@ -525,7 +524,7 @@ export default function AddProduct() {
                     className="w-5 h-5 accent-cyan-500"
                   />
                   <span className="text-[15px] font-bold text-slate-700 dark:text-slate-300">
-                    Featured
+                    {t("addProduct.featuredLabel")}
                   </span>
                 </label>
                 <label className="flex flex-1 sm:flex-none items-center justify-center gap-3 rounded-2xl border border-slate-200/50 dark:border-slate-700/50 bg-white/70 dark:bg-slate-800/50 px-6 py-4 cursor-pointer hover:bg-slate-50 dark:hover:bg-slate-700/50 transition-all backdrop-blur-sm shadow-sm">
@@ -537,7 +536,7 @@ export default function AddProduct() {
                     className="w-5 h-5 accent-cyan-500"
                   />
                   <span className="text-[15px] font-bold text-slate-700 dark:text-slate-300">
-                    Active
+                    {t("addProduct.activeLabel")}
                   </span>
                 </label>
               </div>
@@ -547,14 +546,14 @@ export default function AddProduct() {
                   to="/products"
                   className="flex items-center justify-center gap-2 rounded-2xl px-6 py-3 text-[14px] font-bold transition-all bg-white/70 dark:bg-slate-800/50 text-slate-700 dark:text-slate-300 border border-slate-200/50 dark:border-slate-700/50 hover:bg-slate-50 dark:hover:bg-slate-700/50 active:scale-[0.98] backdrop-blur-sm"
                 >
-                  Cancel
+                  {t("addProduct.cancel")}
                 </Link>
                 <button
                   disabled={loading}
                   className="flex items-center cursor-pointer justify-center gap-2 rounded-2xl px-6 py-3 text-[14px] font-bold transition-all bg-gradient-to-r from-cyan-500 to-sky-500 text-white shadow-lg shadow-cyan-500/30 hover:from-cyan-600 hover:to-sky-600 hover:shadow-xl hover:shadow-cyan-500/40 active:scale-[0.98] disabled:opacity-50 disabled:cursor-not-allowed"
                   type="submit"
                 >
-                  {loading ? "Creating..." : "Create Product"}
+                  {loading ? t("addProduct.creating") : t("addProduct.createProductBtn")}
                 </button>
               </div>
             </div>

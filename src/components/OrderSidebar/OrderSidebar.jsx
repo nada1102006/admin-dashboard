@@ -5,6 +5,7 @@ import { GoDotFill } from "react-icons/go";
 import { FiMinus } from "react-icons/fi";
 import { TbReorder } from "react-icons/tb";
 import { useEffect, useState } from "react";
+import { useLanguage } from "../../Context/LanguageContext";
 
 function OrderSidebar({
   isSidebarOpen,
@@ -21,6 +22,7 @@ function OrderSidebar({
   getStatusDot,
   formatPrice,
 }) {
+  const { t } = useLanguage();
   return (
     <>
       {/* background */}
@@ -43,7 +45,7 @@ function OrderSidebar({
         <div className="flex items-center justify-between border-b border-slate-100 px-3 py-6 min-[850px]:p-6 dark:border-slate-800">
           <div>
             <p className="mb-1.5 text-xs min-[850px]:text-sm font-semibold uppercase tracking-widest text-slate-400">
-              Order detail
+              {t("orderSidebar.detail")}
             </p>
             <p className="flex items-center gap-0 text-xs min-[850px]:text-sm font-bold text-slate-800 dark:text-slate-100">
               {selectedOrder?.orderNumber && (
@@ -70,7 +72,7 @@ function OrderSidebar({
               <div className=" flex flex-col justify-center items-center">
                 <LuLoaderCircle className="animate-spin text-slate-300 text-3xl min-[850px]:text-5xl" />
                 <p className="mt-4 text-slate-500 capitalize text-center">
-                  Loading order details...
+                  {t("orderSidebar.loading")}
                 </p>
               </div>
             </div>
@@ -84,25 +86,25 @@ function OrderSidebar({
                   <GoDotFill
                     className={`text-xs min-[850px]:text-sm ${getStatusDot(selectedOrder.statusColor)}`}
                   />
-                  {selectedOrder.status}
+                  {t(`status.${selectedOrder.raw?.status}`) || selectedOrder.status}
                 </span>
                 <span className="inline-flex items-center rounded-md px-3 py-1.5 text-[10px] min-[850px]:text-xs font-semibold uppercase  bg-amber-100 text-amber-700 dark:bg-amber-900/30 dark:text-amber-300">
-                  {selectedOrder.payment}
+                  {t(`common.${selectedOrder.raw?.paymentStatus}`) || selectedOrder.payment}
                 </span>
                 <span className="ml-auto  min-[218px]:ml-0 min-[255px]:ml-auto text-[10px] min-[850px]:text-xs capitalize text-slate-400">
-                  {selectedOrder.method}
+                  {t(`common.${selectedOrder.raw?.paymentMethod}`) || selectedOrder.method}
                 </span>
               </div>
 
               {/* info */}
               <div className="mb-5">
                 <p className="mb-3 text-[9px]  min-[850px]:text-[10px] font-semibold uppercase tracking-widest text-slate-400">
-                  Info
+                  {t("orderSidebar.info")}
                 </p>
                 <div className="rounded-xl border border-slate-100 px-4 min-[850px]:px-5 py-2 dark:border-slate-800">
                   <div className=" flex flex-wrap flex-col min-[270px]:flex-row  items-start justify-between gap-3 py-2.5 text-xs min-[850px]:text-sm border-b border-slate-100 dark:border-slate-800 ">
                     <span className=" text-slate-500 dark:text-slate-400">
-                      Placed
+                      {t("orderSidebar.placed")}
                     </span>
                     <span className="text-right font-medium text-slate-800 dark:text-slate-100 text-xs min-[850px]:text-sm">
                       {selectedOrder.date}
@@ -110,7 +112,7 @@ function OrderSidebar({
                   </div>
                   <div className=" flex flex-wrap flex-col min-[270px]:flex-row items-start justify-between gap-3 py-2.5 text-xs min-[850px]:text-sm border-b border-slate-100 dark:border-slate-800 ">
                     <span className=" text-slate-500 dark:text-slate-400">
-                      Customer
+                      {t("orderSidebar.customer")}
                     </span>
                     <span className="text-right font-medium text-slate-800 dark:text-slate-100 text-xs min-[850px]:text-sm">
                       {selectedOrder.customer}
@@ -118,7 +120,7 @@ function OrderSidebar({
                   </div>
                   <div className=" flex flex-wrap flex-col min-[270px]:flex-row items-start justify-between gap-3 py-2.5 text-xs min-[850px]:text-sm border-b border-slate-100 dark:border-slate-800 ">
                     <span className="text-slate-500 dark:text-slate-400">
-                      Email
+                      {t("orderSidebar.email")}
                     </span>
                     <span className="text-right font-medium text-slate-800 dark:text-slate-100 text-xs min-[850px]:text-sm">
                       {selectedOrder.email}
@@ -126,7 +128,7 @@ function OrderSidebar({
                   </div>
                   <div className=" flex flex-wrap flex-col min-[270px]:flex-row items-start justify-between gap-3 py-2.5 text-xs min-[850px]:text-sm border-b border-slate-100 dark:border-slate-800 last:border-0">
                     <span className=" text-slate-500 dark:text-slate-400 ">
-                      Ship to
+                      {t("orderSidebar.shipTo")}
                     </span>
                     <span className="text-right font-medium text-slate-800 dark:text-slate-100 text-xs min-[850px]:text-sm">
                       {selectedOrder.raw?.shippingAddress?.city || "—"},{" "}
@@ -139,7 +141,7 @@ function OrderSidebar({
               {/* items */}
               <div className="mb-5">
                 <p className="mb-3 text-[9px] min-[850px]:text-[10px] font-semibold uppercase tracking-widest text-slate-400">
-                  Items
+                  {t("orderSidebar.items")}
                 </p>
                 {selectedOrder.raw?.items?.map((item, index) => (
                   <div
@@ -171,7 +173,7 @@ function OrderSidebar({
               <div className="mb-5 rounded-xl border border-slate-100 px-4 py-1 dark:border-slate-800">
                 <div className="flex flex-wrap flex-col min-[270px]:flex-row items-start justify-between gap-3 py-2.5 text-xs min-[850px]:text-sm border-b border-slate-100 dark:border-slate-800">
                   <span className=" text-slate-500 dark:text-slate-400">
-                    Subtotal
+                    {t("orderSidebar.subtotal")}
                   </span>
                   <span className="text-right font-medium text-slate-800 dark:text-slate-100">
                     {formatPrice(selectedOrder.raw?.subtotal || 0)} EGP
@@ -179,7 +181,7 @@ function OrderSidebar({
                 </div>
                 <div className="flex flex-wrap flex-col min-[270px]:flex-row items-start justify-between gap-3 py-2.5 text-xs min-[850px]:text-sm border-b border-slate-100 dark:border-slate-800 ">
                   <span className=" text-slate-500 dark:text-slate-400">
-                    Shipping
+                    {t("orderSidebar.shipping")}
                   </span>
                   <span className="text-right font-medium text-slate-800 dark:text-slate-100">
                     {formatPrice(selectedOrder.raw?.shippingFee || 0)} EGP
@@ -187,7 +189,7 @@ function OrderSidebar({
                 </div>
                 <div className="flex flex-wrap flex-col min-[270px]:flex-row items-start justify-between gap-3 py-2.5 text-xs min-[850px]:text-sm border-b border-slate-100 dark:border-slate-800 ">
                   <span className=" text-slate-500 dark:text-slate-400">
-                    Tax (14%)
+                    {t("orderSidebar.tax")}
                   </span>
                   <span className="text-right font-medium text-slate-800 dark:text-slate-100">
                     {formatPrice(selectedOrder.raw?.tax || 0)} EGP
@@ -196,7 +198,7 @@ function OrderSidebar({
                 {selectedOrder.raw?.discount > 0 && (
                   <div className="flex flex-wrap flex-col min-[270px]:flex-row items-start justify-between gap-3 py-2.5 text-xs min-[850px]:text-sm border-b border-slate-100 dark:border-slate-800 ">
                     <span className=" text-slate-500 dark:text-slate-400">
-                      Discount
+                      {t("orderSidebar.discount")}
                     </span>
                     <span className="flex items-center text-right font-medium text-green-600 dark:text-green-400">
                       <FiMinus />
@@ -205,7 +207,7 @@ function OrderSidebar({
                   </div>
                 )}
                 <div className="flex flex-wrap flex-col min-[270px]:flex-row items-start min-[270px]:items-center justify-between py-3 text-xs min-[850px]:text-sm font-bold text-slate-900 dark:text-white">
-                  <span>Total</span>
+                  <span>{t("orderSidebar.total")}</span>
                   <span className="text-xs min-[850px]:text-sm">
                     {selectedOrder.total}
                   </span>
@@ -216,7 +218,7 @@ function OrderSidebar({
               {selectedOrder.raw?.customerNote && (
                 <div className="mb-5 ">
                   <p className="mb-3 text-[9px] min-[850px]:text-[10px] font-semibold uppercase tracking-widest text-slate-400">
-                    Customer Note
+                    {t("orderSidebar.customerNote")}
                   </p>
                   <div className="rounded-lg min-[850px]:rounded-xl border border-slate-100 px-4 py-3 dark:border-slate-800">
                     <p className="text-xs min-[850px]:text-sm text-slate-700 dark:text-slate-300">
@@ -229,7 +231,7 @@ function OrderSidebar({
               {/* update status */}
               <div className="mb-5">
                 <p className="mb-3 text-[9px] min-[850px]:text-[10px] font-semibold uppercase tracking-widest text-slate-400">
-                  Update status
+                  {t("orderSidebar.updateStatus")}
                 </p>
                 <div className="space-y-3 rounded-lg min-[850px]:rounded-xl border border-slate-100 p-3 min-[850px]:p-4 dark:border-slate-800">
                   <select
@@ -238,18 +240,18 @@ function OrderSidebar({
                     disabled={isUpdating}
                     className="w-full rounded-md min-[850px]:rounded-lg border border-slate-200 bg-slate-50 px-3 py-2 text-xs min-[850px]:text-sm text-slate-800 outline-none transition focus:border-slate-400 dark:border-slate-700 dark:bg-slate-800 dark:text-slate-100 disabled:opacity-50 "
                   >
-                    <option value="pending">Pending</option>
-                    <option value="confirmed">Confirmed</option>
-                    <option value="processing">Processing</option>
-                    <option value="shipped">Shipped</option>
-                    <option value="delivered">Delivered</option>
-                    <option value="cancelled">Cancelled</option>
-                    <option value="returned">Returned</option>
+                    <option value="pending">{t("status.pending")}</option>
+                    <option value="confirmed">{t("status.confirmed")}</option>
+                    <option value="processing">{t("status.processing")}</option>
+                    <option value="shipped">{t("status.shipped")}</option>
+                    <option value="delivered">{t("status.delivered")}</option>
+                    <option value="cancelled">{t("status.cancelled")}</option>
+                    <option value="returned">{t("status.returned")}</option>
                   </select>
 
                   <textarea
                     rows="3"
-                    placeholder="Admin note (optional)…"
+                    placeholder={t("orderSidebar.adminNotePlaceholder")}
                     value={adminNote}
                     onChange={(e) => setAdminNote(e.target.value)}
                     disabled={isUpdating}
@@ -264,10 +266,10 @@ function OrderSidebar({
                     {isUpdating ? (
                       <>
                         <LuLoaderCircle className="animate-spin" />
-                        <span> Processing...</span>
+                        <span> {t("orderSidebar.saving")}</span>
                       </>
                     ) : (
-                      <span> Save changes</span>
+                      <span> {t("orderSidebar.saveChanges")}</span>
                     )}
                   </button>
                 </div>
@@ -277,7 +279,7 @@ function OrderSidebar({
             <div className="flex h-full items-center justify-center">
               <p className="text-slate-500 flex items-center justify-center gap-1 text-[10px] min-[250px]:text-[16px]">
                 <TbReorder className="text-sm md:text-xl" />
-                No order selected
+                {t("orderSidebar.noOrder")}
               </p>
             </div>
           )}

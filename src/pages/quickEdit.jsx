@@ -2,12 +2,14 @@ import { useState, useRef } from "react";
 import { FiX, FiImage, FiLoader, FiPlus } from "react-icons/fi";
 import { toast } from "react-toastify";
 import api from "../api/api";
+import { useLanguage } from "../Context/LanguageContext";
 
 export default function QuickEdit({
   product: initialProduct,
   onClose,
   onSuccess,
 }) {
+  const { t } = useLanguage();
   const [product, setProduct] = useState({
     _id: initialProduct._id,
     name: initialProduct.name || initialProduct.title || "",
@@ -194,7 +196,7 @@ export default function QuickEdit({
       <div className="bg-white dark:bg-slate-900 rounded-3xl shadow-2xl w-full max-w-4xl overflow-hidden flex flex-col max-h-[92vh] border border-slate-200 dark:border-slate-700">
         <div className="flex items-center justify-between px-6 py-4 border-b border-slate-200 dark:border-slate-700 shrink-0 bg-slate-50/80 dark:bg-slate-900/80">
           <h2 className="font-extrabold text-xl tracking-tight text-slate-900 dark:text-white">
-            Quick Edit
+            {t("quickEdit.title")}
           </h2>
           <button
             onClick={onClose}
@@ -210,7 +212,7 @@ export default function QuickEdit({
             <div className="lg:col-span-4 flex flex-col gap-6">
               <div className="bg-slate-50 dark:bg-slate-800/50 p-5 rounded-2xl border border-slate-200 dark:border-slate-700">
                 <label className="text-[11px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-widest mb-3 block">
-                  Media ({imagePreviews.length}/5)
+                  {t("quickEdit.media")} ({imagePreviews.length}/5)
                 </label>
                 <div className="grid grid-cols-2 gap-3 mb-4">
                   {imagePreviews.map((img, num) => (
@@ -242,7 +244,7 @@ export default function QuickEdit({
                         size={20}
                       />
                       <span className="text-[10px] font-bold text-cyan-500 dark:text-cyan-400">
-                        Upload
+                        {t("quickEdit.upload")}
                       </span>
                     </div>
                   )}
@@ -259,7 +261,7 @@ export default function QuickEdit({
 
               <div className="bg-slate-50 dark:bg-slate-800/50 p-5 rounded-2xl border border-slate-200 dark:border-slate-700">
                 <label className="text-[11px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-widest mb-4 block">
-                  Status
+                  {t("quickEdit.status")}
                 </label>
                 <div className="flex flex-col gap-3">
                   <label className="flex items-center gap-3 cursor-pointer group">
@@ -271,7 +273,7 @@ export default function QuickEdit({
                       className="w-5 h-5 accent-cyan-500 rounded border-slate-300 dark:border-slate-600"
                     />
                     <span className="text-sm font-semibold text-slate-700 dark:text-slate-300 group-hover:text-cyan-500 transition-colors">
-                      Featured Product
+                      {t("quickEdit.featuredProduct")}
                     </span>
                   </label>
                   <label className="flex items-center gap-3 cursor-pointer group">
@@ -283,7 +285,7 @@ export default function QuickEdit({
                       className="w-5 h-5 accent-cyan-500 rounded border-slate-300 dark:border-slate-600"
                     />
                     <span className="text-sm font-semibold text-slate-700 dark:text-slate-300 group-hover:text-cyan-500 transition-colors">
-                      Active Listing
+                      {t("quickEdit.activeListing")}
                     </span>
                   </label>
                 </div>
@@ -294,7 +296,7 @@ export default function QuickEdit({
               <div className="grid gap-5 sm:grid-cols-2">
                 <div className="flex flex-col gap-1.5 sm:col-span-2">
                   <label className="text-[11px] uppercase text-slate-500 dark:text-slate-400 font-bold tracking-wider">
-                    Product Name *
+                    {t("addProduct.productName")}
                   </label>
                   <input
                     name="name"
@@ -307,7 +309,7 @@ export default function QuickEdit({
 
                 <div className="flex flex-col gap-1.5 sm:col-span-2">
                   <label className="text-[11px] uppercase text-slate-500 dark:text-slate-400 font-bold tracking-wider">
-                    Short Description *
+                    {t("addProduct.shortDesc")}
                   </label>
                   <input
                     name="shortDescription"
@@ -320,7 +322,7 @@ export default function QuickEdit({
 
                 <div className="flex flex-col gap-1.5">
                   <label className="text-[11px] uppercase text-slate-500 dark:text-slate-400 font-bold tracking-wider">
-                    Price (EGP) *
+                    {t("addProduct.price")}
                   </label>
                   <input
                     name="price"
@@ -336,7 +338,7 @@ export default function QuickEdit({
 
                 <div className="flex flex-col gap-1.5">
                   <label className="text-[11px] uppercase text-slate-500 dark:text-slate-400 font-bold tracking-wider">
-                    Discount Price (EGP)
+                    {t("addProduct.discountPrice")}
                   </label>
                   <input
                     name="discountPrice"
@@ -351,7 +353,7 @@ export default function QuickEdit({
 
                 <div className="flex flex-col gap-1.5">
                   <label className="text-[11px] uppercase text-slate-500 dark:text-slate-400 font-bold tracking-wider">
-                    Stock *
+                    {t("addProduct.stock")}
                   </label>
                   <input
                     name="stock"
@@ -366,7 +368,7 @@ export default function QuickEdit({
 
                 <div className="flex flex-col gap-1.5">
                   <label className="text-[11px] uppercase text-slate-500 dark:text-slate-400 font-bold tracking-wider">
-                    SKU
+                    {t("addProduct.sku")}
                   </label>
                   <input
                     name="sku"
@@ -378,7 +380,7 @@ export default function QuickEdit({
 
                 <div className="flex flex-col gap-1.5">
                   <label className="text-[11px] uppercase text-slate-500 dark:text-slate-400 font-bold tracking-wider">
-                    Category *
+                    {t("addProduct.categoryLabel")}
                   </label>
                   <select
                     name="category"
@@ -387,7 +389,7 @@ export default function QuickEdit({
                     className="w-full h-12 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl px-4 text-sm text-slate-900 dark:text-white focus:outline-none focus:border-cyan-500 focus:ring-1 focus:ring-cyan-500 transition-all"
                     required
                   >
-                    <option value="">Select Category</option>
+                    <option value="">{t("addProduct.selectCategory")}</option>
                     {categories.map((c) => (
                       <option key={c} value={c}>
                         {c}
@@ -406,7 +408,7 @@ export default function QuickEdit({
 
                 <div className="flex flex-col gap-1.5">
                   <label className="text-[11px] uppercase text-slate-500 dark:text-slate-400 font-bold tracking-wider">
-                    Brand
+                    {t("addProduct.brand")}
                   </label>
                   <input
                     name="brand"
@@ -418,7 +420,7 @@ export default function QuickEdit({
 
                 <div className="flex flex-col gap-1.5 sm:col-span-2">
                   <label className="text-[11px] uppercase text-slate-500 dark:text-slate-400 font-bold tracking-wider">
-                    Tags
+                    {t("addProduct.tags")}
                   </label>
                   <div className="flex gap-2">
                     <input
@@ -426,7 +428,7 @@ export default function QuickEdit({
                       onChange={(e) => setTagInput(e.target.value)}
                       onKeyDown={handleTagKeyDown}
                       className="flex-1 h-12 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl px-4 text-sm text-slate-900 dark:text-white placeholder:text-slate-400 focus:outline-none focus:border-cyan-500 focus:ring-1 focus:ring-cyan-500 transition-all"
-                      placeholder="Type a tag and press +"
+                      placeholder={t("addProduct.tagPlaceholder")}
                     />
                     <button
                       type="button"
@@ -467,7 +469,7 @@ export default function QuickEdit({
             onClick={onClose}
             className="px-6 py-2.5 text-sm cursor-pointer font-bold text-slate-600 hover:text-slate-800 bg-white hover:bg-slate-50 border border-slate-200 hover:border-slate-300 dark:text-slate-300 dark:hover:text-white dark:bg-slate-800 dark:hover:bg-slate-700 dark:border-slate-700 dark:hover:border-slate-600 rounded-xl transition-all"
           >
-            Cancel
+            {t("quickEdit.cancel")}
           </button>
           <button
             type="button"
@@ -477,10 +479,10 @@ export default function QuickEdit({
           >
             {loading ? (
               <>
-                <FiLoader className="animate-spin" size={16} /> Saving...
+                <FiLoader className="animate-spin" size={16} /> {t("quickEdit.saving")}
               </>
             ) : (
-              "Save Changes"
+              t("quickEdit.saveChanges")
             )}
           </button>
         </div>

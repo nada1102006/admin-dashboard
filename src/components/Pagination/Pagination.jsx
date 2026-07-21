@@ -1,16 +1,17 @@
-import { FaChevronLeft } from "react-icons/fa6";
-import { FaChevronRight } from "react-icons/fa6";
+import { FaChevronLeft, FaChevronRight } from "react-icons/fa6";
+import { useLanguage } from "../../Context/LanguageContext";
 
 function Pagination({ currentPage, totalPages, goToPage, nextPage, prevPage }) {
+  const { t } = useLanguage();
   if (totalPages <= 0) return null;
   return (
     <div className="flex flex-col min-[350px]:flex-row items-center justify-center min-[350px]:justify-between gap-3 min-[300px]:gap-0 border-t border-slate-100 px-5 py-3.5 dark:border-slate-800">
       <p className="text-[12px] sm:text-sm text-slate-400">
-        Page{" "}
+        {t("products.page")}{" "}
         <span className="font-semibold text-slate-600 dark:text-slate-300">
           {currentPage}
         </span>{" "}
-        of{" "}
+        {t("products.of")}{" "}
         <span className="font-semibold text-slate-600 dark:text-slate-300">
           {totalPages}
         </span>

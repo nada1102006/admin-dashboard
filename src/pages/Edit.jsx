@@ -6,11 +6,13 @@ import { toast, ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { EditProductSkeleton } from '../components/Skeleton/EditProductSkeleton/EditProductSkeleton';
 import useTheme from '../components/customHook/useTheme';
+import { useLanguage } from '../Context/LanguageContext';
 
 export default function Edit() {
   const { id } = useParams();
   const navigate = useNavigate();
   const { isDarkMode } = useTheme();
+  const { t } = useLanguage();
   const [loading, setLoading] = useState(false);
   const [isFetching, setIsFetching] = useState(true);
   
@@ -234,7 +236,7 @@ export default function Edit() {
                 className="inline-flex items-center gap-2 rounded-xl border border-slate-200/50 dark:border-slate-700/50 bg-white/70 dark:bg-slate-800/50 px-4 py-2 text-sm text-slate-600 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-700/50 backdrop-blur-sm transition-all"
               >
                 <FiArrowLeft size={16} />
-                Back to products
+                {t("editProduct.backToProducts")}
               </Link>
               
               <div className="mt-5 flex items-center gap-4">
@@ -243,21 +245,21 @@ export default function Edit() {
                 </div>
                 <div className="flex flex-col justify-center">
                   <span className="text-[11px] font-bold tracking-[0.25em] text-sky-500 dark:text-sky-400 uppercase mb-1">
-                    Edit Product
+                    {t("editProduct.editProduct")}
                   </span>
                   <h1 className="text-[32px] sm:text-4xl leading-none font-black text-slate-900 dark:text-white tracking-tight">
-                    Update product details
+                    {t("editProduct.updateTitle")}
                   </h1>
                 </div>
               </div>
               <p className="mt-4 max-w-2xl text-[15px] text-slate-500 dark:text-slate-400 font-medium">
-                Edit product information, manage gallery, and adjust availability seamlessly.
+                {t("editProduct.updateDesc")}
               </p>
             </div>
             
             <div className="rounded-2xl border border-slate-200/50 dark:border-slate-700/50 bg-white/70 dark:bg-slate-800/50 p-5 shadow-lg backdrop-blur-sm">
-              <p className="text-[11px] font-bold uppercase tracking-[0.25em] text-sky-500 dark:text-sky-400">Live Update</p>
-              <p className="mt-1.5 text-[14px] font-medium text-slate-600 dark:text-slate-300">Changes will be visible immediately.</p>
+              <p className="text-[11px] font-bold uppercase tracking-[0.25em] text-sky-500 dark:text-sky-400">{t("editProduct.liveUpdate")}</p>
+              <p className="mt-1.5 text-[14px] font-medium text-slate-600 dark:text-slate-300">{t("editProduct.liveUpdateDesc")}</p>
             </div>
           </div>
         </div>
@@ -270,8 +272,8 @@ export default function Edit() {
                 <FiImage size={24} />
               </div>
               <div>
-                <h3 className="text-xl font-black tracking-tight text-slate-900 dark:text-white">Gallery *</h3>
-                <p className="text-sm font-medium text-slate-500 dark:text-slate-400 mt-0.5">Upload up to 5 images and preview instantly.</p>
+                <h3 className="text-xl font-black tracking-tight text-slate-900 dark:text-white">{t("addProduct.gallery")}</h3>
+                <p className="text-sm font-medium text-slate-500 dark:text-slate-400 mt-0.5">{t("addProduct.galleryDesc")}</p>
               </div>
             </div>
             
@@ -283,11 +285,11 @@ export default function Edit() {
                       <img src={preview} alt={`preview-${idx}`} className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105" />
                     </div>
                     <div className="absolute top-3 left-3 bg-white/90 dark:bg-slate-900/90 backdrop-blur px-3 py-1.5 rounded-xl text-[10px] font-bold uppercase tracking-[0.2em] text-slate-600 dark:text-slate-300 shadow-sm">
-                      Image {idx + 1}
+                      {t("addProduct.image")} {idx + 1}
                     </div>
                     {idx >= existingImages.length && (
                       <div className="absolute top-3 right-14 bg-gradient-to-r from-cyan-500 to-sky-500 backdrop-blur px-3 py-1.5 rounded-xl text-[10px] font-bold uppercase tracking-[0.2em] text-white shadow-sm">
-                        New
+                        {t("editProduct.new")}
                       </div>
                     )}
                     <button 
@@ -307,8 +309,8 @@ export default function Edit() {
                 <div className="mb-4 flex h-14 w-14 items-center justify-center rounded-2xl bg-white dark:bg-slate-700 shadow-sm transition-transform group-hover:scale-110 group-hover:shadow-md">
                   <FiImage size={24} className="text-cyan-500" />
                 </div>
-                <p className="text-[17px] font-bold text-slate-900 dark:text-white">Upload images</p>
-                <p className="mt-1.5 text-sm font-medium text-slate-500 dark:text-slate-400">PNG, JPG, WEBP • multiple files supported ({5 - imagePreviews.length} left)</p>
+                <p className="text-[17px] font-bold text-slate-900 dark:text-white">{t("addProduct.uploadImages")}</p>
+                <p className="mt-1.5 text-sm font-medium text-slate-500 dark:text-slate-400">{t("addProduct.uploadFormats")} ({5 - imagePreviews.length} {t("addProduct.left")})</p>
                 <input hidden type="file" accept="image/*" multiple onChange={handleImageChange} />
               </label>
             )}
@@ -316,10 +318,10 @@ export default function Edit() {
             <div className="mt-6 rounded-2xl border border-emerald-200/50 dark:border-emerald-800/50 bg-emerald-50/50 dark:bg-emerald-950/20 p-5">
               <div className="flex items-center gap-2 text-[13px] font-bold uppercase tracking-wider text-emerald-600 dark:text-emerald-400">
                 <FiStar size={16} className="fill-emerald-600/20 dark:fill-emerald-400/20" />
-                Upload Tips
+                {t("addProduct.uploadTips")}
               </div>
               <p className="mt-2 text-[14px] font-medium text-emerald-600/90 dark:text-emerald-400/80 leading-relaxed">
-                Use high-quality images (preferably 1:1 ratio) for the best display on the store. The first image will be used as the thumbnail.
+                {t("addProduct.uploadTipsDesc")}
               </p>
             </div>
           </section>
@@ -328,47 +330,47 @@ export default function Edit() {
             <div className="grid gap-6">
               
               <label className="block">
-                <span className="mb-2 block text-[13px] font-bold text-slate-700 dark:text-slate-300 uppercase tracking-wide">Product Name *</span>
+                <span className="mb-2 block text-[13px] font-bold text-slate-700 dark:text-slate-300 uppercase tracking-wide">{t("addProduct.productName")}</span>
                 <input required name="name" value={formData.name} onChange={handleChange} placeholder="e.g. iPhone 16 Pro" className="h-14 w-full px-5 outline-none transition-all text-[15px] rounded-2xl border border-slate-200 dark:border-slate-700 bg-white/70 dark:bg-slate-900/50 text-slate-900 dark:text-white placeholder:text-slate-400 focus:border-cyan-500 focus:ring-1 focus:ring-cyan-500 backdrop-blur-sm" />
               </label>
 
               <label className="block">
-                <span className="mb-2 block text-[13px] font-bold text-slate-700 dark:text-slate-300 uppercase tracking-wide">Short Description *</span>
+                <span className="mb-2 block text-[13px] font-bold text-slate-700 dark:text-slate-300 uppercase tracking-wide">{t("addProduct.shortDesc")}</span>
                 <input required name="shortDescription" value={formData.shortDescription} onChange={handleChange} placeholder="Minimum 10 characters" className="h-14 w-full px-5 text-[15px] outline-none transition-all rounded-2xl border border-slate-200 dark:border-slate-700 bg-white/70 dark:bg-slate-900/50 text-slate-900 dark:text-white placeholder:text-slate-400 focus:border-cyan-500 focus:ring-1 focus:ring-cyan-500 backdrop-blur-sm" />
               </label>
 
               <label className="block">
-                <span className="mb-2 block text-[13px] font-bold text-slate-700 dark:text-slate-300 uppercase tracking-wide">Description *</span>
+                <span className="mb-2 block text-[13px] font-bold text-slate-700 dark:text-slate-300 uppercase tracking-wide">{t("addProduct.description")}</span>
                 <textarea required name="description" value={formData.description} onChange={handleChange} rows="5" placeholder="Minimum 20 characters" className="w-full rounded-2xl border border-slate-200 dark:border-slate-700 bg-white/70 dark:bg-slate-900/50 px-5 py-4 text-[15px] outline-none transition-all focus:border-cyan-500 focus:ring-1 focus:ring-cyan-500 placeholder:text-slate-400 text-slate-900 dark:text-white backdrop-blur-sm"></textarea>
               </label>
 
               <div className="grid gap-6 md:grid-cols-2">
                 <label className="block">
-                  <span className="mb-2 block text-[13px] font-bold text-slate-700 dark:text-slate-300 uppercase tracking-wide">Price (EGP) *</span>
+                  <span className="mb-2 block text-[13px] font-bold text-slate-700 dark:text-slate-300 uppercase tracking-wide">{t("addProduct.price")}</span>
                   <input required type="number" step="1" name="price" value={formData.price} onChange={handleChange} placeholder="0" className="h-14 w-full rounded-2xl border border-slate-200 dark:border-slate-700 bg-white/70 dark:bg-slate-900/50 px-5 text-[15px] outline-none transition-all focus:border-cyan-500 focus:ring-1 focus:ring-cyan-500 placeholder:text-slate-400 text-slate-900 dark:text-white backdrop-blur-sm" />
                 </label>
                 <label className="block">
-                  <span className="mb-2 block text-[13px] font-bold text-slate-700 dark:text-slate-300 uppercase tracking-wide">Discount Price (EGP)</span>
+                  <span className="mb-2 block text-[13px] font-bold text-slate-700 dark:text-slate-300 uppercase tracking-wide">{t("addProduct.discountPrice")}</span>
                   <input type="number" step="1" name="discountPrice" value={formData.discountPrice} onChange={handleChange} placeholder="0" className="h-14 w-full rounded-2xl border border-slate-200 dark:border-slate-700 bg-white/70 dark:bg-slate-900/50 px-5 text-[15px] outline-none transition-all focus:border-cyan-500 focus:ring-1 focus:ring-cyan-500 placeholder:text-slate-400 text-slate-900 dark:text-white backdrop-blur-sm" />
                 </label>
               </div>
 
               <div className="grid gap-6 md:grid-cols-2">
                 <label className="block">
-                  <span className="mb-2 block text-[13px] font-bold text-slate-700 dark:text-slate-300 uppercase tracking-wide">Stock *</span>
+                  <span className="mb-2 block text-[13px] font-bold text-slate-700 dark:text-slate-300 uppercase tracking-wide">{t("addProduct.stock")}</span>
                   <input required type="number" name="stock" value={formData.stock} onChange={handleChange} placeholder="0" className="h-14 w-full rounded-2xl border border-slate-200 dark:border-slate-700 bg-white/70 dark:bg-slate-900/50 px-5 text-[15px] outline-none transition-all focus:border-cyan-500 focus:ring-1 focus:ring-cyan-500 placeholder:text-slate-400 text-slate-900 dark:text-white backdrop-blur-sm" />
                 </label>
                 <label className="block">
-                  <span className="mb-2 block text-[13px] font-bold text-slate-700 dark:text-slate-300 uppercase tracking-wide">SKU</span>
+                  <span className="mb-2 block text-[13px] font-bold text-slate-700 dark:text-slate-300 uppercase tracking-wide">{t("addProduct.sku")}</span>
                   <input name="sku" value={formData.sku} onChange={handleChange} placeholder="e.g. IPH-16-PRO" className="h-14 w-full rounded-2xl border border-slate-200 dark:border-slate-700 bg-white/70 dark:bg-slate-900/50 px-5 text-[15px] outline-none transition-all focus:border-cyan-500 focus:ring-1 focus:ring-cyan-500 placeholder:text-slate-400 text-slate-900 dark:text-white backdrop-blur-sm" />
                 </label>
               </div>
 
               <div className="grid gap-6 md:grid-cols-2">
                 <label className="block">
-                  <span className="mb-2 block text-[13px] font-bold text-slate-700 dark:text-slate-300 uppercase tracking-wide">Category *</span>
+                  <span className="mb-2 block text-[13px] font-bold text-slate-700 dark:text-slate-300 uppercase tracking-wide">{t("addProduct.categoryLabel")}</span>
                   <select required name="category" value={formData.category} onChange={handleChange} className="h-14 w-full rounded-2xl border border-slate-200 dark:border-slate-700 bg-white/70 dark:bg-slate-900/50 px-5 text-[15px] outline-none transition-all focus:border-cyan-500 focus:ring-1 focus:ring-cyan-500 text-slate-900 dark:text-white backdrop-blur-sm">
-                    <option value="">Select Category</option>
+                    <option value="">{t("addProduct.selectCategory")}</option>
                     <option value="Electronics">Electronics</option>
                     <option value="Phones">Phones</option>
                     <option value="Fashion">Fashion</option>
@@ -381,25 +383,25 @@ export default function Edit() {
                   </select>
                 </label>
                 <label className="block">
-                  <span className="mb-2 block text-[13px] font-bold text-slate-700 dark:text-slate-300 uppercase tracking-wide">Subcategory</span>
+                  <span className="mb-2 block text-[13px] font-bold text-slate-700 dark:text-slate-300 uppercase tracking-wide">{t("addProduct.subcategoryLabel")}</span>
                   <input name="subcategory" value={formData.subcategory} onChange={handleChange} placeholder="e.g. smartphones" className="h-14 w-full rounded-2xl border border-slate-200 dark:border-slate-700 bg-white/70 dark:bg-slate-900/50 px-5 text-[15px] outline-none transition-all focus:border-cyan-500 focus:ring-1 focus:ring-cyan-500 placeholder:text-slate-400 text-slate-900 dark:text-white backdrop-blur-sm" />
                 </label>
               </div>
 
               <label className="block">
-                <span className="mb-2 block text-[13px] font-bold text-slate-700 dark:text-slate-300 uppercase tracking-wide">Brand</span>
+                <span className="mb-2 block text-[13px] font-bold text-slate-700 dark:text-slate-300 uppercase tracking-wide">{t("addProduct.brand")}</span>
                 <input name="brand" value={formData.brand} onChange={handleChange} placeholder="e.g. Apple" className="h-14 w-full rounded-2xl border border-slate-200 dark:border-slate-700 bg-white/70 dark:bg-slate-900/50 px-5 text-[15px] outline-none transition-all focus:border-cyan-500 focus:ring-1 focus:ring-cyan-500 placeholder:text-slate-400 text-slate-900 dark:text-white backdrop-blur-sm" />
               </label>
 
               <div className="rounded-2xl border border-slate-200/50 dark:border-slate-700/50 bg-white/70 dark:bg-slate-800/50 p-6 backdrop-blur-sm">
                 <label className="block">
-                  <span className="mb-3 block text-[13px] font-bold text-slate-700 dark:text-slate-300 uppercase tracking-wide">Tags</span>
+                  <span className="mb-3 block text-[13px] font-bold text-slate-700 dark:text-slate-300 uppercase tracking-wide">{t("addProduct.tags")}</span>
                   <div className="flex gap-3">
                     <input 
                       value={tagInput}
                       onChange={(e) => setTagInput(e.target.value)}
                       onKeyDown={handleTagKeyDown}
-                      placeholder="Type a tag and press +" 
+                      placeholder={t("addProduct.tagPlaceholder")} 
                       className="h-14 flex-1 rounded-2xl border border-slate-200 dark:border-slate-700 bg-white/70 dark:bg-slate-900/50 px-5 text-[15px] outline-none transition-all focus:border-cyan-500 focus:ring-1 focus:ring-cyan-500 placeholder:text-slate-400 text-slate-900 dark:text-white backdrop-blur-sm" 
                     />
                     <button type="button" onClick={handleAddTag} className="inline-flex cursor-pointer h-14 w-14 items-center justify-center rounded-2xl bg-gradient-to-r from-cyan-500 to-sky-500 text-white shadow-lg shadow-cyan-500/30 transition hover:from-cyan-600 hover:to-sky-600">
@@ -408,7 +410,7 @@ export default function Edit() {
                   </div>
                 </label>
                 <div className="mt-4 flex flex-wrap gap-2">
-                  {tags.length === 0 && <p className="text-sm font-medium text-slate-500 dark:text-slate-400">Add one or more tags to organize the product.</p>}
+                  {tags.length === 0 && <p className="text-sm font-medium text-slate-500 dark:text-slate-400">{t("addProduct.tagHint")}</p>}
                   {tags.map((tag, idx) => (
                     <span key={idx} className="inline-flex items-center gap-1.5 rounded-xl border border-slate-200/50 dark:border-slate-700/50 bg-white/70 dark:bg-slate-800/50 px-3 py-1.5 text-[13px] font-semibold text-slate-700 dark:text-slate-300 shadow-sm backdrop-blur-sm">
                       {tag}
@@ -423,20 +425,20 @@ export default function Edit() {
               <div className="flex flex-wrap gap-4 mt-2">
                 <label className="flex flex-1 sm:flex-none items-center justify-center gap-3 rounded-2xl border border-slate-200/50 dark:border-slate-700/50 bg-white/70 dark:bg-slate-800/50 px-6 py-4 cursor-pointer hover:bg-slate-50 dark:hover:bg-slate-700/50 transition-all backdrop-blur-sm shadow-sm">
                   <input type="checkbox" name="featured" checked={formData.featured} onChange={handleChange} className="w-5 h-5 accent-cyan-500" />
-                  <span className="text-[15px] font-bold text-slate-700 dark:text-slate-300">Featured</span>
+                  <span className="text-[15px] font-bold text-slate-700 dark:text-slate-300">{t("addProduct.featuredLabel")}</span>
                 </label>
                 <label className="flex flex-1 sm:flex-none items-center justify-center gap-3 rounded-2xl border border-slate-200/50 dark:border-slate-700/50 bg-white/70 dark:bg-slate-800/50 px-6 py-4 cursor-pointer hover:bg-slate-50 dark:hover:bg-slate-700/50 transition-all backdrop-blur-sm shadow-sm">
                   <input type="checkbox" name="isActive" checked={formData.isActive} onChange={handleChange} className="w-5 h-5 accent-cyan-500" />
-                  <span className="text-[15px] font-bold text-slate-700 dark:text-slate-300">Active</span>
+                  <span className="text-[15px] font-bold text-slate-700 dark:text-slate-300">{t("addProduct.activeLabel")}</span>
                 </label>
               </div>
 
               <div className="flex items-center justify-start gap-3 border-t border-slate-200/50 dark:border-slate-700/50 pt-6 mt-2">
                 <Link to="/products" className="flex items-center justify-center gap-2 rounded-2xl px-6 py-3 text-[14px] font-bold transition-all bg-white/70 dark:bg-slate-800/50 text-slate-700 dark:text-slate-300 border border-slate-200/50 dark:border-slate-700/50 hover:bg-slate-50 dark:hover:bg-slate-700/50 active:scale-[0.98] backdrop-blur-sm">
-                  Cancel
+                  {t("addProduct.cancel")}
                 </Link>
                 <button disabled={loading} className="flex cursor-pointer items-center justify-center gap-2 rounded-2xl px-6 py-3 text-[14px] font-bold transition-all bg-gradient-to-r from-cyan-500 to-sky-500 text-white shadow-lg shadow-cyan-500/30 hover:from-cyan-600 hover:to-sky-600 hover:shadow-xl hover:shadow-cyan-500/40 active:scale-[0.98] disabled:opacity-50 disabled:cursor-not-allowed" type="submit">
-                  {loading ? "Saving..." : "Save Changes"}
+                  {loading ? t("editProduct.saving") : t("editProduct.saveChanges")}
                 </button>
               </div>
             </div>

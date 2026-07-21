@@ -11,9 +11,11 @@ import api from "../../api/api.jsx";
 import { useNavigate } from "react-router-dom";
 import { ToastContainer, toast } from "react-toastify";
 import { LuLoaderCircle } from "react-icons/lu";
+import { useLanguage } from "../../Context/LanguageContext";
 
 function Login() {
   const navigate = useNavigate();
+  const { t } = useLanguage();
   const [loading, setLoading] = useState(false);
   const [credentials, setCredentials] = useState({
     email: "",
@@ -34,14 +36,14 @@ function Login() {
         const admin = response.data;
         localStorage.setItem("userToken", JSON.stringify(admin.token));
 
-        toast.info("Logged in successfully");
+        toast.info(t("login.success"));
         setTimeout(() => {
           const x = navigate("/dashboard");
           return () => clearTimeout(x);
         }, 2500);
       }
     } catch (error) {
-      toast.error("Login credentials are incorrect. Please try again.");
+      toast.error(t("login.error"));
     } finally {
       setLoading(false);
     }
@@ -72,24 +74,23 @@ function Login() {
                 <div className="max-w-md">
                   <div className="mb-6 flex items-center gap-3">
                     <FiShoppingBag className="text-[32px] min-[1200px]:text-[40px]" />
-                    <h2 className=" text-3xl font-bold">Koda Commerce</h2>
+                    <h2 className=" text-3xl font-bold">{t("login.title")}</h2>
                   </div>
                   <h1 className="text-4xl min-[1200px]:text-5xl font-bold leading-tight">
-                    Manage Your Store Like a Pro
+                    {t("login.heading")}
                   </h1>
                   <p className="mt-6 text-lg text-white/90">
-                    Control products, orders, users, carts and analytics from a
-                    modern dashboard experience.
+                    {t("login.description")}
                   </p>
                   <div className="mt-10 space-y-4">
                     <div className="rounded-2xl bg-white/10 p-4  backdrop-blur flex items-center gap-1.5 ">
-                      <FaCheck /> Product Management
+                      <FaCheck /> {t("login.feature1")}
                     </div>
                     <div className="rounded-2xl bg-white/10 p-4 backdrop-blur flex items-center gap-1.5">
-                      <FaCheck /> Order Tracking
+                      <FaCheck /> {t("login.feature2")}
                     </div>
                     <div className="rounded-2xl bg-white/10 p-4 backdrop-blur flex items-center gap-1.5">
-                      <FaCheck /> Customer Insights
+                      <FaCheck /> {t("login.feature3")}
                     </div>
                   </div>
                 </div>
@@ -108,17 +109,17 @@ function Login() {
                       className="mx-auto h-12 min-[270px]:h-14 min-[500px]:h-[75px] min-[750px]:h-[85px] min-[850px]:h-[90px] min-[1024px]:h-24 w-auto  dark:brightness-90 "
                     />
                     <h2 className="mt-2 min-[1024px]:mt-4 text-lg min-[500px]:text-2xl  min-[600px]:text-3xl font-bold text-slate-900 dark:text-white">
-                      Welcome Back
+                      {t("login.welcome")}
                     </h2>
                     <p className="mt-2 text-slate-500 dark:text-slate-400 text-xs min-[500px]:text-[16px]">
-                      Sign in to your admin dashboard
+                      {t("login.signInDesc")}
                     </p>
                   </div>
 
                   {/* حقل البريد الإلكتروني */}
                   <div className="mb-5">
                     <label className="mb-2 block text-xs min-[500px]:text-sm font-medium text-slate-700 dark:text-slate-300">
-                      Email Address
+                      {t("login.emailLabel")}
                     </label>
                     <div className="relative">
                       <MdOutlineEmail className="absolute left-2.5 min-[500px]:left-4 top-1/2 -translate-y-1/2 text-slate-400 text-sm min-[500px]:text-xl" />
@@ -127,7 +128,7 @@ function Login() {
                         name="email"
                         value={credentials.email}
                         onChange={handleChange}
-                        placeholder="Enter your email"
+                        placeholder={t("login.emailPlaceholder")}
                         className="text-xs min-[500px]:text-[16px] w-full rounded-lg min-[500px]:rounded-2xl border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 py-2.5 min-[500px]:py-3 pl-7 min-[500px]:pl-11 pr-2 min-[500px]:pr-4 text-slate-900 dark:text-white outline-none transition-all duration-200 focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 dark:focus:ring-blue-400/20"
                         required
                       />
@@ -137,7 +138,7 @@ function Login() {
                   {/* حقل كلمة المرور */}
                   <div className="mb-6">
                     <label className="mb-2 block text-xs min-[500px]:text-sm font-medium text-slate-700 dark:text-slate-300">
-                      Password
+                      {t("login.passwordLabel")}
                     </label>
                     <div className="relative">
                       <IoLockClosedOutline className="absolute left-2.5 min-[500px]:left-4 top-1/2 -translate-y-1/2 text-slate-400 text-sm min-[500px]:text-xl" />
@@ -146,7 +147,7 @@ function Login() {
                         name="password"
                         value={credentials.password}
                         onChange={handleChange}
-                        placeholder="Enter your password"
+                        placeholder={t("login.passwordPlaceholder")}
                         className="text-xs min-[500px]:text-[16px] w-full rounded-lg min-[500px]:rounded-2xl border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 py-2.5 min-[500px]:py-3 pl-7 min-[500px]:pl-11 pr-2 min-[500px]:pr-4 text-slate-900 dark:text-white outline-none transition-all duration-200 focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 dark:focus:ring-blue-400/20"
                         required
                       />
@@ -163,10 +164,10 @@ function Login() {
                     {loading ? (
                       <div className="flex gap-2 items-center justify-center">
                         <LuLoaderCircle className="animate-spin text-lg" />
-                        <span>Sign In...</span>
+                        <span>{t("login.signingIn")}</span>
                       </div>
                     ) : (
-                      <span>Sign In</span>
+                      <span>{t("login.signIn")}</span>
                     )}
                   </button>
 
@@ -174,7 +175,7 @@ function Login() {
                   <div className="my-6 flex items-center">
                     <div className="h-px flex-1 bg-slate-300 dark:bg-slate-700"></div>
                     <span className="px-4 text-xs min-[500px]:text-sm text-slate-500">
-                      OR
+                      {t("login.or")}
                     </span>
                     <div className="h-px flex-1 bg-slate-300 dark:bg-slate-700"></div>
                   </div>
@@ -190,11 +191,11 @@ function Login() {
                       alt="google"
                       className="h-4 w-4  min-[500px]:h-5 min-[500px]:w-5"
                     />
-                    Continue with Google
+                    {t("login.google")}
                   </a>
 
                   <p className="mt-5 mb-2 min-[500px]:mt-8 text-center text-xs min-[500px]:text-sm text-slate-500">
-                    Secure Admin Access
+                    {t("login.secureAccess")}
                   </p>
                 </form>
               </div>

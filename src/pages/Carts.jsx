@@ -1,10 +1,12 @@
 import { useState, useEffect } from "react";
 import { CartsSkeleton } from "../components/Skeleton/CartsSkeleton/CartsSkeleton";
 import useTheme from "../components/customHook/useTheme";
+import { useLanguage } from "../Context/LanguageContext";
 import { FiShoppingCart, FiBox, FiUsers, FiDollarSign } from "react-icons/fi";
 
 function Carts() {
   const { isDarkMode } = useTheme();
+  const { t } = useLanguage();
 
   const [showSkeleton, setShowSkeleton] = useState(true);
   const [carts, setCarts] = useState([]);
@@ -20,7 +22,6 @@ function Carts() {
     const timer = setTimeout(() => {
       setShowSkeleton(false);
       setLoading(false);
-      // Mock data - replace with actual API call
       setCarts([]);
       setStats({
         totalCarts: 0,
@@ -60,20 +61,19 @@ function Carts() {
               </div>
               <div>
                 <p className="text-[11px] font-bold tracking-[0.25em] text-sky-500 dark:text-sky-400 uppercase">
-                  CARTS
+                  {t("carts.title")}
                 </p>
                 <h2 className="mt-1 text-2xl font-bold text-slate-900 dark:text-white">
-                  Cart overview
+                  {t("carts.overview")}
                 </h2>
               </div>
             </div>
             <span className="rounded-xl border border-slate-200/50 dark:border-slate-700/50 bg-white/70 dark:bg-slate-800/50 px-4 py-2 text-sm font-medium text-slate-600 dark:text-slate-300 backdrop-blur-sm">
-              Live from API
+              {t("dashboard.updatedFromApi")}
             </span>
           </div>
           <p className="relative z-10 mt-2 text-sm text-slate-500 dark:text-slate-400">
-            All active carts returned from the API are rendered here with their
-            latest item details.
+            {t("carts.description")}
           </p>
         </div>
 
@@ -81,25 +81,25 @@ function Carts() {
           <StatCard
             icon={<FiShoppingCart />}
             value={stats.totalCarts}
-            label="Total Carts"
+            label={t("carts.totalCarts")}
             tone="cyan"
           />
           <StatCard
             icon={<FiBox />}
             value={stats.totalItems}
-            label="Total Items"
+            label={t("carts.totalItems")}
             tone="amber"
           />
           <StatCard
             icon={<FiDollarSign />}
             value={`$${stats.totalValue.toFixed(2)}`}
-            label="Total Value"
+            label={t("carts.totalValue")}
             tone="emerald"
           />
           <StatCard
             icon={<FiUsers />}
             value={stats.uniqueUsers}
-            label="Unique Users"
+            label={t("carts.uniqueUsers")}
             tone="purple"
           />
         </div>
@@ -110,10 +110,10 @@ function Carts() {
               <FiShoppingCart size={32} />
             </div>
             <h3 className="text-xl font-bold text-slate-900 dark:text-white mb-2">
-              No carts found
+              {t("carts.noCarts")}
             </h3>
             <p className="text-slate-500 dark:text-slate-400">
-              No active carts returned from the API at this time.
+              {t("carts.noCartsDesc")}
             </p>
           </div>
         ) : (

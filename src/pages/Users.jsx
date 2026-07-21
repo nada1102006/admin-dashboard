@@ -1177,6 +1177,7 @@ import {
 import { createPortal } from "react-dom";
 import api from "../api/api";
 import { toast } from "react-toastify";
+import { useLanguage } from "../Context/LanguageContext";
 import {
   Users as UsersIcon,
   Shield,
@@ -1421,6 +1422,7 @@ const useUsers = () => {
 };
 
 const EditUserModal = ({ user, onClose, onSave }) => {
+  const { t } = useLanguage();
   const [formData, setFormData] = useState({
     username: "",
     phone: "",
@@ -1448,7 +1450,7 @@ const EditUserModal = ({ user, onClose, onSave }) => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (!formData.username.trim()) {
-      setFormError("Username is required");
+      setFormError(t("users.usernameRequired"));
       return;
     }
     setSaving(true);
@@ -1462,7 +1464,7 @@ const EditUserModal = ({ user, onClose, onSave }) => {
     if (result.success) {
       onClose(); 
     } else {
-      setFormError(result.message || "Failed to update user");
+      setFormError(result.message || t("users.updateFail"));
     }
   };
 
@@ -1476,7 +1478,7 @@ const EditUserModal = ({ user, onClose, onSave }) => {
       <div className="bg-gradient-to-br from-white via-sky-50/80 to-blue-100/40 dark:from-slate-800 dark:via-slate-800/90 dark:to-sky-900/30 rounded-3xl p-6 w-full max-w-md mx-auto my-auto shadow-2xl border border-slate-200/50 dark:border-slate-700/50 max-h-[90vh] overflow-y-auto relative">
         <div className="flex items-center justify-between mb-6">
           <h3 className="text-xl font-bold text-slate-800 dark:text-white">
-            Edit User
+            {t("users.editUser")}
           </h3>
           <button
             onClick={onClose}
@@ -1495,7 +1497,7 @@ const EditUserModal = ({ user, onClose, onSave }) => {
 
           <div className="mb-4">
             <label className="block text-xs font-medium text-slate-500 uppercase tracking-wider mb-2 dark:text-slate-400">
-              USERNAME
+              {t("users.username")}
             </label>
             <input
               type="text"
@@ -1508,7 +1510,7 @@ const EditUserModal = ({ user, onClose, onSave }) => {
 
           <div className="mb-4">
             <label className="block text-xs font-medium text-slate-500 uppercase tracking-wider mb-2 dark:text-slate-400">
-              PHONE
+              {t("users.phone")}
             </label>
             <input
               type="tel"
@@ -1521,7 +1523,7 @@ const EditUserModal = ({ user, onClose, onSave }) => {
 
           <div className="mb-6">
             <label className="block text-xs font-medium text-slate-500 uppercase tracking-wider mb-2 dark:text-slate-400">
-              AVATAR URL
+              {t("users.avatarUrl")}
             </label>
             <input
               type="url"
@@ -1540,10 +1542,10 @@ const EditUserModal = ({ user, onClose, onSave }) => {
             {saving ? (
               <>
                 <Loader2 className="w-5 h-5 animate-spin" />
-                Saving...
+                {t("users.savingBtn")}
               </>
             ) : (
-              "Save Changes"
+              t("users.saveChanges")
             )}
           </button>
         </form>
@@ -1572,6 +1574,7 @@ const StatCard = ({ title, value, icon: Icon, color }) => (
 );
 
 const RoleBadge = ({ role }) => {
+  const { t } = useLanguage();
   const styles =
     role === "admin"
       ? "bg-purple-100 text-purple-700 dark:bg-purple-900/30 dark:text-purple-400"
@@ -1580,24 +1583,25 @@ const RoleBadge = ({ role }) => {
     <span
       className={`px-2.5 sm:px-3 py-1 rounded-full text-xs font-medium capitalize ${styles}`}
     >
-      {role}
+      {role === "admin" ? t("users.roles.admin") : t("users.roles.customer")}
     </span>
   );
 };
 
 const VerifiedBadge = ({ isVerified }) => {
+  const { t } = useLanguage();
   if (isVerified) {
     return (
       <span className="flex items-center gap-1 text-emerald-600 dark:text-emerald-400 text-sm font-medium">
         <BadgeCheck className="w-4 h-4 shrink-0" />
-        Verified
+        {t("users.verified")}
       </span>
     );
   }
   return (
     <span className="flex items-center gap-1 text-rose-500 dark:text-rose-400 text-sm font-medium">
       <X className="w-4 h-4 shrink-0" />
-      No
+      {t("users.no")}
     </span>
   );
 };
@@ -1612,8 +1616,9 @@ const ActionButton = ({ icon: Icon, color, onClick, title }) => (
   </button>
 );
 
-const DeleteModal = ({ user, onConfirm, onCancel, deleting }) => (
-  createPortal(
+const DeleteModal = ({ user, onConfirm, onCancel, deleting }) => {
+  const { t } = useLanguage();
+  return createPortal(
     <div 
       className="fixed inset-0 bg-slate-900/80 flex items-center justify-center z-[100] backdrop-blur-sm p-4 overflow-y-auto"
       onClick={(e) => e.target === e.currentTarget && onCancel()}
@@ -1621,7 +1626,7 @@ const DeleteModal = ({ user, onConfirm, onCancel, deleting }) => (
       <div className="bg-gradient-to-br from-white to-sky-200 dark:from-slate-800 dark:via-slate-800/90 dark:to-sky-900/30 rounded-2xl p-6 w-full max-w-md mx-auto my-auto shadow-2xl border border-slate-200/50 dark:border-slate-700/50 relative">
         <div className="flex items-center justify-between mb-2">
           <h3 className="text-xl font-bold text-slate-800 dark:text-white">
-            Delete User
+            {t("users.deleteUserTitle")}
           </h3>
           <button
             onClick={onCancel}
@@ -1632,15 +1637,14 @@ const DeleteModal = ({ user, onConfirm, onCancel, deleting }) => (
         </div>
         
         <p className="text-slate-600 dark:text-slate-300 mb-6 break-words">
-          Are you sure you want to delete <strong>{user?.name}</strong>? This
-          action cannot be undone.
+          {t("users.deleteConfirm")} <strong>{user?.name}</strong>{t("users.cannotUndo")}
         </p>
         <div className="flex flex-col-reverse sm:flex-row gap-3 sm:justify-end">
           <button
             onClick={onCancel}
             className="w-full sm:w-auto px-6 py-2.5 text-sm font-bold rounded-lg cursor-pointer text-slate-600 hover:text-slate-800 bg-white hover:bg-slate-50 border border-slate-200 hover:border-slate-300 dark:text-slate-300 dark:hover:text-white dark:bg-slate-800 dark:hover:bg-slate-700 dark:border-slate-700 dark:hover:border-slate-600 transition-all duration-200 shadow-sm hover:shadow"
           >
-            Cancel
+            {t("users.cancelBtn")}
           </button>
           <button
             onClick={onConfirm}
@@ -1648,16 +1652,17 @@ const DeleteModal = ({ user, onConfirm, onCancel, deleting }) => (
             className="w-full sm:w-auto px-4 py-2.5 rounded-lg cursor-pointer bg-gradient-to-r from-rose-500 to-red-500 text-white hover:from-rose-600 hover:to-red-600 transition-colors flex items-center justify-center gap-2 disabled:cursor-not-allowed disabled:opacity-50 select-none shadow-lg shadow-rose-500/20"
           >
             {deleting && <Loader2 className="w-4 h-4 animate-spin" />}
-            Delete
+            {t("users.deleteBtn")}
           </button>
         </div>
       </div>
     </div>,
     document.body
-  )
-);
+  );
+};
 
 const AddUserForm = ({ onClose, onSubmit }) => {
+  const { t } = useLanguage();
   const [formData, setFormData] = useState({
     username: "",
     email: "",
@@ -1681,7 +1686,7 @@ const AddUserForm = ({ onClose, onSubmit }) => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (!formData.username || !formData.email || !formData.password) {
-      setFormError("Username, email and password are required.");
+      setFormError(t("users.requiredFieldsError"));
       return;
     }
     setSubmitting(true);
@@ -1699,7 +1704,7 @@ const AddUserForm = ({ onClose, onSubmit }) => {
       });
     } else {
       setFormError(
-        result.message || "Unable to create user. Please try again.",
+        result.message || t("users.createFail"),
       );
     }
   };
@@ -1712,9 +1717,9 @@ const AddUserForm = ({ onClose, onSubmit }) => {
             <UserPlus className="w-5 h-5 text-white" />
           </div>
           <div>
-            <h3 className="font-semibold text-white text-sm sm:text-base">Create New User</h3>
+            <h3 className="font-semibold text-white text-sm sm:text-base">{t("users.createNewUser")}</h3>
             <p className="text-xs text-white/80 hidden sm:block">
-              Fill in the details below to add a new user
+              {t("users.fillDetails")}
             </p>
           </div>
         </div>
@@ -1734,7 +1739,7 @@ const AddUserForm = ({ onClose, onSubmit }) => {
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-4">
           <div>
             <label className="block text-xs font-medium text-slate-600 dark:text-slate-400 mb-1.5">
-              USERNAME <span className="text-rose-500">*</span>
+              {t("users.username")} <span className="text-rose-500">*</span>
             </label>
             <input
               ref={nameInputRef}
@@ -1749,7 +1754,7 @@ const AddUserForm = ({ onClose, onSubmit }) => {
           </div>
           <div>
             <label className="block text-xs font-medium text-slate-600 dark:text-slate-400 mb-1.5">
-              EMAIL <span className="text-rose-500">*</span>
+              {t("users.email")} <span className="text-rose-500">*</span>
             </label>
             <input
               type="email"
@@ -1763,12 +1768,12 @@ const AddUserForm = ({ onClose, onSubmit }) => {
           </div>
           <div>
             <label className="block text-xs font-medium text-slate-600 dark:text-slate-400 mb-1.5">
-              PASSWORD <span className="text-rose-500">*</span>
+              {t("users.password")} <span className="text-rose-500">*</span>
             </label>
             <input
               type="password"
               name="password"
-              placeholder="Min. 6 characters"
+              placeholder={t("users.minChars")}
               value={formData.password}
               onChange={handleChange}
               required
@@ -1778,7 +1783,7 @@ const AddUserForm = ({ onClose, onSubmit }) => {
           </div>
           <div>
             <label className="block text-xs font-medium text-slate-600 dark:text-slate-400 mb-1.5">
-              PHONE
+              {t("users.phone")}
             </label>
             <input
               type="tel"
@@ -1792,7 +1797,7 @@ const AddUserForm = ({ onClose, onSubmit }) => {
         </div>
         <div className="flex flex-col-reverse sm:flex-row items-center justify-between gap-3">
           <p className="text-xs text-slate-400 dark:text-slate-500 order-2 sm:order-1">
-            <span className="text-rose-500">*</span> Required fields
+            <span className="text-rose-500">*</span> {t("users.requiredFields")}
           </p>
           <div className="flex flex-col sm:flex-row items-center gap-3 w-full sm:w-auto order-1 sm:order-2">
             <button
@@ -1808,7 +1813,7 @@ const AddUserForm = ({ onClose, onSubmit }) => {
               }
               className="w-full sm:w-auto px-6 py-2.5 text-sm font-bold rounded-lg cursor-pointer text-slate-600 hover:text-slate-800 bg-white hover:bg-slate-50 border border-slate-200 hover:border-slate-300 dark:text-slate-300 dark:hover:text-white dark:bg-slate-800 dark:hover:bg-slate-700 dark:border-slate-700 dark:hover:border-slate-600 transition-all duration-200 shadow-sm hover:shadow"
             >
-              Clear
+              {t("users.clear")}
             </button>
             <button
               type="submit"
@@ -1817,7 +1822,7 @@ const AddUserForm = ({ onClose, onSubmit }) => {
             >
               {submitting && <Loader2 className="w-4 h-4 animate-spin" />}
               <UserPlus className="w-4 h-4" />
-              Create User
+              {t("users.createUserBtn")}
             </button>
           </div>
         </div>
@@ -1825,7 +1830,6 @@ const AddUserForm = ({ onClose, onSubmit }) => {
     </div>
   );
 };
-
 const Users = () => {
   const {
     users,
@@ -1840,6 +1844,7 @@ const Users = () => {
     updateUser,
   } = useUsers();
   const { isDarkMode } = useTheme();
+  const { t } = useLanguage();
 
   const [searchQuery, setSearchQuery] = useState("");
   const [showAddForm, setShowAddForm] = useState(false);
@@ -1952,10 +1957,10 @@ const Users = () => {
         <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between mb-6 sm:mb-8">
           <div>
             <p className="text-cyan-500 dark:text-cyan-400 text-xs font-bold tracking-widest uppercase mb-1">
-              User Management
+              {t("users.management") || "User Management"}
             </p>
             <h2 className="text-2xl sm:text-3xl font-bold text-slate-800 dark:text-white">
-              Manage Users
+              {t("users.title") || "Manage Users"}
             </h2>
           </div>
           <div className="flex flex-col gap-3 sm:flex-row sm:items-center w-full md:w-auto">
@@ -1963,7 +1968,7 @@ const Users = () => {
               <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400 dark:text-slate-500" />
               <input
                 type="text"
-                placeholder="Search users..."
+                placeholder={t("users.searchPlaceholder") || "Search users..."}
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 className="pl-10 pr-4 py-3 w-full bg-white/70 dark:bg-slate-800/50 border border-slate-300 dark:border-slate-700 rounded-2xl text-sm focus:outline-none focus:ring-2 focus:ring-cyan-500 focus:border-transparent text-slate-800 dark:text-white backdrop-blur-sm"
@@ -1974,7 +1979,7 @@ const Users = () => {
               className="inline-flex cursor-pointer items-center justify-center gap-2 px-4 py-3 bg-gradient-to-r from-cyan-500 to-sky-500 text-white rounded-2xl text-sm font-medium hover:from-cyan-600 hover:to-sky-600 transition-colors shadow-lg shadow-cyan-500/20 w-full sm:w-auto"
             >
               <Plus className="w-4 h-4" />
-              Add User
+              {t("users.addUser") || "Add User"}
               <ChevronDown
                 className={`w-3 h-3 transition-transform ${showAddForm ? "rotate-180" : ""}`}
               />
@@ -1993,25 +1998,25 @@ const Users = () => {
         {/* Stats Cards */}
         <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-5 mb-6 sm:mb-8">
           <StatCard
-            title="Total Users"
+            title={t("users.totalUsers") || "Total Users"}
             value={stats.totalUsers}
             icon={UsersIcon}
             color="bg-gradient-to-r from-cyan-500 to-sky-500"
           />
           <StatCard
-            title="Admins"
+            title={t("users.admins") || "Admins"}
             value={stats.admins}
             icon={Shield}
             color="bg-gradient-to-r from-purple-500 to-violet-500"
           />
           <StatCard
-            title="Customers"
+            title={t("users.customers") || "Customers"}
             value={stats.customers}
             icon={UsersIcon}
             color="bg-gradient-to-r from-emerald-500 to-green-500"
           />
           <StatCard
-            title="Verified"
+            title={t("users.verified") || "Verified"}
             value={stats.verified}
             icon={UserCheck}
             color="bg-gradient-to-r from-sky-500 to-blue-500"
@@ -2048,16 +2053,16 @@ const Users = () => {
                   <thead>
                     <tr className="border-b border-slate-200/50 dark:border-slate-700/50">
                       <th className="text-left text-xs sm:text-sm font-medium text-slate-500 dark:text-slate-400 px-3 sm:px-6 py-4">
-                        User
+                        {t("users.userCol")}
                       </th>
                       <th className="text-left text-xs sm:text-sm font-medium text-slate-500 dark:text-slate-400 px-3 sm:px-6 py-4">
-                        Role
+                        {t("users.roleCol")}
                       </th>
                       <th className="text-left text-xs sm:text-sm font-medium text-slate-500 dark:text-slate-400 px-3 sm:px-6 py-4">
-                        Verified
+                        {t("users.verifiedCol")}
                       </th>
                       <th className="text-left text-xs sm:text-sm font-medium text-slate-500 dark:text-slate-400 px-3 sm:px-6 py-4">
-                        Actions
+                        {t("users.actionsCol")}
                       </th>
                     </tr>
                   </thead>
@@ -2069,8 +2074,8 @@ const Users = () => {
                           className="text-center py-12 text-slate-400 dark:text-slate-500"
                         >
                           {searchQuery
-                            ? "No users match your search."
-                            : "No users found."}
+                            ? t("users.noMatch")
+                            : t("users.noUsers")}
                         </td>
                       </tr>
                     ) : (
@@ -2120,19 +2125,19 @@ const Users = () => {
                                 icon={Pencil}
                                 color="bg-blue-500 hover:bg-blue-600"
                                 onClick={() => handleEdit(user)}
-                                title="Edit"
+                                title={t("users.edit")}
                               />
                               <ActionButton
                                 icon={actionLoading[user._id] === "role" ? Loader2 : ShieldCheck}
                                 color={`${user.role === "admin" ? "bg-purple-500 hover:bg-purple-600" : "bg-emerald-500 hover:bg-emerald-600"} ${actionLoading[user._id] === "role" ? "animate-spin" : ""}`}
                                 onClick={() => handleToggleRole(user)}
-                                title={user.role === "admin" ? "Demote to Customer" : "Promote to Admin"}
+                                title={user.role === "admin" ? t("users.demote") : t("users.promote")}
                               />
                               <ActionButton
                                 icon={actionLoading[user._id] === "delete" ? Loader2 : Trash2}
                                 color="bg-red-500 hover:bg-red-600"
                                 onClick={() => handleDeleteClick(user)}
-                                title="Delete"
+                                title={t("users.delete")}
                               />
                             </div>
                           </td>

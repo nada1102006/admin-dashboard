@@ -1,11 +1,13 @@
 import { FaBox, FaStar, FaTag } from 'react-icons/fa';
 import { useProduct } from '../../Context/ProductContext';
+import { useLanguage } from '../../Context/LanguageContext';
 
 export default function ProductOveriew() {
   const { product, loading, error } = useProduct();
+  const { t } = useLanguage();
 
   if (loading) {
-    return <div className="rounded-3xl bg-white p-8 text-slate-500 shadow-sm">Loading product...</div>;
+    return <div className="rounded-3xl bg-white p-8 text-slate-500 shadow-sm">{t("productDetails.loading")}</div>;
   }
 
   if (error) {
@@ -26,7 +28,7 @@ export default function ProductOveriew() {
     <div className="rounded-[28px] border border-slate-200 bg-white p-6 shadow-sm dark:border-slate-800 dark:bg-slate-900">
       <div className="flex flex-wrap items-center justify-between gap-3">
         <div>
-          <p className="text-sm font-semibold uppercase tracking-[0.2em] text-sky-600">Product Overview</p>
+          <p className="text-sm font-semibold uppercase tracking-[0.2em] text-sky-600">{t("productDetails.productOverview")}</p>
           <h2 className="mt-2 text-3xl font-bold text-slate-900 dark:text-white">{product.name}</h2>
         </div>
         <span className="rounded-full bg-slate-100 px-3 py-1 text-sm font-medium text-slate-600 dark:bg-slate-800 dark:text-slate-300">
@@ -54,33 +56,33 @@ export default function ProductOveriew() {
         <div className="rounded-2xl bg-slate-50 p-4 dark:bg-slate-800/70">
           <div className="flex items-center gap-2 text-slate-600 dark:text-slate-300">
             <FaTag />
-            <span className="text-sm font-semibold">Brand</span>
+            <span className="text-sm font-semibold">{t("productDetails.brand")}</span>
           </div>
           <p className="mt-2 text-lg font-semibold text-slate-900 dark:text-white">{product.brand}</p>
         </div>
         <div className="rounded-2xl bg-slate-50 p-4 dark:bg-slate-800/70">
           <div className="flex items-center gap-2 text-slate-600 dark:text-slate-300">
             <FaBox />
-            <span className="text-sm font-semibold">Stock</span>
+            <span className="text-sm font-semibold">{t("productDetails.stock")}</span>
           </div>
-          <p className="mt-2 text-lg font-semibold text-slate-900 dark:text-white">{product.stock > 0 ? `${product.stock} available` : 'Out of stock'}</p>
+          <p className="mt-2 text-lg font-semibold text-slate-900 dark:text-white">{product.stock > 0 ? `${product.stock} ${t("productDetails.available")}` : t("productDetails.outOfStock")}</p>
         </div>
         <div className="rounded-2xl bg-slate-50 p-4 dark:bg-slate-800/70">
           <div className="flex items-center gap-2 text-slate-600 dark:text-slate-300">
             <FaStar />
-            <span className="text-sm font-semibold">Rating</span>
+            <span className="text-sm font-semibold">{t("productDetails.rating")}</span>
           </div>
           <p className="mt-2 text-lg font-semibold text-slate-900 dark:text-white">{product.averageRating || 0} / 5</p>
         </div>
       </div>
 
       <div className="mt-6 rounded-3xl border border-slate-200 bg-slate-50 p-5 dark:border-slate-800 dark:bg-slate-800/70">
-        <h3 className="text-lg font-semibold text-slate-900 dark:text-white">Short Description</h3>
+        <h3 className="text-lg font-semibold text-slate-900 dark:text-white">{t("productDetails.shortDescription")}</h3>
         <p className="mt-2 text-sm leading-7 text-slate-600 dark:text-slate-300">{product.shortDescription}</p>
       </div>
 
       <div className="mt-6">
-        <h3 className="text-lg font-semibold text-slate-900 dark:text-white">Reviews</h3>
+        <h3 className="text-lg font-semibold text-slate-900 dark:text-white">{t("productDetails.reviews")}</h3>
         <div className="mt-4 space-y-3">
           {(product.reviews || []).slice(0, 3).map((review) => (
             <div key={review._id} className="rounded-2xl border border-slate-200 bg-white p-4 dark:border-slate-800 dark:bg-slate-800/70">
