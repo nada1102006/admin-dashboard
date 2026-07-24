@@ -1,0 +1,73 @@
+body {
+  height: 100vh;
+}
+
+.order-status h5 {
+  color: gray;
+  margin-bottom: 5px;
+}
+
+.order-status h2 {
+  margin-bottom: 20px;
+}
+
+.status-grid {
+  display: grid;
+  background-color: black;
+  grid-template-columns: repeat(3, 220px);
+  gap: 16px;
+  padding: 20px;
+  width: max-content
+}
+
+.pending {
+  border-left: 5px solid gold;
+}
+
+.processing {
+  border-left: 5px solid dodgerblue;
+}
+
+.confirmed {
+  border-left: 5px solid deepskyblue;
+}
+
+.shipped {
+  border-left: 5px solid purple;
+}
+
+.delivered {
+  border-left: 5px solid green;
+}
+
+.cancelled {
+  border-left: 5px solid red;
+}
+
+/*
+  NOTE (removed): .dashboard, .dashboard-header, .cards-grid, .card,
+  .card-icon, .dash-card-caption, .bottom-section, .best-seller,
+  .product-item used to be defined here with their own padding, grid
+  columns, and a position:absolute icon box.
+
+  DashboardHome.jsx now controls all of that directly with Tailwind
+  utility classes (including responsive breakpoints), so keeping both
+  meant this file and the JSX were fighting over the same elements —
+  that's what caused the icon overlapping text and the layout jumping
+  at odd screen widths. If any of those class names are reused by
+  another page, recreate them there with a different name instead of
+  re-adding them here, so this file doesn't collide with
+  DashboardHome.jsx again.
+*/
+
+/* loading */
+
+.loading {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 400px;
+  font-size: 16px;
+  font-weight: 500;
+  color: #94a3b8;
+}

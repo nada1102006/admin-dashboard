@@ -1,0 +1,48 @@
+.skeleton-product-image {
+  height: 100% !important;
+}
+
+
+@media (max-width: 640px) {
+  .skeleton-product-card {
+    margin-bottom: 1rem;
+  }
+}
+
+
+.skeleton-stats-card {
+  min-height: 120px;
+}
+
+
+@keyframes pulse {
+
+  0%,
+  100% {
+    opacity: 1;
+  }
+
+  50% {
+    opacity: 0.4;
+  }
+}
+
+.skeleton-loading {
+  animation: pulse 1.8s ease-in-out infinite;
+}
+
+
+.dark .skeleton {
+  background-color: #1e293b;
+}
+
+
+.skeleton-button {
+  border-radius: 16px;
+}
+
+
+.skeleton-image-wrapper {
+  position: relative;
+  overflow: hidden;
+}
