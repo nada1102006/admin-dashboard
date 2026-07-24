@@ -1,8 +1,8 @@
 // ProductDetails.jsx
 import { useProduct } from "../Context/ProductContext";
-import Slider from "../Components/ProductDetails/Slider";
-import ProductOverview from "../Components/ProductDetails/ProductOverview";
-import ProductNotFound from "../Components/ProductDetails/ProductNotFound";
+import Slider from "../components/ProductDetails/Slider";
+import ProductOverview from "../components/ProductDetails/ProductOverview";
+import ProductNotFound from "../components/ProductDetails/ProductNotFound";
 import { useParams } from "react-router-dom";
 import { useEffect } from "react";
 import { FiPackage, FiArrowLeft } from "react-icons/fi";
